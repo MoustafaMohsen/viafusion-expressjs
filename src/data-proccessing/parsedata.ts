@@ -1,5 +1,5 @@
 import es from 'event-stream';
-import { ViafusionDB } from './viafusiondb';
+import { ViafusionDB } from '../db/viafusiondb';
 import performance from "perf_hooks";
 import fs from 'fs';
 import path, { resolve } from "path";

@@ -1,10 +1,5 @@
 import es from 'event-stream';
-import { ViafusionDB } from './viafusiondb';
-import performance from "perf_hooks";
 import fs from 'fs';
-import path, { resolve } from "path";
-import { CsvParserStream, parse, parseFile, parseStream } from 'fast-csv';
-import { Client } from 'pg';
 import PareseData from './parsedata';
 
 

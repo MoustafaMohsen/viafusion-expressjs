@@ -1,12 +1,12 @@
-import { ViafusionDBFromFile } from './viafusiondbfromfile';
-import { ViafusionDB } from './viafusiondb';
+import { ViafusionDB } from '../db/viafusiondb';
 import performance from "perf_hooks";
 import fs from 'fs';
 import path from "path";
 import express from "express";
 import { Client, Pool } from "pg";
-import PareseData from './parsedata';
-import ParseToFile from './parsedatatofile';
+import PareseData from '../data-proccessing/parsedata';
+import ParseToFile from '../data-proccessing/parsedatatofile';
+import { ViafusionDBFromFile } from '../db/viafusiondbfromfile';
 
 
 export default class ViafusionServer {

@@ -1,5 +1,5 @@
-import { ViafusionDB } from './viafusiondb';
-import ViafusionServer from "./server";
+import { ViafusionDB } from './db/viafusiondb';
+import ViafusionServer from "./server/server";
 try {
     const db = new ViafusionDB();
     const server = new ViafusionServer(db);
