@@ -2,7 +2,7 @@ import { ApiService } from './../services/api';
 import performance from "perf_hooks";
 import express from "express";
 import ViafusionServerCore from './core/server-core';
-
+const makeRequest = require('../services/utitlies').makeRequest;
 
 export default class ViafusionServerRoutes extends ViafusionServerCore {
 
@@ -51,7 +51,8 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
             let api = new ApiService();
             try {
                 let body = req.body;
-                data = await api.post("/data/countries",body);
+                // data = await api.post("/data/countries",body);
+                const result = await makeRequest('GET', '/v1/data/countries');
                 send(res, data, t0)
             } catch (error) {
                 err(res, error, t0)

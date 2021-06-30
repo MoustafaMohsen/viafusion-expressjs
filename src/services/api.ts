@@ -65,13 +65,32 @@ export class ApiService {
     }
 
     post(path: string, body: any) {
-        let headers = this.get_auth("v1" + path, "post", body)
+        let myheaders = this.get_auth("v1" + path, "post", body)
         let param: AxiosRequestConfig = {
-            headers
+            headers: {
+                ...myheaders
+            }
         }
 
         let url = this.base_uri + path
+        return new Promise((resolve, reject) => {
 
+            axios({
+                method: 'post',
+                url: url,
+                headers: { ...myheaders }
+            })
+                .then(res => {
+                    console.log(res);
+                    resolve(res)
+                })
+                .catch(err => {
+                    console.error(err);
+                    reject(err)
+                })
+        })
+
+        /*
         return new Promise((resolve, reject) => {
             axios.post(url, param)
                 .then(res => {
@@ -83,6 +102,7 @@ export class ApiService {
                     reject(err)
                 })
         })
+        */
     }
 
 }
