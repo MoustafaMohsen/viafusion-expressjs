@@ -1,3 +1,4 @@
+import { ApiService } from './../services/api';
 import performance from "perf_hooks";
 import express from "express";
 import ViafusionServerCore from './core/server-core';
@@ -44,11 +45,13 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
         })
 
         // === Register Wallet
-        this.app.post('/register-wallet', async (req, res) => {
+        this.app.post('/list-countries', async (req, res) => {
             let t0 = performance.performance.now();
             let data = {} as any;
-            let body = req.body;
+            let api = new ApiService();
             try {
+                let body = req.body;
+                data = await api.post("/data/countries",body);
                 send(res, data, t0)
             } catch (error) {
                 err(res, error, t0)
