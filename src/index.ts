@@ -1,8 +1,6 @@
-import { ViafusionDB } from './db/viafusiondb';
-import ViafusionServer from "./server/server";
+import ViafusionServer from "./server/server-init";
 try {
-    const db = new ViafusionDB();
-    const server = new ViafusionServer(db);
+    const server = new ViafusionServer();
     server.init();
     
 } catch (error) {

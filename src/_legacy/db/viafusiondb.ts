@@ -1,7 +1,4 @@
-import performance from "perf_hooks";
-import fs from 'fs';
-import path from "path";
-import { Client, ClientConfig, Pool, QueryResult } from "pg";
+import { Client, ClientConfig, QueryResult } from "pg";
 
 export class ViafusionDB {
     dbsettings:ClientConfig = {

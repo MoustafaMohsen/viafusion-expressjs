@@ -1,15 +1,15 @@
-import { ViafusionDB } from '../db/viafusiondb';
+import { ViafusionDB } from './db/viafusiondb';
 import performance from "perf_hooks";
 import fs from 'fs';
 import path from "path";
 import express from "express";
 import { Client, Pool } from "pg";
-import PareseData from '../data-proccessing/parsedata';
-import ParseToFile from '../data-proccessing/parsedatatofile';
-import { ViafusionDBFromFile } from '../db/viafusiondbfromfile';
+import PareseData from './data-proccessing/parsedata';
+import ParseToFile from './data-proccessing/parsedatatofile';
+import { ViafusionDBFromFile } from './db/viafusiondbfromfile';
 
 
-export default class ViafusionServer {
+export default class _legacy_server {
     client = new Client({
         user: 'postgres',
         host: 'localhost',
@@ -29,6 +29,7 @@ export default class ViafusionServer {
         this.setupRoute();
         this.listen();
     }
+
     setupMiddleware() {
         // json request and response
         this.app.use(express.json());
@@ -46,6 +47,7 @@ export default class ViafusionServer {
         // preflight handler
         this.app.options('*');
     }
+
     setupRoute() {
         function json_type(res) {
             res.setHeader('content-type', 'application/json');
@@ -247,6 +249,7 @@ export default class ViafusionServer {
                 err(res, error, t0)
             }
         })
+        
         this.app.post('/insert-from-file', async (req, res) => {
             let t0 = performance.performance.now();
             json_type(res);

@@ -1,7 +1,4 @@
-import performance from "perf_hooks";
-import fs from 'fs';
-import path from "path";
-import { Client, Pool, QueryResult } from "pg";
+import { Client } from "pg";
 import { ViafusionDB } from "./viafusiondb";
 
 export class ViafusionDBFromFile extends ViafusionDB {
