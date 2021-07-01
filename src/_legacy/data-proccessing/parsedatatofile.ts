@@ -1,9 +1,9 @@
 import es from 'event-stream';
 import fs from 'fs';
-import PareseData from './parsedata';
+import _PareseData from './parsedata';
 
 
-export default class ParseToFile extends PareseData {
+export default class _ParseToFile extends _PareseData {
     constructor() {
         super();
     }

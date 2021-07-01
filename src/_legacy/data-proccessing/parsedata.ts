@@ -1,5 +1,5 @@
 import es from 'event-stream';
-import { ViafusionDB } from '../db/viafusiondb';
+import { _ViafusionDB } from '../db/viafusiondb';
 import performance from "perf_hooks";
 import fs from 'fs';
 import path, { resolve } from "path";
@@ -7,7 +7,7 @@ import { CsvParserStream, parse, parseFile, parseStream } from 'fast-csv';
 import { Client } from 'pg';
 
 
-export default class PareseData {
+export default class _PareseData {
     constructor() { }
     stream: fs.ReadStream
     start_reading(filepath: string, callback: Function) {
@@ -189,7 +189,7 @@ export default class PareseData {
         ]
     }
 
-    async read_and_insert_rows(viafusiondb: ViafusionDB, filename: string, max_rows_count: number, offset = 0, take_a_rest_every=5000, token: any, progressCallback: Function) {
+    async read_and_insert_rows(viafusiondb: _ViafusionDB, filename: string, max_rows_count: number, offset = 0, take_a_rest_every=5000, token: any, progressCallback: Function) {
         return new Promise<number>(async (resolve, reject) => {
             let inserted_rows = 0;
             let queried_rows = 0;

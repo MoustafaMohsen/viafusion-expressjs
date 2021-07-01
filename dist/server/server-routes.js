@@ -115,6 +115,28 @@ var ViafusionServerRoutes = (function (_super) {
                 return [2];
             });
         }); });
+        this.app.post('/prepare-db', function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+            var t0, data, db, _a, _b;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0:
+                        t0 = perf_hooks_1.default.performance.now();
+                        data = {};
+                        _a = response;
+                        _b = [{}];
+                        return [4, this.db.PrepareDB(req.body.database)];
+                    case 1:
+                        db = _a.result = __assign.apply(void 0, _b.concat([(_c.sent())]));
+                        try {
+                            send(res, data, t0);
+                        }
+                        catch (error) {
+                            err(res, error, t0);
+                        }
+                        return [2];
+                }
+            });
+        }); });
         this.app.post('/create-wallet', function (req, res) { return __awaiter(_this, void 0, void 0, function () {
             var t0, data, walletSrv, body;
             return __generator(this, function (_a) {

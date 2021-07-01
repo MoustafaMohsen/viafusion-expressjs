@@ -46,6 +46,20 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
                 err(res, error, t0)
             }
         })
+
+
+        this.app.post('/prepare-db', async (req, res) => {
+            let t0 = performance.performance.now();
+            let data = {} as any;
+            const db = 
+            response.result = { ...(await this.db.PrepareDB(req.body.database)) };
+            try {
+                send(res, data, t0)
+            } catch (error) {
+                err(res, error, t0)
+            }
+        })
+
         this.app.post('/create-wallet', async (req, res) => {
             let t0 = performance.performance.now();
             let data = {} as any;

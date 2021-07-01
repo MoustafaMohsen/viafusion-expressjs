@@ -1,6 +1,6 @@
 import { Client, ClientConfig, QueryResult } from "pg";
 
-export class _ViafusionDB {
+export class ViafusionDB {
     dbsettings:ClientConfig = {
         user: 'postgres',
         host: 'localhost',
@@ -12,15 +12,16 @@ export class _ViafusionDB {
         this.dbsettings = { ...this.dbsettings, ...(opts as any) };
     }
 
-    async PrepareDB(dbname = "viafusiondb",tablename = "users") {
+    async PrepareDB(dbname = "viafusiondb") {
         let result: any = {}
         const client1 = await this.connect();
         result.createDB = await this.createDB(client1, dbname);
         await client1.end();
 
-        this.dbsettings.database = "dbname";
+        this.dbsettings.database = dbname;
         const client2 = await this.connect();
-        result.createTable = await this.createTable(client2,tablename);
+        result.create_wallet_tabel = await this.create_wallet_tabel(client2);
+        result.create_contact_tabel = await this.create_contact_tabel(client2);
         await client2.end();
         delete this.dbsettings.database;
         console.log("DB is ready");
@@ -77,30 +78,29 @@ export class _ViafusionDB {
         return result;
     }
 
-    async createTable(client: Client, tablename = "users") {
+    async create_wallet_tabel(client: Client, tablename = "wallet") {
         await client.query("DROP TABLE IF EXISTS " + tablename + ";")
         let result = await client.query(`CREATE TABLE IF NOT EXISTS ${tablename} (
-            id serial PRIMARY KEY,
-            fb_id VARCHAR ( 255 ),
+            ewallet_reference_id VARCHAR ( 255 ) PRIMARY KEY,
+            id VARCHAR ( 255 ),
+            phone_number VARCHAR ( 255 ),
             email VARCHAR ( 255 ),
-            phone VARCHAR ( 255 ),
-            religion TEXT,
-            birthdate VARCHAR ( 255 ),
-            first_name VARCHAR ( 255 ),
-            last_name VARCHAR ( 255 ),
-            gender VARCHAR ( 255 ),
-            fb_link VARCHAR ( 255 ),
-            username TEXT,
-            middle TEXT,
-            profile_status TEXT,
-            job_company TEXT,
-            job_title TEXT,
-            city TEXT,
-            government TEXT,
-            collage TEXT, 
-            fb_email VARCHAR ( 255 ),
+            contact_id VARCHAR ( 255 ),
+            contact_refrence_id VARCHAR ( 255 ),
             data TEXT
-
+);`)
+        return result;
+    }
+    async create_contact_tabel(client: Client, tablename = "contact") {
+        await client.query("DROP TABLE IF EXISTS " + tablename + ";")
+        let result = await client.query(`CREATE TABLE IF NOT EXISTS ${tablename} (
+            contact_reference_id VARCHAR ( 255 ) PRIMARY KEY,
+            id VARCHAR ( 255 ),
+            phone_number VARCHAR ( 255 ),
+            email VARCHAR ( 255 ),
+            wallet_id VARCHAR ( 255 ),
+            wallet_refrence_id VARCHAR ( 255 ),
+            data TEXT
 );`)
         return result;
     }

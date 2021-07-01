@@ -1,7 +1,7 @@
 import { Client } from "pg";
-import { ViafusionDB } from "./viafusiondb";
+import { _ViafusionDB } from "./viafusiondb";
 
-export class ViafusionDBFromFile extends ViafusionDB {
+export class _ViafusionDBFromFile extends _ViafusionDB {
     constructor(opts?){
         super(opts)
     }
