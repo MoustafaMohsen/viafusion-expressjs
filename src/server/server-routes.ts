@@ -1,3 +1,4 @@
+import { IDBWallet } from './../models/db/idbwallet';
 import { IDBContact } from './../models/db/idbcontact';
 import { UserService } from './../services/user';
 import { ViafusionDB } from './../services/db/viafusiondb';
@@ -9,6 +10,7 @@ import express from "express";
 import ViafusionServerCore from './core/server-core';
 import { RapydUtilties } from '../services/utilities';
 import { IContact } from '../models/rapyd/icontact';
+import { IDBSelect } from '../models/db/select_rows';
 const makeRequest = require('../services/utitlies').makeRequest;
 
 export default class ViafusionServerRoutes extends ViafusionServerCore {
@@ -68,8 +70,23 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
             let t0 = performance.performance.now();
             try {
                 const userSrv = new UserService();
-                let body:IDBContact = req.body;
+                let body:IDBSelect<IDBContact> = req.body;
                 userSrv.get_db_user(body).then((d)=>{
+                    send(res, d, t0)
+                }).catch(e=>{
+                    err(res, e, t0)
+                })
+            } catch (error) {
+                err(res, error, t0)
+            }
+        })
+
+        this.app.post('/get-db-wallet', async (req, res) => {
+            let t0 = performance.performance.now();
+            try {
+                const userSrv = new WalletService();
+                let body:IDBSelect<IDBWallet> = req.body;
+                userSrv.get_db_wallet(body).then((d)=>{
                     send(res, d, t0)
                 }).catch(e=>{
                     err(res, e, t0)

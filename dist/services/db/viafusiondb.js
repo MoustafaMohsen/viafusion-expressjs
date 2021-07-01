@@ -167,7 +167,7 @@ var ViafusionDB = (function () {
         });
     };
     ViafusionDB.prototype.create_wallet_tabel = function (client, tablename) {
-        if (tablename === void 0) { tablename = "dbwallets"; }
+        if (tablename === void 0) { tablename = "dbwallet"; }
         return __awaiter(this, void 0, void 0, function () {
             var result;
             return __generator(this, function (_a) {
@@ -184,7 +184,7 @@ var ViafusionDB = (function () {
         });
     };
     ViafusionDB.prototype.create_contact_tabel = function (client, tablename) {
-        if (tablename === void 0) { tablename = "dbcontacts"; }
+        if (tablename === void 0) { tablename = "dbcontact"; }
         return __awaiter(this, void 0, void 0, function () {
             var result;
             return __generator(this, function (_a) {

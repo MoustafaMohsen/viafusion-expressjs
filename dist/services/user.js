@@ -48,7 +48,7 @@ var UserService = (function () {
                 switch (_a.label) {
                     case 0:
                         db = new viafusiondb_1.ViafusionDB();
-                        return [4, db.insert_object(user, 'dbcontacts')];
+                        return [4, db.insert_object(user, 'dbcontact')];
                     case 1:
                         results = _a.sent();
                         return [2, results];
@@ -63,7 +63,7 @@ var UserService = (function () {
                 switch (_a.label) {
                     case 0:
                         db = new viafusiondb_1.ViafusionDB();
-                        return [4, db.get_object(user, "OR", 'dbcontacts')];
+                        return [4, db.get_object(user, "OR", 'dbcontact')];
                     case 1:
                         results = _a.sent();
                         return [2, results];

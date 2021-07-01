@@ -70,7 +70,7 @@ export class ViafusionDB {
         return result;
     }
 
-    async create_wallet_tabel(client: Client, tablename = "dbwallets") {
+    async create_wallet_tabel(client: Client, tablename = "dbwallet") {
         await client.query("DROP TABLE IF EXISTS " + tablename + ";")
         let result = await client.query(`CREATE TABLE IF NOT EXISTS ${tablename} (
             ewallet_reference_id SERIAL PRIMARY KEY,
@@ -85,7 +85,7 @@ export class ViafusionDB {
 );`)
         return result;
     }
-    async create_contact_tabel(client: Client, tablename = "dbcontacts") {
+    async create_contact_tabel(client: Client, tablename = "dbcontact") {
         await client.query("DROP TABLE IF EXISTS " + tablename + ";")
         let result = await client.query(`CREATE TABLE IF NOT EXISTS ${tablename} (
             contact_reference_id SERIAL PRIMARY KEY,
