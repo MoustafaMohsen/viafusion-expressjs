@@ -56,6 +56,21 @@ var UserService = (function () {
             });
         });
     };
+    UserService.prototype.get_db_user = function (user) {
+        return __awaiter(this, void 0, void 0, function () {
+            var db, results;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        db = new viafusiondb_1.ViafusionDB();
+                        return [4, db.get_object(user, "OR", 'dbcontacts')];
+                    case 1:
+                        results = _a.sent();
+                        return [2, results];
+                }
+            });
+        });
+    };
     return UserService;
 }());
 exports.UserService = UserService;

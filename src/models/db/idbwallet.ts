@@ -21,6 +21,7 @@ export interface IDBWallet {
     contact_id: string;
     contact_refrence_id: string;
     phone_number?: string;
-
+    securiy:object;
+    meta:object;
     data:IWallet;
 }

@@ -12,4 +12,10 @@ export class UserService {
         let results = await db.insert_object(user, 'dbcontacts');
         return results;
     }
+
+    async get_db_user(user:IDBContact){
+        const db = new ViafusionDB();
+        let results = await db.get_object(user, "OR", 'dbcontacts');
+        return results;
+    }
 }

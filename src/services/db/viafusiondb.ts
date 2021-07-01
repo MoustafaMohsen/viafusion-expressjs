@@ -34,16 +34,7 @@ export class ViafusionDB {
         return await client.query(query);
     }
 
-    async get_rows(client:Client, tablename, cols: string[], values: {}, relation:"OR"|"AND",token){
-        const query = this.create_select_query(tablename, cols, values, relation);
-        console.log(query);
-        token.cancel = ()=>{
-            client.end();
-        }
-        return await client.query(query);
-    }
-
-    create_select_query(tablename, cols: string[], values: {}, relation:"OR"|"AND"){
+    create_select_query(tablename, cols: string[]|string, values: {}, relation:"OR"|"AND"){
         let equals_keys = Object.keys(values);
         let equals = Object.values(values);
         let _tmp_keys = equals_keys?"WHERE ":"";
@@ -59,6 +50,7 @@ export class ViafusionDB {
         }
         return query;
     }
+
     async connect(database?) {
         const set = database?{...this.dbsettings,database }:this.dbsettings;
         const client = new Client(set);
@@ -88,6 +80,7 @@ export class ViafusionDB {
             contact_id VARCHAR ( 255 ),
             contact_refrence_id VARCHAR ( 255 ),
             data TEXT,
+            meta TEXT,
             security TEXT NOT NULL
 );`)
         return result;
@@ -102,6 +95,7 @@ export class ViafusionDB {
             wallet_refrence_id VARCHAR ( 255 ),
             phone_number VARCHAR ( 255 ) NOT NULL UNIQUE,
             data TEXT,
+            meta TEXT,
             security TEXT NOT NULL
 );`)
         return result;
@@ -187,6 +181,16 @@ export class ViafusionDB {
         let keys = Object.keys(data);
         let values = Object.values(data);
         const query = this.create_insert_query(tabelname, keys , values);
+        const client = await this.connect(dbname);
+        let result = await client.query(query);
+        await client.end();
+        return result;
+    }
+
+    async get_object(data:object,relation:"OR" | "AND", tabelname ,dbname="viafusiondb"){
+        let keys = Object.keys(data)[0];
+        let values = Object.values(data)[0];
+        const query = this.create_select_query(tabelname, keys , values, relation);
         const client = await this.connect(dbname);
         let result = await client.query(query);
         await client.end();

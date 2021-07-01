@@ -113,23 +113,6 @@ var ViafusionDB = (function () {
             });
         });
     };
-    ViafusionDB.prototype.get_rows = function (client, tablename, cols, values, relation, token) {
-        return __awaiter(this, void 0, void 0, function () {
-            var query;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        query = this.create_select_query(tablename, cols, values, relation);
-                        console.log(query);
-                        token.cancel = function () {
-                            client.end();
-                        };
-                        return [4, client.query(query)];
-                    case 1: return [2, _a.sent()];
-                }
-            });
-        });
-    };
     ViafusionDB.prototype.create_select_query = function (tablename, cols, values, relation) {
         var equals_keys = Object.keys(values);
         var equals = Object.values(values);
@@ -192,7 +175,7 @@ var ViafusionDB = (function () {
                     case 0: return [4, client.query("DROP TABLE IF EXISTS " + tablename + ";")];
                     case 1:
                         _a.sent();
-                        return [4, client.query("CREATE TABLE IF NOT EXISTS " + tablename + " (\n            ewallet_reference_id SERIAL PRIMARY KEY,\n            id VARCHAR ( 255 ),\n            phone_number VARCHAR ( 255 ) NOT NULL UNIQUE,\n            email VARCHAR ( 255 ),\n            contact_id VARCHAR ( 255 ),\n            contact_refrence_id VARCHAR ( 255 ),\n            data TEXT,\n            security TEXT NOT NULL\n);")];
+                        return [4, client.query("CREATE TABLE IF NOT EXISTS " + tablename + " (\n            ewallet_reference_id SERIAL PRIMARY KEY,\n            id VARCHAR ( 255 ),\n            phone_number VARCHAR ( 255 ) NOT NULL UNIQUE,\n            email VARCHAR ( 255 ),\n            contact_id VARCHAR ( 255 ),\n            contact_refrence_id VARCHAR ( 255 ),\n            data TEXT,\n            meta TEXT,\n            security TEXT NOT NULL\n);")];
                     case 2:
                         result = _a.sent();
                         return [2, result];
@@ -209,7 +192,7 @@ var ViafusionDB = (function () {
                     case 0: return [4, client.query("DROP TABLE IF EXISTS " + tablename + ";")];
                     case 1:
                         _a.sent();
-                        return [4, client.query("CREATE TABLE IF NOT EXISTS " + tablename + " (\n            contact_reference_id SERIAL PRIMARY KEY,\n            id VARCHAR ( 255 ),\n            email VARCHAR ( 255 ),\n            ewallet VARCHAR ( 255 ),\n            wallet_refrence_id VARCHAR ( 255 ),\n            phone_number VARCHAR ( 255 ) NOT NULL UNIQUE,\n            data TEXT,\n            security TEXT NOT NULL\n);")];
+                        return [4, client.query("CREATE TABLE IF NOT EXISTS " + tablename + " (\n            contact_reference_id SERIAL PRIMARY KEY,\n            id VARCHAR ( 255 ),\n            email VARCHAR ( 255 ),\n            ewallet VARCHAR ( 255 ),\n            wallet_refrence_id VARCHAR ( 255 ),\n            phone_number VARCHAR ( 255 ) NOT NULL UNIQUE,\n            data TEXT,\n            meta TEXT,\n            security TEXT NOT NULL\n);")];
                     case 2:
                         result = _a.sent();
                         return [2, result];
@@ -290,6 +273,30 @@ var ViafusionDB = (function () {
                         keys = Object.keys(data);
                         values = Object.values(data);
                         query = this.create_insert_query(tabelname, keys, values);
+                        return [4, this.connect(dbname)];
+                    case 1:
+                        client = _a.sent();
+                        return [4, client.query(query)];
+                    case 2:
+                        result = _a.sent();
+                        return [4, client.end()];
+                    case 3:
+                        _a.sent();
+                        return [2, result];
+                }
+            });
+        });
+    };
+    ViafusionDB.prototype.get_object = function (data, relation, tabelname, dbname) {
+        if (dbname === void 0) { dbname = "viafusiondb"; }
+        return __awaiter(this, void 0, void 0, function () {
+            var keys, values, query, client, result;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        keys = Object.keys(data)[0];
+                        values = Object.values(data)[0];
+                        query = this.create_select_query(tabelname, keys, values, relation);
                         return [4, this.connect(dbname)];
                     case 1:
                         client = _a.sent();
