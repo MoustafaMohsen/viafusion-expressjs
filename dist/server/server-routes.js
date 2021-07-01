@@ -84,10 +84,10 @@ var ViafusionServerRoutes = (function (_super) {
             var pre = perf_hooks_1.default.performance.now() - t0;
             console.log("-->Request for:'" + res.req.path + "', from client:'" + res.req.ip + "' took:" + pre + "ms");
             if (!res.headersSent) {
-                res.send(JSON.stringify({ data: __assign({}, response), performance: pre, success: true }));
+                res.send(JSON.stringify({ performance: pre, success: true, data: __assign({}, response) }));
             }
             else {
-                res.write(JSON.stringify({ data: __assign({}, response), performance: pre, success: true }));
+                res.write(JSON.stringify({ performance: pre, success: true, data: __assign({}, response) }));
                 res.end();
             }
         }

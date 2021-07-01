@@ -83,11 +83,12 @@ export class ViafusionDB {
         let result = await client.query(`CREATE TABLE IF NOT EXISTS ${tablename} (
             ewallet_reference_id SERIAL PRIMARY KEY,
             id VARCHAR ( 255 ),
-            phone_number VARCHAR ( 255 ) NOT NULL,
+            phone_number VARCHAR ( 255 ) NOT NULL UNIQUE,
             email VARCHAR ( 255 ),
             contact_id VARCHAR ( 255 ),
             contact_refrence_id VARCHAR ( 255 ),
-            data TEXT
+            data TEXT,
+            security TEXT NOT NULL
 );`)
         return result;
     }
@@ -99,8 +100,9 @@ export class ViafusionDB {
             email VARCHAR ( 255 ),
             ewallet VARCHAR ( 255 ),
             wallet_refrence_id VARCHAR ( 255 ),
-            phone_number VARCHAR ( 255 ) NOT NULL,
-            data TEXT
+            phone_number VARCHAR ( 255 ) NOT NULL UNIQUE,
+            data TEXT,
+            security TEXT NOT NULL
 );`)
         return result;
     }

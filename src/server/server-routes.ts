@@ -19,9 +19,9 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
             let pre = performance.performance.now() - t0;
             console.log(`-->Request for:'${res.req.path}', from client:'${res.req.ip}' took:${pre}ms`);
             if (!res.headersSent) {
-                res.send(JSON.stringify({ data: { ...response }, performance: pre, success: true }))
+                res.send(JSON.stringify({ performance: pre, success: true ,data: { ...response } }))
             } else {
-                res.write(JSON.stringify({ data: { ...response }, performance: pre, success: true }));
+                res.write(JSON.stringify({ performance: pre, success: true ,data: { ...response }}));
                 res.end();
             }
         }
