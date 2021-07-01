@@ -2,9 +2,9 @@ import { IAddress } from "./address";
 
 export interface IContact {
     phone_number?: string
-    email?: string
     first_name?: string
     last_name?: string
+    email?: string
     mothers_name?: string
     contact_type?: string
     address?: IAddress

@@ -114,7 +114,7 @@ var ViafusionServerRoutes = (function (_super) {
             });
         }); });
         this.app.post('/list-countries', function (req, res) { return __awaiter(_this, void 0, void 0, function () {
-            var t0, data, api, body, result, error_1;
+            var t0, data, api, body, data_1, error_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -127,8 +127,8 @@ var ViafusionServerRoutes = (function (_super) {
                         body = req.body;
                         return [4, makeRequest('GET', '/v1/data/countries')];
                     case 2:
-                        result = _a.sent();
-                        send(res, data, t0);
+                        data_1 = _a.sent();
+                        send(res, data_1.body, t0);
                         return [3, 4];
                     case 3:
                         error_1 = _a.sent();

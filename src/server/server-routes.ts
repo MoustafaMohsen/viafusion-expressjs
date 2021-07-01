@@ -44,16 +44,15 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
             }
         })
 
-        // === Register Wallet
+        // === List Countries
         this.app.post('/list-countries', async (req, res) => {
             let t0 = performance.performance.now();
             let data = {} as any;
             let api = new ApiService();
             try {
                 let body = req.body;
-                // data = await api.post("/data/countries",body);
-                const result = await makeRequest('GET', '/v1/data/countries');
-                send(res, data, t0)
+                const data = await makeRequest('GET', '/v1/data/countries');
+                send(res, data.body, t0)
             } catch (error) {
                 err(res, error, t0)
             }
