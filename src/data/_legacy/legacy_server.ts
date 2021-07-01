@@ -1,4 +1,4 @@
-import { ViafusionDB } from './db/viafusiondb';
+import { _ViafusionDB } from './db/viafusiondb';
 import performance from "perf_hooks";
 import fs from 'fs';
 import path from "path";
@@ -6,7 +6,7 @@ import express from "express";
 import { Client, Pool } from "pg";
 import PareseData from './data-proccessing/parsedata';
 import ParseToFile from './data-proccessing/parsedatatofile';
-import { ViafusionDBFromFile } from './db/viafusiondbfromfile';
+import { _ViafusionDBFromFile } from './db/viafusiondbfromfile';
 
 
 export default class _legacy_server {
@@ -18,7 +18,7 @@ export default class _legacy_server {
     });
     app = express();
     port = process.env.NODEJS_PORT || 3005;
-    db: ViafusionDB;
+    db: _ViafusionDB;
     constructor(_db) {
         this.db = _db;
     }
@@ -107,7 +107,7 @@ export default class _legacy_server {
                         token.cancel2?.();
                     }
                 });
-                const viafusiondb = new ViafusionDB();
+                const viafusiondb = new _ViafusionDB();
                 const client = await viafusiondb.connect(body.database);
                 const results = await viafusiondb.get_rows(client, body.tablename, body.cols, body.values, body.relation, token);
                 response = {
@@ -136,7 +136,7 @@ export default class _legacy_server {
                     }
                 });
                 // // ===== Preparing Database
-                const viafusiondbfromfile = new ViafusionDBFromFile();
+                const viafusiondbfromfile = new _ViafusionDBFromFile();
                 response.prepare_init_file_db = await viafusiondbfromfile.prepare_init_file_db(req.body.database);
                 const parsertofile = new ParseToFile();
                 for (let i = 0; i < req.body.files_paths.length; i++) {
@@ -163,7 +163,7 @@ export default class _legacy_server {
                     }
 
                     // ==== Creating indexes
-                    const viafusiondb = new ViafusionDB();
+                    const viafusiondb = new _ViafusionDB();
                     response.index_results = []
                     for (let i = 0; i < req.body.indexes.length; i++) {
                         let tablename = req.body.indexes[i].tablename;
@@ -205,7 +205,7 @@ export default class _legacy_server {
                         token.cancel2?.();
                     }
                 });
-                const viafusiondb = new ViafusionDB();
+                const viafusiondb = new _ViafusionDB();
                 response.results = []
                 for (let i = 0; i < req.body.indexes.length; i++) {
                     let tablename = req.body.indexes[i].tablename;
@@ -241,7 +241,7 @@ export default class _legacy_server {
                         token.cancel?.();
                     }
                 });
-                const viafusiondbfromfile = new ViafusionDBFromFile();
+                const viafusiondbfromfile = new _ViafusionDBFromFile();
                 let rows = await viafusiondbfromfile.prepare_init_file_db(req.body.database);
                 response.rows = rows;
                 send(res, response, t0)
@@ -262,7 +262,7 @@ export default class _legacy_server {
                         token.cancel?.();
                     }
                 });
-                const viafusiondbfromfile = new ViafusionDBFromFile();
+                const viafusiondbfromfile = new _ViafusionDBFromFile();
                 let rows = await viafusiondbfromfile.start_copy_from_file(path.resolve(__dirname, ...req.body.filename), req.body.database);
                 response.rows = rows;
                 send(res, response, t0)
@@ -305,7 +305,7 @@ export default class _legacy_server {
                     }
                 });
                 const parser = new PareseData();
-                const viafusiondb = new ViafusionDB();
+                const viafusiondb = new _ViafusionDB();
                 let rows = await parser.read_and_insert_rows(viafusiondb, filename,
                     req.body.max_rows_count, req.body.offset, req.body.take_a_rest_every, token, (inset, queried) => { res.write(JSON.stringify({ inset, queried })) });
                 response.rows = rows;

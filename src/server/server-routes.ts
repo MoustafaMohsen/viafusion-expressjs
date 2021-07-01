@@ -11,7 +11,6 @@ import ViafusionServerCore from './core/server-core';
 import { RapydUtilties } from '../services/util/utilities';
 import { IContact } from '../interfaces/rapyd/icontact';
 import { IDBSelect } from '../interfaces/db/select_rows';
-const makeRequest = require('../services/utitlies').makeRequest;
 
 export default class ViafusionServerRoutes extends ViafusionServerCore {
 
