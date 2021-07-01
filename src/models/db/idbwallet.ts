@@ -14,7 +14,7 @@ data TEXT
  */
 
 export interface IDBWallet {
-    ewallet_reference_id?: string;
+    ewallet_reference_id?: number;
     id?: contact_id;
     email?: string;
     ewallet: ewallet_id;

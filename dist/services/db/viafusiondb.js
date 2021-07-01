@@ -192,7 +192,7 @@ var ViafusionDB = (function () {
                     case 0: return [4, client.query("DROP TABLE IF EXISTS " + tablename + ";")];
                     case 1:
                         _a.sent();
-                        return [4, client.query("CREATE TABLE IF NOT EXISTS " + tablename + " (\n            ewallet_reference_id VARCHAR ( 255 ) PRIMARY KEY,\n            id VARCHAR ( 255 ),\n            phone_number VARCHAR ( 255 ),\n            email VARCHAR ( 255 ),\n            contact_id VARCHAR ( 255 ),\n            contact_refrence_id VARCHAR ( 255 ),\n            data TEXT\n);")];
+                        return [4, client.query("CREATE TABLE IF NOT EXISTS " + tablename + " (\n            ewallet_reference_id SERIAL PRIMARY KEY,\n            id VARCHAR ( 255 ),\n            phone_number VARCHAR ( 255 ) NOT NULL,\n            email VARCHAR ( 255 ),\n            contact_id VARCHAR ( 255 ),\n            contact_refrence_id VARCHAR ( 255 ),\n            data TEXT\n);")];
                     case 2:
                         result = _a.sent();
                         return [2, result];
@@ -209,7 +209,7 @@ var ViafusionDB = (function () {
                     case 0: return [4, client.query("DROP TABLE IF EXISTS " + tablename + ";")];
                     case 1:
                         _a.sent();
-                        return [4, client.query("CREATE TABLE IF NOT EXISTS " + tablename + " (\n            contact_reference_id VARCHAR ( 255 ) PRIMARY KEY,\n            id VARCHAR ( 255 ),\n            email VARCHAR ( 255 ),\n            ewallet VARCHAR ( 255 ),\n            wallet_refrence_id VARCHAR ( 255 ),\n            phone_number VARCHAR ( 255 ),\n            data TEXT\n);")];
+                        return [4, client.query("CREATE TABLE IF NOT EXISTS " + tablename + " (\n            contact_reference_id SERIAL PRIMARY KEY,\n            id VARCHAR ( 255 ),\n            email VARCHAR ( 255 ),\n            ewallet VARCHAR ( 255 ),\n            wallet_refrence_id VARCHAR ( 255 ),\n            phone_number VARCHAR ( 255 ) NOT NULL,\n            data TEXT\n);")];
                     case 2:
                         result = _a.sent();
                         return [2, result];

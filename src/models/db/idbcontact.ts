@@ -13,11 +13,11 @@ data TEXT
  */
 
 export interface IDBContact {
-    contact_reference_id?: string;
+    contact_reference_id?: number;
     id?: string;
     email?: string;
     ewallet: ewallet_id;
-     wallet_refrence_id: string;
+    wallet_refrence_id: string;
     phone_number?: string;
 
     data:IContact;

@@ -64,12 +64,12 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
             }
         })
 
-        this.app.post('/create-user', async (req, res) => {
+        this.app.post('/create-db-user', async (req, res) => {
             let t0 = performance.performance.now();
             try {
-                const walletSrv = new UserService();
+                const userSrv = new UserService();
                 let body:IDBContact = req.body;
-                walletSrv.create_user(body).then((d)=>{
+                userSrv.create_db_user(body).then((d)=>{
                     send(res, d, t0)
                 }).catch(e=>{
                     err(res, e, t0)

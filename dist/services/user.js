@@ -41,7 +41,7 @@ var viafusiondb_1 = require("./db/viafusiondb");
 var UserService = (function () {
     function UserService() {
     }
-    UserService.prototype.create_user = function (user) {
+    UserService.prototype.create_db_user = function (user) {
         return __awaiter(this, void 0, void 0, function () {
             var db, results;
             return __generator(this, function (_a) {

@@ -143,14 +143,14 @@ var ViafusionServerRoutes = (function (_super) {
                 }
             });
         }); });
-        this.app.post('/create-user', function (req, res) { return __awaiter(_this, void 0, void 0, function () {
-            var t0, walletSrv, body;
+        this.app.post('/create-db-user', function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+            var t0, userSrv, body;
             return __generator(this, function (_a) {
                 t0 = perf_hooks_1.default.performance.now();
                 try {
-                    walletSrv = new user_1.UserService();
+                    userSrv = new user_1.UserService();
                     body = req.body;
-                    walletSrv.create_user(body).then(function (d) {
+                    userSrv.create_db_user(body).then(function (d) {
                         send(res, d, t0);
                     }).catch(function (e) {
                         err(res, e, t0);

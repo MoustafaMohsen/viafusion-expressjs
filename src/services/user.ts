@@ -7,7 +7,7 @@ import { IContact } from '../models/rapyd/icontact';
 export class UserService {
     constructor() {}
 
-    async create_user(user:IDBContact){
+    async create_db_user(user:IDBContact){
         const db = new ViafusionDB();
         let results = await db.insert_object(user, 'dbcontacts');
         return results;
