@@ -1,5 +1,5 @@
-import { IAddress } from "./address";
-import { address_id, contact_id, dateformate, ewallet_id } from "./types";
+import { IAddress } from "./iaddress";
+import { address_id, contact_id, contact_type, dateformate, ewallet_id } from "./types";
 
 
 export interface IContact {
@@ -33,7 +33,7 @@ export interface IContact {
     personal - An individual customer.
     business - A business customer.
     */
-    contact_type?: string;
+    contact_type?: contact_type;
     /**
     * The two-letter ISO 3166-1 ALPHA-2 code for the country. Uppercase.
     

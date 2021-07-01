@@ -1,7 +1,10 @@
+import { IWallet } from '../models/rapyd/iwallet';
+import { WalletService } from './../services/wallet';
 import { ApiService } from './../services/api';
 import performance from "perf_hooks";
 import express from "express";
 import ViafusionServerCore from './core/server-core';
+import { RapydUtilties } from '../services/utilities';
 const makeRequest = require('../services/utitlies').makeRequest;
 
 export default class ViafusionServerRoutes extends ViafusionServerCore {
@@ -43,6 +46,22 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
                 err(res, error, t0)
             }
         })
+        this.app.post('/create-wallet', async (req, res) => {
+            let t0 = performance.performance.now();
+            let data = {} as any;
+            
+            try {
+                const walletSrv = new WalletService();
+                let body:IWallet = req.body;
+                walletSrv.create_wallet_and_contact(body).then((d)=>{
+                    send(res, d, t0)
+                }).catch(e=>{
+                    err(res, e, t0)
+                })
+            } catch (error) {
+                err(res, error, t0)
+            }
+        })
 
         // === List Countries
         this.app.post('/list-countries', async (req, res) => {
@@ -51,8 +70,9 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
             let api = new ApiService();
             try {
                 let body = req.body;
-                const data = await makeRequest('GET', '/v1/data/countries');
-                send(res, data.body, t0)
+                var rapydUti = new RapydUtilties();
+                const data = await rapydUti.makeRequest('GET', '/v1/data/countries');
+                send(res, data.body.data, t0)
             } catch (error) {
                 err(res, error, t0)
             }

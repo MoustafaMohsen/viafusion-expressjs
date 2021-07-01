@@ -65,9 +65,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+var wallet_1 = require("./../services/wallet");
 var api_1 = require("./../services/api");
 var perf_hooks_1 = __importDefault(require("perf_hooks"));
 var server_core_1 = __importDefault(require("./core/server-core"));
+var utilities_1 = require("../services/utilities");
 var makeRequest = require('../services/utitlies').makeRequest;
 var ViafusionServerRoutes = (function (_super) {
     __extends(ViafusionServerRoutes, _super);
@@ -113,8 +115,28 @@ var ViafusionServerRoutes = (function (_super) {
                 return [2];
             });
         }); });
+        this.app.post('/create-wallet', function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+            var t0, data, walletSrv, body;
+            return __generator(this, function (_a) {
+                t0 = perf_hooks_1.default.performance.now();
+                data = {};
+                try {
+                    walletSrv = new wallet_1.WalletService();
+                    body = req.body;
+                    walletSrv.create_wallet_and_contact(body).then(function (d) {
+                        send(res, d, t0);
+                    }).catch(function (e) {
+                        err(res, e, t0);
+                    });
+                }
+                catch (error) {
+                    err(res, error, t0);
+                }
+                return [2];
+            });
+        }); });
         this.app.post('/list-countries', function (req, res) { return __awaiter(_this, void 0, void 0, function () {
-            var t0, data, api, body, data_1, error_1;
+            var t0, data, api, body, rapydUti, data_1, error_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -125,10 +147,11 @@ var ViafusionServerRoutes = (function (_super) {
                     case 1:
                         _a.trys.push([1, 3, , 4]);
                         body = req.body;
-                        return [4, makeRequest('GET', '/v1/data/countries')];
+                        rapydUti = new utilities_1.RapydUtilties();
+                        return [4, rapydUti.makeRequest('GET', '/v1/data/countries')];
                     case 2:
                         data_1 = _a.sent();
-                        send(res, data_1.body, t0);
+                        send(res, data_1.body.data, t0);
                         return [3, 4];
                     case 3:
                         error_1 = _a.sent();

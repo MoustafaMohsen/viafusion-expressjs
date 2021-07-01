@@ -35,17 +35,20 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.RapydUtitlies = void 0;
+exports.RapydUtilties = void 0;
 var crypto = require('crypto');
-var https = require('https');
+var https_1 = __importDefault(require("https"));
 var access_key = "2BD4532374A630BAACA9";
 var secretKey = "3b0dafc63e76c830bf37a1d9e2ad87f7812f669f26aa0fb06647235d3905d70ddf4174ebfb141e9d";
-var log = false;
-var RapydUtitlies = (function () {
-    function RapydUtitlies() {
+var log = true;
+var RapydUtilties = (function () {
+    function RapydUtilties() {
     }
-    RapydUtitlies.prototype.makeRequest = function (method, urlPath, body) {
+    RapydUtilties.prototype.makeRequest = function (method, urlPath, body) {
         if (body === void 0) { body = null; }
         return __awaiter(this, void 0, void 0, function () {
             var hostname, path, salt, idempotency, timestamp, signature, options, error_1;
@@ -84,7 +87,7 @@ var RapydUtitlies = (function () {
             });
         });
     };
-    RapydUtitlies.prototype.sign = function (method, urlPath, salt, timestamp, body) {
+    RapydUtilties.prototype.sign = function (method, urlPath, salt, timestamp, body) {
         try {
             var bodyString = "";
             if (body) {
@@ -104,7 +107,7 @@ var RapydUtitlies = (function () {
             throw error;
         }
     };
-    RapydUtitlies.prototype.generateRandomString = function (size) {
+    RapydUtilties.prototype.generateRandomString = function (size) {
         try {
             return crypto.randomBytes(size).toString('hex');
         }
@@ -113,7 +116,7 @@ var RapydUtitlies = (function () {
             throw error;
         }
     };
-    RapydUtitlies.prototype.httpRequest = function (options, body) {
+    RapydUtilties.prototype.httpRequest = function (options, body) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 return [2, new Promise(function (resolve, reject) {
@@ -124,7 +127,7 @@ var RapydUtitlies = (function () {
                                 bodyString = bodyString == "{}" ? "" : bodyString;
                             }
                             log && console.log("httpRequest options: " + JSON.stringify(options));
-                            var req = https.request(options, function (res) {
+                            var req = https_1.default.request(options, function (res) {
                                 var response = {
                                     statusCode: res.statusCode,
                                     headers: res.headers,
@@ -155,7 +158,7 @@ var RapydUtitlies = (function () {
             });
         });
     };
-    return RapydUtitlies;
+    return RapydUtilties;
 }());
-exports.RapydUtitlies = RapydUtitlies;
-//# sourceMappingURL=utitlies.js.map
+exports.RapydUtilties = RapydUtilties;
+//# sourceMappingURL=utilities.js.map
