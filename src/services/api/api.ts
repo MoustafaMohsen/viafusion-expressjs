@@ -1,8 +1,8 @@
-import { IWallet } from '../models/rapyd/iwallet';
+import { IWallet } from '../../interfaces/rapyd/iwallet';
 import axios, { AxiosRequestConfig } from "axios";
 import CryptoJS from "crypto-js";
-import { RapydUtilties } from './utilities';
-import { IRapydResponse, IUtitliesResponse } from '../models/rapyd/rest-response';
+import { RapydUtilties } from '../util/utilities';
+import { IRapydResponse, IUtitliesResponse } from '../../interfaces/rapyd/rest-response';
 
 export class ApiService {
     constructor() {

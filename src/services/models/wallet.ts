@@ -1,8 +1,8 @@
-import { IDBWallet } from './../models/db/idbwallet';
-import { ApiService } from './api';
-import { IWallet } from "../models/rapyd/iwallet";
-import { ViafusionDB } from './db/viafusiondb';
-import { IDBSelect } from '../models/db/select_rows';
+import { IDBWallet } from '../../interfaces/db/idbwallet';
+import { ApiService } from '../api/api';
+import { IWallet } from "../../interfaces/rapyd/iwallet";
+import { ViafusionDB } from '../db/viafusiondb';
+import { IDBSelect } from '../../interfaces/db/select_rows';
 
 export class WalletService {
     constructor() {}

@@ -65,13 +65,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var user_1 = require("./../services/user");
+var user_1 = require("../services/models/user");
 var viafusiondb_1 = require("./../services/db/viafusiondb");
-var wallet_1 = require("./../services/wallet");
-var api_1 = require("./../services/api");
+var wallet_1 = require("../services/models/wallet");
+var api_1 = require("../services/api/api");
 var perf_hooks_1 = __importDefault(require("perf_hooks"));
 var server_core_1 = __importDefault(require("./core/server-core"));
-var utilities_1 = require("../services/utilities");
+var utilities_1 = require("../services/util/utilities");
 var makeRequest = require('../services/utitlies').makeRequest;
 var ViafusionServerRoutes = (function (_super) {
     __extends(ViafusionServerRoutes, _super);

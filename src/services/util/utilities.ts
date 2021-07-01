@@ -1,6 +1,6 @@
 const crypto = require('crypto');
 import CryptoJS from "crypto-js";
-import { IRapydResponse, IUtitliesResponse } from "../models/rapyd/rest-response";
+import { IRapydResponse, IUtitliesResponse } from "../../interfaces/rapyd/rest-response";
 
 
 // const https = require('https');

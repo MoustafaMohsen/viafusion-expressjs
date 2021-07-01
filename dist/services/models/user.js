@@ -36,24 +36,19 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.WalletService = void 0;
-var api_1 = require("./api/api");
-var viafusiondb_1 = require("./db/viafusiondb");
-var WalletService = (function () {
-    function WalletService() {
+exports.UserService = void 0;
+var viafusiondb_1 = require("../db/viafusiondb");
+var UserService = (function () {
+    function UserService() {
     }
-    WalletService.prototype.create_wallet_and_contact = function (wallet) {
-        var apiSrv = new api_1.ApiService();
-        return apiSrv.post("user", wallet);
-    };
-    WalletService.prototype.create_db_wallet = function (wallet) {
+    UserService.prototype.create_db_user = function (user) {
         return __awaiter(this, void 0, void 0, function () {
             var db, results;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         db = new viafusiondb_1.ViafusionDB();
-                        return [4, db.insert_object(wallet, 'dbwallet')];
+                        return [4, db.insert_object(user, 'dbcontact')];
                     case 1:
                         results = _a.sent();
                         return [2, results];
@@ -61,14 +56,14 @@ var WalletService = (function () {
             });
         });
     };
-    WalletService.prototype.get_db_wallet = function (wallet) {
+    UserService.prototype.get_db_user = function (user) {
         return __awaiter(this, void 0, void 0, function () {
             var db, results;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         db = new viafusiondb_1.ViafusionDB();
-                        return [4, db.get_object(wallet, "OR", 'dbwallet')];
+                        return [4, db.get_object(user, "OR", 'dbcontact')];
                     case 1:
                         results = _a.sent();
                         return [2, results];
@@ -76,7 +71,7 @@ var WalletService = (function () {
             });
         });
     };
-    return WalletService;
+    return UserService;
 }());
-exports.WalletService = WalletService;
-//# sourceMappingURL=wallet.js.map
+exports.UserService = UserService;
+//# sourceMappingURL=user.js.map

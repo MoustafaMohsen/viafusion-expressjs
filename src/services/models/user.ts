@@ -1,9 +1,9 @@
-import { IDBContact } from './../models/db/idbcontact';
-import { ViafusionDB } from './db/viafusiondb';
-import { ApiService } from './api';
-import { IWallet } from "../models/rapyd/iwallet";
-import { IContact } from '../models/rapyd/icontact';
-import { IDBSelect } from '../models/db/select_rows';
+import { IDBContact } from '../../interfaces/db/idbcontact';
+import { ViafusionDB } from '../db/viafusiondb';
+import { ApiService } from '../api/api';
+import { IWallet } from "../../interfaces/rapyd/iwallet";
+import { IContact } from '../../interfaces/rapyd/icontact';
+import { IDBSelect } from '../../interfaces/db/select_rows';
 
 export class UserService {
     constructor() {}

@@ -37,8 +37,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WalletService = void 0;
-var api_1 = require("./api/api");
-var viafusiondb_1 = require("./db/viafusiondb");
+var api_1 = require("../api/api");
+var viafusiondb_1 = require("../db/viafusiondb");
 var WalletService = (function () {
     function WalletService() {
     }

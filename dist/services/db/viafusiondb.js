@@ -200,6 +200,23 @@ var ViafusionDB = (function () {
             });
         });
     };
+    ViafusionDB.prototype.create_wallet_transaction_tabel = function (client, tablename) {
+        if (tablename === void 0) { tablename = "dbwallet_transaction"; }
+        return __awaiter(this, void 0, void 0, function () {
+            var result;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4, client.query("DROP TABLE IF EXISTS " + tablename + ";")];
+                    case 1:
+                        _a.sent();
+                        return [4, client.query("CREATE TABLE IF NOT EXISTS " + tablename + " (\n            ewallet_reference_id SERIAL PRIMARY KEY,\n            ewallet VARCHAR ( 255 ),\n            id VARCHAR ( 255 ),\n            email VARCHAR ( 255 ),\n            wallet_refrence_id VARCHAR ( 255 ),\n            phone_number VARCHAR ( 255 ) NOT NULL UNIQUE,\n            data TEXT,\n            meta TEXT,\n            security TEXT NOT NULL\n);")];
+                    case 2:
+                        result = _a.sent();
+                        return [2, result];
+                }
+            });
+        });
+    };
     ViafusionDB.prototype.insertRows = function (tabelname, client, cols, values) {
         return __awaiter(this, void 0, void 0, function () {
             var queries, done;

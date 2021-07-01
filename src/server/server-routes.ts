@@ -1,16 +1,16 @@
-import { IDBWallet } from './../models/db/idbwallet';
-import { IDBContact } from './../models/db/idbcontact';
-import { UserService } from './../services/user';
+import { IDBWallet } from './../interfaces/db/idbwallet';
+import { IDBContact } from './../interfaces/db/idbcontact';
+import { UserService } from '../services/models/user';
 import { ViafusionDB } from './../services/db/viafusiondb';
-import { IWallet } from '../models/rapyd/iwallet';
-import { WalletService } from './../services/wallet';
-import { ApiService } from './../services/api';
+import { IWallet } from '../interfaces/rapyd/iwallet';
+import { WalletService } from '../services/models/wallet';
+import { ApiService } from '../services/api/api';
 import performance from "perf_hooks";
 import express from "express";
 import ViafusionServerCore from './core/server-core';
-import { RapydUtilties } from '../services/utilities';
-import { IContact } from '../models/rapyd/icontact';
-import { IDBSelect } from '../models/db/select_rows';
+import { RapydUtilties } from '../services/util/utilities';
+import { IContact } from '../interfaces/rapyd/icontact';
+import { IDBSelect } from '../interfaces/db/select_rows';
 const makeRequest = require('../services/utitlies').makeRequest;
 
 export default class ViafusionServerRoutes extends ViafusionServerCore {
