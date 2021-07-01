@@ -1,3 +1,6 @@
+import { IDBContact } from './../models/db/idbcontact';
+import { UserService } from './../services/user';
+import { ViafusionDB } from './../services/db/viafusiondb';
 import { IWallet } from '../models/rapyd/iwallet';
 import { WalletService } from './../services/wallet';
 import { ApiService } from './../services/api';
@@ -5,6 +8,7 @@ import performance from "perf_hooks";
 import express from "express";
 import ViafusionServerCore from './core/server-core';
 import { RapydUtilties } from '../services/utilities';
+import { IContact } from '../models/rapyd/icontact';
 const makeRequest = require('../services/utitlies').makeRequest;
 
 export default class ViafusionServerRoutes extends ViafusionServerCore {
@@ -51,10 +55,25 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
         this.app.post('/prepare-db', async (req, res) => {
             let t0 = performance.performance.now();
             let data = {} as any;
-            const db = 
-            response.result = { ...(await this.db.PrepareDB(req.body.database)) };
+            const db = new ViafusionDB();
             try {
+                data.result = { ...(await db.PrepareDB(req.body.database)) };
                 send(res, data, t0)
+            } catch (error) {
+                err(res, error, t0)
+            }
+        })
+
+        this.app.post('/create-user', async (req, res) => {
+            let t0 = performance.performance.now();
+            try {
+                const walletSrv = new UserService();
+                let body:IDBContact = req.body;
+                walletSrv.create_user(body).then((d)=>{
+                    send(res, d, t0)
+                }).catch(e=>{
+                    err(res, e, t0)
+                })
             } catch (error) {
                 err(res, error, t0)
             }

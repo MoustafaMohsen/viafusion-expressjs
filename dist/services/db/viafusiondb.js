@@ -184,7 +184,7 @@ var ViafusionDB = (function () {
         });
     };
     ViafusionDB.prototype.create_wallet_tabel = function (client, tablename) {
-        if (tablename === void 0) { tablename = "wallet"; }
+        if (tablename === void 0) { tablename = "dbwallets"; }
         return __awaiter(this, void 0, void 0, function () {
             var result;
             return __generator(this, function (_a) {
@@ -201,7 +201,7 @@ var ViafusionDB = (function () {
         });
     };
     ViafusionDB.prototype.create_contact_tabel = function (client, tablename) {
-        if (tablename === void 0) { tablename = "contact"; }
+        if (tablename === void 0) { tablename = "dbcontacts"; }
         return __awaiter(this, void 0, void 0, function () {
             var result;
             return __generator(this, function (_a) {
@@ -209,7 +209,7 @@ var ViafusionDB = (function () {
                     case 0: return [4, client.query("DROP TABLE IF EXISTS " + tablename + ";")];
                     case 1:
                         _a.sent();
-                        return [4, client.query("CREATE TABLE IF NOT EXISTS " + tablename + " (\n            contact_reference_id VARCHAR ( 255 ) PRIMARY KEY,\n            id VARCHAR ( 255 ),\n            phone_number VARCHAR ( 255 ),\n            email VARCHAR ( 255 ),\n            wallet_id VARCHAR ( 255 ),\n            wallet_refrence_id VARCHAR ( 255 ),\n            data TEXT\n);")];
+                        return [4, client.query("CREATE TABLE IF NOT EXISTS " + tablename + " (\n            contact_reference_id VARCHAR ( 255 ) PRIMARY KEY,\n            id VARCHAR ( 255 ),\n            email VARCHAR ( 255 ),\n            ewallet VARCHAR ( 255 ),\n            wallet_refrence_id VARCHAR ( 255 ),\n            phone_number VARCHAR ( 255 ),\n            data TEXT\n);")];
                     case 2:
                         result = _a.sent();
                         return [2, result];
@@ -217,12 +217,11 @@ var ViafusionDB = (function () {
             });
         });
     };
-    ViafusionDB.prototype.insertRows = function (client, cols, values) {
+    ViafusionDB.prototype.insertRows = function (tabelname, client, cols, values) {
         return __awaiter(this, void 0, void 0, function () {
-            var queries, promsies, done;
+            var queries, done;
             return __generator(this, function (_a) {
-                queries = this.create_multiple_insert_queries(cols, values);
-                promsies = [];
+                queries = this.create_multiple_insert_queries(tabelname, cols, values);
                 done = 0;
                 new Promise(function (resolve, reject) {
                     var _loop_1 = function (i) {
@@ -247,16 +246,16 @@ var ViafusionDB = (function () {
             });
         });
     };
-    ViafusionDB.prototype.create_multiple_insert_queries = function (cols, values_array) {
+    ViafusionDB.prototype.create_multiple_insert_queries = function (tabelname, cols, values_array) {
         var queries = [];
         for (var i = 0; i < values_array.length; i++) {
             var values = values_array[i];
-            var query = this.create_insert_query(cols, values);
+            var query = this.create_insert_query(tabelname, cols, values);
             queries.push(query);
         }
         return queries;
     };
-    ViafusionDB.prototype.create_insert_query = function (cols, values) {
+    ViafusionDB.prototype.create_insert_query = function (tabelname, cols, values) {
         var _tmp_cols_arr = [];
         for (var i = 0; i < cols.length; i++) {
             _tmp_cols_arr.push("$" + (i + 1));
@@ -264,7 +263,7 @@ var ViafusionDB = (function () {
         var _tmp_val_replace = _tmp_cols_arr.join(", ");
         var _tmp_cols = cols.map(function (d) { return d.replace("'", "''"); }).join(", ");
         var query = {
-            text: "INSERT INTO users(" + _tmp_cols + ") VALUES(" + _tmp_val_replace + ")",
+            text: "INSERT INTO " + tabelname + "(" + _tmp_cols + ") VALUES(" + _tmp_val_replace + ")",
             values: values
         };
         return query;
@@ -280,6 +279,30 @@ var ViafusionDB = (function () {
         }).join(", ");
         var query = "INSERT INTO users(" + _tmp_cols + ") VALUES(" + _values + ")";
         return query;
+    };
+    ViafusionDB.prototype.insert_object = function (data, tabelname, dbname) {
+        if (dbname === void 0) { dbname = "viafusiondb"; }
+        return __awaiter(this, void 0, void 0, function () {
+            var keys, values, query, client, result;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        keys = Object.keys(data);
+                        values = Object.values(data);
+                        query = this.create_insert_query(tabelname, keys, values);
+                        return [4, this.connect(dbname)];
+                    case 1:
+                        client = _a.sent();
+                        return [4, client.query(query)];
+                    case 2:
+                        result = _a.sent();
+                        return [4, client.end()];
+                    case 3:
+                        _a.sent();
+                        return [2, result];
+                }
+            });
+        });
     };
     return ViafusionDB;
 }());

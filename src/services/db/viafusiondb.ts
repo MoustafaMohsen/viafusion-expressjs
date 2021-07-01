@@ -78,7 +78,7 @@ export class ViafusionDB {
         return result;
     }
 
-    async create_wallet_tabel(client: Client, tablename = "wallet") {
+    async create_wallet_tabel(client: Client, tablename = "dbwallets") {
         await client.query("DROP TABLE IF EXISTS " + tablename + ";")
         let result = await client.query(`CREATE TABLE IF NOT EXISTS ${tablename} (
             ewallet_reference_id VARCHAR ( 255 ) PRIMARY KEY,
@@ -91,23 +91,22 @@ export class ViafusionDB {
 );`)
         return result;
     }
-    async create_contact_tabel(client: Client, tablename = "contact") {
+    async create_contact_tabel(client: Client, tablename = "dbcontacts") {
         await client.query("DROP TABLE IF EXISTS " + tablename + ";")
         let result = await client.query(`CREATE TABLE IF NOT EXISTS ${tablename} (
             contact_reference_id VARCHAR ( 255 ) PRIMARY KEY,
             id VARCHAR ( 255 ),
-            phone_number VARCHAR ( 255 ),
             email VARCHAR ( 255 ),
-            wallet_id VARCHAR ( 255 ),
+            ewallet VARCHAR ( 255 ),
             wallet_refrence_id VARCHAR ( 255 ),
+            phone_number VARCHAR ( 255 ),
             data TEXT
 );`)
         return result;
     }
 
-    async insertRows(client: Client, cols: string[], values: string[][]) {
-        const queries = this.create_multiple_insert_queries(cols, values);
-        const promsies: Promise<QueryResult<any>>[] = []
+    async insertRows(tabelname, client: Client, cols: string[], values: string[][]) {
+        const queries = this.create_multiple_insert_queries(tabelname, cols, values);
         // callback
         let done = 0;
         new Promise((resolve, reject) => {
@@ -135,20 +134,20 @@ export class ViafusionDB {
 
     }
 
-    create_multiple_insert_queries(cols: string[], values_array: string[][]) {
+    create_multiple_insert_queries(tabelname, cols: string[], values_array: string[][]) {
         const queries: {
             text: string,
             values: any[]
         }[] = [];
         for (let i = 0; i < values_array.length; i++) {
             const values = values_array[i]
-            const query = this.create_insert_query(cols, values);
+            const query = this.create_insert_query(tabelname,cols, values);
             queries.push(query);
         }
         return queries;
     }
     
-    create_insert_query(cols: string[], values: string[]){
+    create_insert_query(tabelname,cols: string[], values: string[]){
         let _tmp_cols_arr = [];
         for (let i = 0; i < cols.length; i++) {
             _tmp_cols_arr.push("$" + (i + 1));
@@ -156,7 +155,7 @@ export class ViafusionDB {
         let _tmp_val_replace = _tmp_cols_arr.join(", ");
         let _tmp_cols = cols.map(d => d.replace("'", "''")).join(", ");
         const query = {
-            text: `INSERT INTO users(${_tmp_cols}) VALUES(${_tmp_val_replace})`,
+            text: `INSERT INTO ${tabelname}(${_tmp_cols}) VALUES(${_tmp_val_replace})`,
             values
         }
         return query;
@@ -180,6 +179,16 @@ export class ViafusionDB {
         }).join(", ")
         const query = `INSERT INTO users(${_tmp_cols}) VALUES(${_values})`
         return query;
+    }
+
+    async insert_object(data:object, tabelname ,dbname="viafusiondb"){
+        let keys = Object.keys(data);
+        let values = Object.values(data);
+        const query = this.create_insert_query(tabelname, keys , values);
+        const client = await this.connect(dbname);
+        let result = await client.query(query);
+        await client.end();
+        return result;
     }
 
 }
