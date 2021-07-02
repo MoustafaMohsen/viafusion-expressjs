@@ -198,22 +198,22 @@ export class ViafusionDB {
         return query;
     }
 
-    async insert_object(data:object, tabelname ,dbname="viafusiondb"){
+    async insert_object<T=any>(data:object, tabelname ,dbname="viafusiondb"){
         let keys = Object.keys(data);
         let values = Object.values(data);
         const query = this.create_insert_query(tabelname, keys , values);
         const client = await this.connect(dbname);
-        let result = await client.query(query);
+        let result = await client.query<T>(query);
         await client.end();
         return result;
     }
 
-    async get_object(data:object,relation:"OR" | "AND", tabelname ,dbname="viafusiondb"){
+    async get_object<T=any>(data:object,relation:"OR" | "AND", tabelname ,dbname="viafusiondb"){
         let keys = Object.keys(data)[0];
         let values = Object.values(data)[0];
         const query = this.create_select_query(tabelname, keys , values, relation);
         const client = await this.connect(dbname);
-        let result = await client.query(query);
+        let result = await client.query<T>(query);
         await client.end();
         return result;
     }
