@@ -11,13 +11,28 @@ export class DBSecurity implements IDBSecurity {
     }
     login: ILogin<any> = {
         authenticated: false,
+        // checkes
         otp_passed: false,
-        pf_passed: false,
         pin_passed: false,
+        pf_passed: false,
+    
+        // has
+        has_otp: false,
+        has_pin: false,
+        has_pf: false,
+        
+        // values
         _otp_value: null,
-        resend_otp_after: 0,
-        user_exsits: false,
+        _pin_value: null,
+        _fp_value: null,
+        
+        user_registred: false,
+        user_verified: false,
+    
+        resend_otp_after: 60,
+    
+        data: null,
         _sandbox: true,
-        data: null
+
     };
 }

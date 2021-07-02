@@ -42,6 +42,17 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
 
 
         // ==== Status Test
+        this.app.get('/', async (req, res) => {
+            let t0 = performance.performance.now();
+            let data = {} as any;
+            try {
+                send(res, data, t0)
+            } catch (error) {
+                err(res, error, t0)
+            }
+        })
+
+        // ==== Status Test
         this.app.post('/', async (req, res) => {
             let t0 = performance.performance.now();
             let data = {} as any;
@@ -125,15 +136,17 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
             }
         })
 
+
+        //#region OTP
         this.app.post('/confirm-otp', async (req, res) => {
             let t0 = performance.performance.now();
             try {
                 const userSrv = new UserService();
                 let body: {
-                    otp:number,
-                    user:IDBContact
+                    otp: number,
+                    user: IDBContact
                 } = req.body;
-                userSrv.confirm_user_otp(body.user,body.otp).then((d) => {
+                userSrv.confirm_user_otp(body.user, body.otp).then((d) => {
                     send(res, d, t0)
                 }).catch(e => {
                     err(res, e, t0)
@@ -148,10 +161,10 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
             try {
                 const userSrv = new UserService();
                 let body: {
-                    otp:number,
-                    user:IDBContact
+                    otp: string,
+                    user: IDBContact
                 } = req.body;
-                userSrv.set_user_otp(body.user,body.otp).then((d) => {
+                userSrv.set_user_otp(body.user, body.otp).then((d) => {
                     send(res, d, t0)
                 }).catch(e => {
                     err(res, e, t0)
@@ -160,6 +173,46 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
                 err(res, error, t0)
             }
         })
+        //#endregion
+
+        //#region PIN
+        this.app.post('/confirm-pin', async (req, res) => {
+            let t0 = performance.performance.now();
+            try {
+                const userSrv = new UserService();
+                let body: {
+                    pin: number,
+                    user: IDBContact
+                } = req.body;
+                userSrv.confirm_user_pin(body.user, body.pin).then((d) => {
+                    send(res, d, t0)
+                }).catch(e => {
+                    err(res, e, t0)
+                })
+            } catch (error) {
+                err(res, error, t0)
+            }
+        })
+
+        this.app.post('/set-pin', async (req, res) => {
+            let t0 = performance.performance.now();
+            try {
+                const userSrv = new UserService();
+                let body: {
+                    pin: string,
+                    user: IDBContact
+                } = req.body;
+                userSrv.set_user_pin(body.user, body.pin).then((d) => {
+                    send(res, d, t0)
+                }).catch(e => {
+                    err(res, e, t0)
+                })
+            } catch (error) {
+                err(res, error, t0)
+            }
+        })
+        //#endregion
+
 
         this.app.post('/create-wallet', async (req, res) => {
             let t0 = performance.performance.now();
