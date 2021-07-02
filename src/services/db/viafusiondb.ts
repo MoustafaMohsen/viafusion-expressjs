@@ -179,18 +179,19 @@ export class ViafusionDB {
         return query;
     }
     
-    create_update_query(tabelname,object:object, condition , relation:"OR"|"AND" = "OR"):QueryConfig{
+    create_update_query(tabelname,object:object, condition , relation:"OR"|"AND" = "AND"):QueryConfig{
 
         let equals_keys = Object.keys(object);
         let equals = Object.values(object);
         let _set_string = "";
-        var last = 1;
+        var last = 0;
         for (let i = 0; i < equals_keys.length; i++) {
             const key = equals_keys[i];
             const value = object[key];
             _set_string = _set_string + key + `=$${i+1} ` + (i!=equals_keys.length-1?", ":"");
             last = i;
         }
+        last++;
 
         let cond_keys = Object.keys(condition);
         let cond = Object.values(condition);
@@ -198,7 +199,7 @@ export class ViafusionDB {
         for (let i = 0; i < cond_keys.length; i++) {
             const key = cond_keys[i];
             const value = condition[key];
-            _where_string = _where_string + key + `=$${i+1+last} ` + (i!=cond_keys.length-1?relation:"");
+            _where_string = _where_string + key + `=$${i+1+last} ` + (i!=cond_keys.length-1?relation+" ":"");
         }
 
         const query = {

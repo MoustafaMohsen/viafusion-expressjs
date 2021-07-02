@@ -20,7 +20,7 @@ export interface IDBContact {
     ewallet?: ewallet_id;
     wallet_refrence_id?: string;
     phone_number?: string;
-    securiy?:IDBSecurity;
+    security?:IDBSecurity;
     meta?:object;
     data?:IContact;
 }

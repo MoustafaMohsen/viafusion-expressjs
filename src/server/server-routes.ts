@@ -69,7 +69,7 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
             let t0 = performance.performance.now();
             try {
                 const userSrv = new UserService();
-                let body: IDBSelect<IDBContact> = req.body;
+                let body: IDBContact = req.body;
                 userSrv.get_db_user(body).then((d) => {
                     send(res, d, t0)
                 }).catch(e => {
@@ -134,6 +134,24 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
                     user:IDBContact
                 } = req.body;
                 userSrv.confirm_user_otp(body.user,body.otp).then((d) => {
+                    send(res, d, t0)
+                }).catch(e => {
+                    err(res, e, t0)
+                })
+            } catch (error) {
+                err(res, error, t0)
+            }
+        })
+
+        this.app.post('/set-otp', async (req, res) => {
+            let t0 = performance.performance.now();
+            try {
+                const userSrv = new UserService();
+                let body: {
+                    otp:number,
+                    user:IDBContact
+                } = req.body;
+                userSrv.set_user_otp(body.user,body.otp).then((d) => {
                     send(res, d, t0)
                 }).catch(e => {
                     err(res, e, t0)

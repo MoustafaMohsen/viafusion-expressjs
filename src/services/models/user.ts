@@ -1,3 +1,4 @@
+import { DBSecurity } from './security';
 import { IDBSecurity } from './../../interfaces/db/isecurity';
 import { ILogin } from './../../interfaces/db/ilogin';
 import { HelperService } from './../util/helper';
@@ -14,32 +15,32 @@ export class UserService {
     async create_db_user(user: IDBContact) {
         const db = new ViafusionDB();
         let results = await db.insert_object(user, 'dbcontact');
-        let dbresults = await db.get_object<IDBContact>(user, "OR", 'dbcontact');
-        return this.parse_user(dbresults.rows[0]);
+        let result = await this.get_db_user(user);
+        return result;
     }
 
-    async get_db_user(user: IDBSelect<IDBContact>) {
+    async get_db_user(minimum_user_object: IDBContact) {
         const db = new ViafusionDB();
-        let results = await db.get_object<IDBContact>(user, "OR", 'dbcontact');
+        let _user: IDBSelect<IDBContact> = {
+            "*": minimum_user_object
+        }
+        let results = await db.get_object<IDBContact>(_user, "AND", 'dbcontact');
         return this.parse_user(results.rows[0]);
 
     }
 
     async update_db_user(user: IDBContact, newuser: IDBContact) {
         const db = new ViafusionDB();
-        let results = await db.update_object<IDBContact>(user, newuser, 'dbcontact');
-        return this.parse_user(results.rows[0]);
+        let results = await db.update_object<IDBContact>(newuser, user, 'dbcontact');
+        let result = await this.get_db_user(user);
+        return result;
     }
 
 
     async login_or_register_to_otp(login: any) {
         // user exists or not
-        let _user: IDBSelect<IDBContact> = {
-            "*": {
-                phone_number: login.phone_number
-            }
-        };
-        var user = await this.get_db_user(_user);
+
+        var user = await this.get_db_user({phone_number: login.phone_number});
 
         let otp = HelperService.generate_otp();
         // if user make otp request then return loggedin
@@ -79,14 +80,11 @@ export class UserService {
     // update user security object to set otp
     async set_user_otp(minimum_user_object: IDBContact, otp: number) {
         // user exists or not
-        let _user: IDBSelect<IDBContact> = {
-            "*": minimum_user_object
-        };
         const db = new ViafusionDB();
-        let user = await this.get_db_user(_user);
+        let user = await this.get_db_user(minimum_user_object);
         let security = this.update_security_otp(user, otp);
         let newuser = user;
-        newuser.securiy = security;
+        newuser.security = security;
         let updatedUser = await this.update_db_user({ contact_reference_id: user.contact_reference_id }, newuser);
         return updatedUser;
     }
@@ -95,18 +93,17 @@ export class UserService {
     // update user security object to set otp
     async confirm_user_otp(minimum_user_object: IDBContact, otp: number) {
         // user exists or not
-        let _user: IDBSelect<IDBContact> = {
-            "*": minimum_user_object
-        };
         const db = new ViafusionDB();
-        let user = await this.get_db_user(_user);
-        if (user && user.securiy.login._otp_value == otp) {
-            user.securiy.login.otp_passed = true;
+        let user = await this.get_db_user(minimum_user_object);
+        if (user && user.security && user.security.login._otp_value == otp) {
+            user.security.login.otp_passed = true;
             let updatedUser = await this.update_db_user({ contact_reference_id: user.contact_reference_id }, user);
             return updatedUser;
-            
-        }else{
-            return user;
+
+        } else {
+            user.security.login.otp_passed = false;
+            let updatedUser = await this.update_db_user({ contact_reference_id: user.contact_reference_id }, user);
+            return updatedUser;
         }
     }
 
@@ -118,8 +115,8 @@ export class UserService {
         return security;
     }
 
-    get_user_security(user: IDBContact){
-        let security = user.securiy;
+    get_user_security(user: IDBContact) {
+        let security = new DBSecurity(user.security);
         try {
             security = typeof security === "string" ? JSON.parse(security) : security;
         } catch (error) {
@@ -132,17 +129,20 @@ export class UserService {
 
 
     // ==== User parser
-    parse_user(user:IDBContact) {
-        user.securiy = this.parse_if_string(user.securiy);
-        user.meta = this.parse_if_string(user.securiy);
-        user.data = this.parse_if_string(user.securiy);
+    parse_user(user: IDBContact) {
+        user.security = this.parse_if_string(user.security) as any;
+        user.meta = this.parse_if_string(user.meta) as any;
+        user.data = this.parse_if_string(user.data) as any;
         return user;
     }
-    parse_if_string(str:string |object ){
+    parse_if_string(str: string | object) {
+        let temp = str;
         if (typeof str == "string") {
-            return JSON.parse(str);
+            temp = JSON.parse(str);
+        } else {
+            temp = str;
         }
-        return str;
+        return temp;
     }
     // User parser ====
     // 
