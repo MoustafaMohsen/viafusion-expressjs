@@ -37,10 +37,10 @@ export class UserService {
     }
 
 
-    async login_or_register_to_otp(login: any) {
+    async login_or_register_to_otp(_login: any) {
         // user exists or not
 
-        var user = await this.get_db_user({phone_number: login.phone_number});
+        var user = await this.get_db_user({ phone_number: _login.phone_number });
 
         let otp = HelperService.generate_otp();
         // if user make otp request then return loggedin
@@ -57,13 +57,13 @@ export class UserService {
                 _sandbox: true,
                 data: null
             };
-            return login;
+            return { login, contact_reference_id: user.contact_reference_id };
         }
 
         // if not register login
-        user = await this.create_db_user(login);
+        user = await this.create_db_user(_login);
         this.set_user_otp({ contact_reference_id: user.contact_reference_id }, otp);
-        let register: ILogin = {
+        let login: ILogin = {
             authenticated: false,
             otp_passed: false,
             pf_passed: false,
@@ -74,7 +74,7 @@ export class UserService {
             _sandbox: true,
             data: null
         };
-        return register;
+        return { login, contact_reference_id: user.contact_reference_id };
     }
 
     // update user security object to set otp
