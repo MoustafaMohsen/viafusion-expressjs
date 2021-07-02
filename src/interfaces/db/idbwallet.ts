@@ -9,7 +9,7 @@ id VARCHAR ( 255 ),
 phone_number VARCHAR ( 255 ),
 email VARCHAR ( 255 ),
 contact_id VARCHAR ( 255 ),
-contact_refrence_id VARCHAR ( 255 ),
+contact_reference_id VARCHAR ( 255 ),
 data TEXT
 
  */
@@ -20,7 +20,7 @@ export interface IDBWallet {
     email?: string;
     ewallet: ewallet_id;
     contact_id: string;
-    contact_refrence_id: string;
+    contact_reference_id: string;
     phone_number?: string;
     security:IDBSecurity;
     meta:object;

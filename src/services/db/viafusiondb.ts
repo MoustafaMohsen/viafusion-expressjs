@@ -65,7 +65,7 @@ export class ViafusionDB {
             phone_number VARCHAR ( 255 ) NOT NULL UNIQUE,
             email VARCHAR ( 255 ),
             contact_id VARCHAR ( 255 ),
-            contact_refrence_id VARCHAR ( 255 ),
+            contact_reference_id VARCHAR ( 255 ),
             data TEXT,
             meta TEXT,
             security TEXT NOT NULL
