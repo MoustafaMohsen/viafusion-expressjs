@@ -1,4 +1,4 @@
-import { Client, ClientConfig, QueryResult } from "pg";
+import { Client, ClientConfig, QueryConfig, QueryResult } from "pg";
 
 export class ViafusionDB {
     dbsettings:ClientConfig = {
@@ -34,22 +34,7 @@ export class ViafusionDB {
         return await client.query(query);
     }
 
-    create_select_query(tablename, cols: string[]|string, values: {}, relation:"OR"|"AND"){
-        let equals_keys = Object.keys(values);
-        let equals = Object.values(values);
-        let _tmp_keys = equals_keys?"WHERE ":"";
-        for (let i = 0; i < equals_keys.length; i++) {
-            const key = equals_keys[i];
-            const value = values[key];
-            _tmp_keys = _tmp_keys + key + `=$${i+1} ` + (i!=equals_keys.length-1?relation:"");
-        }
-        let _tmp_cols = cols?typeof cols == "string"?cols:cols.join(", "):"*";
-        const query = {
-            text: `SELECT  ${_tmp_cols} FROM ${tablename} ${_tmp_keys}`,
-            values:equals
-        }
-        return query;
-    }
+
 
     async connect(database?) {
         const set = database?{...this.dbsettings,database }:this.dbsettings;
@@ -152,10 +137,7 @@ export class ViafusionDB {
     }
 
     create_multiple_insert_queries(tabelname, cols: string[], values_array: string[][]) {
-        const queries: {
-            text: string,
-            values: any[]
-        }[] = [];
+        const queries:QueryConfig[] = [];
         for (let i = 0; i < values_array.length; i++) {
             const values = values_array[i]
             const query = this.create_insert_query(tabelname,cols, values);
@@ -163,8 +145,27 @@ export class ViafusionDB {
         }
         return queries;
     }
+
+    // ========== Query helpers
+
+    create_select_query(tablename, cols: string[]|string, values: {}, relation:"OR"|"AND"):QueryConfig{
+        let equals_keys = Object.keys(values);
+        let equals = Object.values(values);
+        let _tmp_keys = equals_keys?"WHERE ":"";
+        for (let i = 0; i < equals_keys.length; i++) {
+            const key = equals_keys[i];
+            const value = values[key];
+            _tmp_keys = _tmp_keys + key + `=$${i+1} ` + (i!=equals_keys.length-1?relation:"");
+        }
+        let _tmp_cols = cols?typeof cols == "string"?cols:cols.join(", "):"*";
+        const query = {
+            text: `SELECT  ${_tmp_cols} FROM ${tablename} ${_tmp_keys}`,
+            values:equals
+        }
+        return query;
+    }
     
-    create_insert_query(tabelname,cols: string[], values: string[]){
+    create_insert_query(tabelname,cols: string[], values: string[]):QueryConfig{
         let _tmp_cols_arr = [];
         for (let i = 0; i < cols.length; i++) {
             _tmp_cols_arr.push("$" + (i + 1));
@@ -172,11 +173,42 @@ export class ViafusionDB {
         let _tmp_val_replace = _tmp_cols_arr.join(", ");
         let _tmp_cols = cols.map(d => d.replace("'", "''")).join(", ");
         const query = {
-            text: `INSERT INTO ${tabelname}(${_tmp_cols}) VALUES(${_tmp_val_replace})`,
+            text: `INSERT INTO ${tabelname} (${_tmp_cols}) VALUES(${_tmp_val_replace})`,
             values
         }
         return query;
     }
+    
+    create_update_query(tabelname,object:object, condition , relation:"OR"|"AND" = "OR"):QueryConfig{
+
+        let equals_keys = Object.keys(object);
+        let equals = Object.values(object);
+        let _set_string = "";
+        var last = 1;
+        for (let i = 0; i < equals_keys.length; i++) {
+            const key = equals_keys[i];
+            const value = object[key];
+            _set_string = _set_string + key + `=$${i+1} ` + (i!=equals_keys.length-1?", ":"");
+            last = i;
+        }
+
+        let cond_keys = Object.keys(condition);
+        let cond = Object.values(condition);
+        let _where_string = cond_keys?"WHERE ":"";
+        for (let i = 0; i < cond_keys.length; i++) {
+            const key = cond_keys[i];
+            const value = condition[key];
+            _where_string = _where_string + key + `=$${i+1+last} ` + (i!=cond_keys.length-1?relation:"");
+        }
+
+        const query = {
+            text: `UPDATE ${tabelname} SET ${_set_string} ${_where_string}`,
+            values:equals.concat(cond)
+        }
+        return query;
+    }
+
+    // Query helpers ==========
 
     /**
      * @deprecated
@@ -198,10 +230,18 @@ export class ViafusionDB {
         return query;
     }
 
-    async insert_object<T=any>(data:object, tabelname ,dbname="viafusiondb"){
+    async insert_object(data:object, tabelname ,dbname="viafusiondb"){
         let keys = Object.keys(data);
         let values = Object.values(data);
         const query = this.create_insert_query(tabelname, keys , values);
+        const client = await this.connect(dbname);
+        let result = await client.query(query);
+        await client.end();
+        return result;
+    }
+
+    async update_object<T=any>(data:object, condition:object, tabelname ,dbname="viafusiondb"){
+        const query = this.create_update_query(tabelname, data, condition);
         const client = await this.connect(dbname);
         let result = await client.query<T>(query);
         await client.end();
