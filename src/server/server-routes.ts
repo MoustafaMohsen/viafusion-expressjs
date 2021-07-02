@@ -125,6 +125,24 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
             }
         })
 
+        this.app.post('/confirm-otp', async (req, res) => {
+            let t0 = performance.performance.now();
+            try {
+                const userSrv = new UserService();
+                let body: {
+                    otp:number,
+                    user:IDBContact
+                } = req.body;
+                userSrv.confirm_user_otp(body.user,body.otp).then((d) => {
+                    send(res, d, t0)
+                }).catch(e => {
+                    err(res, e, t0)
+                })
+            } catch (error) {
+                err(res, error, t0)
+            }
+        })
+
         this.app.post('/create-wallet', async (req, res) => {
             let t0 = performance.performance.now();
             let data = {} as any;

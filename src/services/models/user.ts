@@ -100,7 +100,7 @@ export class UserService {
         };
         const db = new ViafusionDB();
         let user = await this.get_db_user(_user);
-        if (user.securiy.login._otp_value == otp) {
+        if (user && user.securiy.login._otp_value == otp) {
             user.securiy.login.otp_passed = true;
             let updatedUser = await this.update_db_user({ contact_reference_id: user.contact_reference_id }, user);
             return updatedUser;
