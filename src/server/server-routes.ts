@@ -20,9 +20,9 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
             let pre = performance.performance.now() - t0;
             console.log(`-->Request for:'${res.req.path}', from client:'${res.req.ip}' took:${pre}ms`);
             if (!res.headersSent) {
-                res.send(JSON.stringify({ performance: pre, success: true ,data: { ...response } }))
+                res.send(JSON.stringify({ performance: pre, success: true, data: { ...response } }))
             } else {
-                res.write(JSON.stringify({ performance: pre, success: true ,data: { ...response }}));
+                res.write(JSON.stringify({ performance: pre, success: true, data: { ...response } }));
                 res.end();
             }
         }
@@ -69,10 +69,10 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
             let t0 = performance.performance.now();
             try {
                 const userSrv = new UserService();
-                let body:IDBSelect<IDBContact> = req.body;
-                userSrv.get_db_user(body).then((d)=>{
+                let body: IDBSelect<IDBContact> = req.body;
+                userSrv.get_db_user(body).then((d) => {
                     send(res, d, t0)
-                }).catch(e=>{
+                }).catch(e => {
                     err(res, e, t0)
                 })
             } catch (error) {
@@ -84,10 +84,10 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
             let t0 = performance.performance.now();
             try {
                 const userSrv = new WalletService();
-                let body:IDBSelect<IDBWallet> = req.body;
-                userSrv.get_db_wallet(body).then((d)=>{
+                let body: IDBSelect<IDBWallet> = req.body;
+                userSrv.get_db_wallet(body).then((d) => {
                     send(res, d, t0)
-                }).catch(e=>{
+                }).catch(e => {
                     err(res, e, t0)
                 })
             } catch (error) {
@@ -99,10 +99,25 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
             let t0 = performance.performance.now();
             try {
                 const userSrv = new UserService();
-                let body:IDBContact = req.body;
-                userSrv.create_db_user(body).then((d)=>{
+                let body: IDBContact = req.body;
+                userSrv.create_db_user(body).then((d) => {
                     send(res, d, t0)
-                }).catch(e=>{
+                }).catch(e => {
+                    err(res, e, t0)
+                })
+            } catch (error) {
+                err(res, error, t0)
+            }
+        })
+
+        this.app.post('/login', async (req, res) => {
+            let t0 = performance.performance.now();
+            try {
+                const userSrv = new UserService();
+                let body: object = req.body;
+                userSrv.login_or_register_to_otp(body).then((d) => {
+                    send(res, d, t0)
+                }).catch(e => {
                     err(res, e, t0)
                 })
             } catch (error) {
@@ -113,13 +128,13 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
         this.app.post('/create-wallet', async (req, res) => {
             let t0 = performance.performance.now();
             let data = {} as any;
-            
+
             try {
                 const walletSrv = new WalletService();
-                let body:IWallet = req.body;
-                walletSrv.create_wallet_and_contact(body).then((d)=>{
+                let body: IWallet = req.body;
+                walletSrv.create_wallet_and_contact(body).then((d) => {
                     send(res, d, t0)
-                }).catch(e=>{
+                }).catch(e => {
                     err(res, e, t0)
                 })
             } catch (error) {

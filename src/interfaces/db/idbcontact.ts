@@ -16,10 +16,10 @@ export interface IDBContact {
     contact_reference_id?: number;
     id?: string;
     email?: string;
-    ewallet: ewallet_id;
-    wallet_refrence_id: string;
+    ewallet?: ewallet_id;
+    wallet_refrence_id?: string;
     phone_number?: string;
-    securiy:object;
-    meta:object;
-    data:IContact;
+    securiy?:object;
+    meta?:object;
+    data?:IContact;
 }

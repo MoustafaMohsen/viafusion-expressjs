@@ -23,8 +23,13 @@ export class UserService {
     }
     
     
-    async login_or_register_to_otp(_user:IDBSelect<IDBContact>){
+    async login_or_register_to_otp(login:any){
         // user exists or not
+        let _user:IDBSelect<IDBContact> = {
+            "*":{
+                phone_number: login.phone_number
+            }
+        }
         const db = new ViafusionDB();
         let results = await db.get_object<IDBContact>(_user, "OR", 'dbcontact');
         var user = results.rows[0];
@@ -33,29 +38,31 @@ export class UserService {
         // if user make otp request then return loggedin
         if (user) {
             let login :ILogin = {
-                loggedin:false,
+                authenticated:false,
                 otp_passed:false,
                 pf_passed:false,
                 pin_passed:false,
                 _otp_value:otp,
                 resend_otp_after:0,
-                user_created:false,
+                user_exsits:true,
+                _sandbox:true,
                 data:null
             }
             return login;
         }
 
         // if not register login
-        results = await this.create_db_user(HelperService.select_to_object(_user));
+        results = await this.create_db_user(login);
         var user = results.rows[0];
         let register :ILogin = {
-            loggedin:false,
+            authenticated:false,
             otp_passed:false,
             pf_passed:false,
             pin_passed:false,
             _otp_value:otp,
             resend_otp_after:0,
-            user_created:true,
+            user_exsits:false,
+            _sandbox:true,
             data:null
         }
         return register;
