@@ -15,7 +15,7 @@ export class UserService {
     async create_db_user(user: IDBContact) {
         const db = new ViafusionDB();
         let results = await db.insert_object(user, 'dbcontact');
-        let result = await this.get_db_user(user);
+        let result = await this.get_db_user(results.rows[0]);
         return result;
     }
 
@@ -130,11 +130,17 @@ export class UserService {
 
     // ==== User parser
     parse_user(user: IDBContact) {
-        user.security = this.parse_if_string(user.security) as any;
-        user.meta = this.parse_if_string(user.meta) as any;
-        user.data = this.parse_if_string(user.data) as any;
-        return user;
+        try {
+            user.security = this.parse_if_string(user.security) as any;
+            user.meta = this.parse_if_string(user.meta) as any;
+            user.data = this.parse_if_string(user.data) as any;
+            return user;
+        } catch (error) {
+            console.error(error);
+            return null
+        }
     }
+
     parse_if_string(str: string | object) {
         let temp = str;
         if (typeof str == "string") {

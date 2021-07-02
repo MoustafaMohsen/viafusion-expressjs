@@ -173,7 +173,7 @@ export class ViafusionDB {
         let _tmp_val_replace = _tmp_cols_arr.join(", ");
         let _tmp_cols = cols.map(d => d.replace("'", "''")).join(", ");
         const query = {
-            text: `INSERT INTO ${tabelname} (${_tmp_cols}) VALUES(${_tmp_val_replace})`,
+            text: `INSERT INTO ${tabelname} (${_tmp_cols}) VALUES(${_tmp_val_replace}) RETURNING contact_reference_id`,
             values
         }
         return query;
