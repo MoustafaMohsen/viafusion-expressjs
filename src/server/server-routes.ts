@@ -1,3 +1,4 @@
+import { PaymentService } from './../services/models/payment';
 import { IDBWallet } from './../interfaces/db/idbwallet';
 import { IDBContact } from './../interfaces/db/idbcontact';
 import { UserService } from '../services/models/user';
@@ -11,6 +12,7 @@ import ViafusionServerCore from './core/server-core';
 import { RapydUtilties } from '../services/util/utilities';
 import { IContact } from '../interfaces/rapyd/icontact';
 import { IDBSelect } from '../interfaces/db/select_rows';
+import { PostCreatePayment } from '../interfaces/rapyd/ipayment';
 
 export default class ViafusionServerRoutes extends ViafusionServerCore {
 
@@ -28,11 +30,11 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
         }
 
         function err(res: express.Response, error, t0, statuscode = 400) {
-            res.status(statuscode);
+            // res.status(statuscode);
             let pre = performance.performance.now() - t0;
             console.log(`-->Request errored for:'${res.req.path}', from client:'${res.req.ip}' took:${pre}ms`);
             console.error(error);
-            res.send(JSON.stringify({ data: {}, error, performance: pre, success: false }))
+            res.send(JSON.stringify({ data: {}, response_status:400, error, performance: pre, success: false }))
         }
 
         function write_and_log(res: express.Response, msg) {
@@ -120,6 +122,7 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
                 err(res, error, t0)
             }
         })
+
 
         this.app.post('/login', async (req, res) => {
             let t0 = performance.performance.now();
@@ -214,6 +217,60 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
         //#endregion
 
 
+        //#region Collect Payment Group
+
+        this.app.post('/list-payment-methods', async (req, res) => {
+            let t0 = performance.performance.now();
+            let data = {} as any;
+            try {
+                const paymentSrv = new PaymentService();
+                let body: {country:string} = req.body;
+                paymentSrv.list_payment_methods(body.country).then((d) => {
+                    send(res, d, t0)
+                }).catch(e => {
+                    err(res, e, t0)
+                })
+            } catch (error) {
+                err(res, error, t0)
+            }
+        })
+
+        this.app.post('/list-payment-required-fields', async (req, res) => {
+            let t0 = performance.performance.now();
+            let data = {} as any;
+
+            try {
+                const paymentSrv = new PaymentService();
+                let body: {payment_method_type:string} = req.body;
+                paymentSrv.payment_method_required_fields(body.payment_method_type).then((d) => {
+                    send(res, d, t0)
+                }).catch(e => {
+                    err(res, e, t0)
+                })
+            } catch (error) {
+                err(res, error, t0)
+            }
+        })
+
+
+        this.app.post('/create-payment', async (req, res) => {
+            let t0 = performance.performance.now();
+            let data = {} as any;
+
+            try {
+                const paymentSrv = new PaymentService();
+                let body: PostCreatePayment.ICreate = req.body;
+                paymentSrv.create_payment(body).then((d) => {
+                    send(res, d, t0)
+                }).catch(e => {
+                    err(res, e, t0)
+                })
+            } catch (error) {
+                err(res, error, t0)
+            }
+        })
+
+        //#endregion
         this.app.post('/create-wallet', async (req, res) => {
             let t0 = performance.performance.now();
             let data = {} as any;

@@ -1,25 +1,23 @@
 import { ApiService } from '../api/api';
-import { IPayment } from "../../interfaces/rapyd/ipayment";
+import { PostCreatePayment, IPayment, ListPayments, RequiredFields } from "../../interfaces/rapyd/ipayment";
 import { ViafusionDB } from '../db/viafusiondb';
 import { IDBSelect } from '../../interfaces/db/select_rows';
 
 export class PaymentService {
     constructor() {}
 
-    create_payment_and_contact(payment:IPayment){
+    list_payment_methods(country:string){
         var apiSrv = new ApiService();
-        return apiSrv.post<IPayment>("payments", payment)
+        return apiSrv.get<ListPayments.Response[]>("payment_methods/country?country="+country)
     }
 
-    async create_db_payment(payment:IPayment){
-        const db = new ViafusionDB();
-        let results = await db.insert_object(payment, 'dbpayment');
-        return results;
-    }
-
-    async get_payment_method_required_fields(type:string){
+    payment_method_required_fields(payment_method_type:string){
         var apiSrv = new ApiService();
-        return apiSrv.post<IPayment>("payment_methods/required_fields", type)
+        return apiSrv.get<RequiredFields.Response>("payment_methods/required_fields/"+payment_method_type)
     }
 
+    create_payment(create_payment_object:PostCreatePayment.ICreate){
+        var apiSrv = new ApiService();
+        return apiSrv.post<IPayment>("payments",create_payment_object)
+    }
 }

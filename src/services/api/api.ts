@@ -14,4 +14,9 @@ export class ApiService {
         return rapydUti.makeRequest("POST",'/v1/'+path,body);
     }
 
+    get<T>(path: string):Promise<IUtitliesResponse<T>> {
+        var rapydUti = new RapydUtilties()
+        return rapydUti.makeRequest("GET",'/v1/'+path);
+    }
+
 }
