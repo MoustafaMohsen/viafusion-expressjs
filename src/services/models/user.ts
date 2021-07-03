@@ -68,6 +68,9 @@ export class UserService {
         let security = this.update_security_otp(user, otp+"");
         let newuser = user;
         newuser.security = security;
+        newuser.security.login.otp_passed = true;
+        newuser.security.login.has_otp = true;
+
         let updatedUser = await this.update_db_user({ contact_reference_id: user.contact_reference_id }, newuser);
         return updatedUser;
     }
@@ -79,6 +82,7 @@ export class UserService {
         let user = await this.get_db_user(minimum_user_object);
         if (user && user.security && user.security.login._otp_value == otp+"") {
             user.security.login.otp_passed = true;
+            user.security.login.has_otp = true;
             let updatedUser = await this.update_db_user({ contact_reference_id: user.contact_reference_id }, user);
             return updatedUser;
 
@@ -103,6 +107,8 @@ export class UserService {
         let security = this.update_security_pin(user, pin+"");
         let newuser = user;
         newuser.security = security;
+        newuser.security.login.pin_passed = true;
+        newuser.security.login.has_pin = true;
         let updatedUser = await this.update_db_user({ contact_reference_id: user.contact_reference_id }, newuser);
         return updatedUser;
     }
@@ -114,6 +120,7 @@ export class UserService {
         let user = await this.get_db_user(minimum_user_object);
         if (user && user.security && user.security.login._pin_value == (pin+"")) {
             user.security.login.pin_passed = true;
+            user.security.login.has_pin = true;
             let updatedUser = await this.update_db_user({ contact_reference_id: user.contact_reference_id }, user);
             return updatedUser;
 
