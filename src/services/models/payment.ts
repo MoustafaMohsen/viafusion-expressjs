@@ -1,5 +1,5 @@
 import { ApiService } from '../api/api';
-import { PostCreatePayment, IPayment, ListPayments, RequiredFields } from "../../interfaces/rapyd/ipayment";
+import { ListPayments, RequiredFields, PostCreatePayment, IPayment } from '../../interfaces/rapyd/ipayment';
 import { ViafusionDB } from '../db/viafusiondb';
 import { IDBSelect } from '../../interfaces/db/select_rows';
 
