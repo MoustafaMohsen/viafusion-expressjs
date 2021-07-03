@@ -18,7 +18,6 @@ data TEXT
             contact VARCHAR ( 255 ),
             ewallet VARCHAR ( 255 ),
             customer VARCHAR ( 255 ),
-            sender VARCHAR ( 255 ),
             kycid VARCHAR ( 255 ),
             rapyd_contact_data TEXT,
             rapyd_wallet_data TEXT,
@@ -41,12 +40,12 @@ export interface IDBContact {
     /** rapyd id */
     customer?: customer_id;
     /** rapyd id */
-    sender?: sender_id;
-    /** rapyd id */
     kycid?: kycid_id;
     
+    /** data stored in rapyd servers */
+    rapyd_contact_data?:IContact;
+
     phone_number?: string;
     security?:IDBSecurity;
     meta?:object;
-    rapyd_contact?:IContact;
 }

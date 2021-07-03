@@ -21,6 +21,7 @@ export class ViafusionDB {
         this.dbsettings.database = dbname;
         const client2 = await this.connect();
         result.create_contact_tabel = await this.create_contact_tabel(client2);
+        result.create_contactmeta_tabel = await this.create_contactmeta_tabel(client2);
         await client2.end();
         delete this.dbsettings.database;
         console.log("DB is ready");
@@ -79,30 +80,29 @@ export class ViafusionDB {
             contact VARCHAR ( 255 ),
             ewallet VARCHAR ( 255 ),
             customer VARCHAR ( 255 ),
-            sender VARCHAR ( 255 ),
             verification VARCHAR ( 255 ),
             rapyd_contact_data TEXT,
             rapyd_wallet_data TEXT,
             phone_number VARCHAR ( 255 ) NOT NULL UNIQUE,
             security TEXT NOT NULL
             email VARCHAR ( 255 ),
-            meta TEXT,
+            meta TEXT
 );`)
         return result;
     }
 
-    async create_wallet_transaction_tabel(client: Client, tablename = "dbwallet_transaction") {
+    async create_contactmeta_tabel(client: Client, tablename = "dbcontactmeta") {
         await client.query("DROP TABLE IF EXISTS " + tablename + ";")
         let result = await client.query(`CREATE TABLE IF NOT EXISTS ${tablename} (
-            ewallet_reference_id SERIAL PRIMARY KEY,
-            ewallet VARCHAR ( 255 ),
-            id VARCHAR ( 255 ),
-            email VARCHAR ( 255 ),
-            wallet_refrence_id VARCHAR ( 255 ),
-            phone_number VARCHAR ( 255 ) NOT NULL UNIQUE,
-            data TEXT,
-            meta TEXT,
-            security TEXT NOT NULL
+            meta_id SERIAL PRIMARY KEY,
+            contact_reference_id UNIQUE,
+            transactions TEXT NOT NULL,
+            senders TEXT,
+            benes TEXT,
+            actions TEXT,
+            vcc TEXT,
+            pcc TEXT,
+            meta TEXT
 );`)
         return result;
     }

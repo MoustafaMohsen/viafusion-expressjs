@@ -19,7 +19,8 @@ export class DBMetaContact implements IDBMetaContact {
             customer:contact.customer
         }
         let def = new DBMetaContact();
-        let result = Object.assign()
+        let result = Object.assign(updated,def)
+        return result;
     }
 
     /** Internal id for calling actions */

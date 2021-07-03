@@ -11,4 +11,6 @@ export class WalletService {
         var apiSrv = new ApiService();
         return apiSrv.post<IWallet>("user", wallet)
     }
+
+    // TODO: get wallet / get wallet ballance
 }
