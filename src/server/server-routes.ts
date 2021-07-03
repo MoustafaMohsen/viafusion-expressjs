@@ -1,3 +1,4 @@
+import { SenderService } from './../services/models/sender';
 import { PaymentService } from './../services/models/payment';
 import { IDBWallet } from './../interfaces/db/idbwallet';
 import { IDBContact } from './../interfaces/db/idbcontact';
@@ -13,6 +14,7 @@ import { RapydUtilties } from '../services/util/utilities';
 import { IContact } from '../interfaces/rapyd/icontact';
 import { IDBSelect } from '../interfaces/db/select_rows';
 import { PostCreatePayment } from '../interfaces/rapyd/ipayment';
+import { IContactAndSender } from '../interfaces/rapyd/isender';
 
 export default class ViafusionServerRoutes extends ViafusionServerCore {
 
@@ -34,7 +36,7 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
             let pre = performance.performance.now() - t0;
             console.log(`-->Request errored for:'${res.req.path}', from client:'${res.req.ip}' took:${pre}ms`);
             console.error(error);
-            res.send(JSON.stringify({ data: {}, response_status:400, error, performance: pre, success: false }))
+            res.send(JSON.stringify({ data: {}, response_status: 400, error, performance: pre, success: false }))
         }
 
         function write_and_log(res: express.Response, msg) {
@@ -224,7 +226,7 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
             let data = {} as any;
             try {
                 const paymentSrv = new PaymentService();
-                let body: {country:string} = req.body;
+                let body: { country: string } = req.body;
                 paymentSrv.list_payment_methods(body.country).then((d) => {
                     send(res, d, t0)
                 }).catch(e => {
@@ -241,7 +243,7 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
 
             try {
                 const paymentSrv = new PaymentService();
-                let body: {payment_method_type:string} = req.body;
+                let body: { payment_method_type: string } = req.body;
                 paymentSrv.payment_method_required_fields(body.payment_method_type).then((d) => {
                     send(res, d, t0)
                 }).catch(e => {
@@ -269,8 +271,29 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
                 err(res, error, t0)
             }
         })
-
         //#endregion
+
+        //#region Payout
+        this.app.post('/create-sender', async (req, res) => {
+            let t0 = performance.performance.now();
+            let data = {} as any;
+
+            try {
+                const senderSrv = new SenderService();
+                let body: IContactAndSender = req.body;
+                senderSrv.create_sender_from_contact(body.contact,body.meta).then((d) => {
+                    send(res, d, t0)
+                }).catch(e => {
+                    err(res, e, t0)
+                })
+            } catch (error) {
+                err(res, error, t0)
+            }
+        })
+        //#endregion
+
+
+
         this.app.post('/create-wallet', async (req, res) => {
             let t0 = performance.performance.now();
             let data = {} as any;

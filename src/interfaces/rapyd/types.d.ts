@@ -1,6 +1,7 @@
 
 // ids
 export type ewallet_id = `ewallet_${string}`;
+export type customert_id = `cus_${string}`;
 export type contact_id = `cont_${string}`;
 export type address_id = `address_${string}`;
 

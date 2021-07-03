@@ -87,7 +87,7 @@ export interface IContact {
     
     For types that are valid in the country, use List Official Identification Documents.
     */
-    identification_type?: string;
+    identification_type?: "company_registered_number" | "drivers_license" | "identification_id" | "international_passport" | "residence_permit" | "social_security" | "work_permit";
     /**
     * Family name of the personal contact or primary person associated with the business contact. This field is required to issue a card to a personal contact.
     */
