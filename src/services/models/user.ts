@@ -159,7 +159,7 @@ export class UserService {
         try {
             user.security = this.parse_if_string(user.security) as any;
             user.meta = this.parse_if_string(user.meta) as any;
-            user.data = this.parse_if_string(user.data) as any;
+            user.rapyd_contact = this.parse_if_string(user.rapyd_contact) as any;
             return user;
         } catch (error) {
             console.error(error);

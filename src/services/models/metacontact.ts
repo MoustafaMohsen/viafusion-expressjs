@@ -16,7 +16,7 @@ export class MetaContactService {
         const db = new ViafusionDB();
         let results = await db.insert_object(metacontact, 'dbmetacontact');
         let result = await this.get_db_metacontact(results.rows[0]);
-        await this.refresh_security(result);
+        await this.refresh_metacontact(result);
         return result;
     }
 
@@ -131,7 +131,8 @@ export class MetaContactService {
         }
     }
 
-    async refresh_security(metacontact: IDBMetaContact){
+    async refresh_metacontact(metacontact: IDBMetaContact){
+        // 
         metacontact.security = this.get_metacontact_security(metacontact);
         await this.update_db_metacontact({contact_reference_id:metacontact.contact_reference_id},metacontact);
     }
@@ -143,6 +144,7 @@ export class MetaContactService {
 
 
     get_metacontact_security(metacontact: IDBMetaContact) {
+        let defaults = 
         let security = new DBSecurity(metacontact.security);
         try {
             security = typeof security === "string" ? JSON.parse(security) : security;

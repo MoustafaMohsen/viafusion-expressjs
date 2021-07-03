@@ -1,4 +1,4 @@
-import { contact_id, customert_id } from './../rapyd/types.d';
+import { contact_id, customer_id } from './../rapyd/types.d';
 import { IWallet } from './../rapyd/iwallet';
 import { ewallet_id } from "../rapyd/types";
 import { IDBSecurity } from './isecurity';
@@ -20,7 +20,7 @@ export interface IDBWallet {
     email?: string;
     ewallet: ewallet_id;
     contact_id: string;
-    customer?: customert_id;
+    customer?: customer_id;
     contact_reference_id: string;
     phone_number?: string;
     security:IDBSecurity;

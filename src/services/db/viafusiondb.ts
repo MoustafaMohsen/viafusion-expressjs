@@ -20,7 +20,6 @@ export class ViafusionDB {
 
         this.dbsettings.database = dbname;
         const client2 = await this.connect();
-        result.create_wallet_tabel = await this.create_wallet_tabel(client2);
         result.create_contact_tabel = await this.create_contact_tabel(client2);
         await client2.end();
         delete this.dbsettings.database;
@@ -77,14 +76,17 @@ export class ViafusionDB {
         await client.query("DROP TABLE IF EXISTS " + tablename + ";")
         let result = await client.query(`CREATE TABLE IF NOT EXISTS ${tablename} (
             contact_reference_id SERIAL PRIMARY KEY,
-            id VARCHAR ( 255 ),
-            email VARCHAR ( 255 ),
+            contact VARCHAR ( 255 ),
             ewallet VARCHAR ( 255 ),
-            wallet_refrence_id VARCHAR ( 255 ),
+            customer VARCHAR ( 255 ),
+            sender VARCHAR ( 255 ),
+            verification VARCHAR ( 255 ),
+            rapyd_contact_data TEXT,
+            rapyd_wallet_data TEXT,
             phone_number VARCHAR ( 255 ) NOT NULL UNIQUE,
-            data TEXT,
-            meta TEXT,
             security TEXT NOT NULL
+            email VARCHAR ( 255 ),
+            meta TEXT,
 );`)
         return result;
     }

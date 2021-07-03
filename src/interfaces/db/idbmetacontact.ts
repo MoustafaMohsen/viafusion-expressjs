@@ -1,6 +1,6 @@
 import { ISender } from '../rapyd/isender';
 import { PostCreatePayment } from '../rapyd/ipayment';
-import { customert_id } from '../rapyd/types';
+import { contact_id, customer_id } from '../rapyd/types';
 import { ewallet_id } from "../rapyd/types";
 import { IPayment } from '../rapyd/ipayment';
 /**
@@ -18,9 +18,9 @@ data TEXT
 export interface IDBMetaContact {
   /** Internal id for calling actions */
   id?: string;
-  contact_reference_id?: ewallet_id;
-  wallet_refrence_id?: string;
-  customer?: customert_id;
+  contact_reference_id?: contact_id;
+  wallet_refrence_id?: ewallet_id;
+  customer?: customer_id;
   meta?: object;
   transactions?: ITransaction[];
   senders?: ISender[];
