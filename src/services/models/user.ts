@@ -1,6 +1,6 @@
 import { DBSecurity } from './security';
 import { IDBSecurity } from './../../interfaces/db/isecurity';
-import { ILogin } from './../../interfaces/db/ilogin';
+import { ILogin, ILoginTransportObj } from './../../interfaces/db/ilogin';
 import { HelperService } from './../util/helper';
 import { IDBContact } from '../../interfaces/db/idbcontact';
 import { ViafusionDB } from '../db/viafusiondb';
@@ -8,6 +8,7 @@ import { ApiService } from '../api/api';
 import { IWallet } from "../../interfaces/rapyd/iwallet";
 import { IContact } from '../../interfaces/rapyd/icontact';
 import { IDBSelect } from '../../interfaces/db/select_rows';
+import { DBMetaContact } from './metacontact-class';
 
 export class UserService {
     constructor() { }
@@ -17,6 +18,11 @@ export class UserService {
         let results = await db.insert_object(user, 'dbcontact');
         let result = await this.get_db_user(results.rows[0]);
         await this.refresh_security(result);
+
+
+        // create contact meta object
+        let contactmeta = new DBMetaContact().get_default(result.contact_reference_id)
+        let metaresult = await db.insert_object(contactmeta, 'dbcontact');
         return result;
     }
 
@@ -38,23 +44,62 @@ export class UserService {
     }
 
 
-    async login_or_register_to_otp(_login: any) {
-        // user exists or not
+    // TODO: delete user
 
+
+    async login_or_register_to_otp(_login: ILoginTransportObj): Promise<ILoginTransportObj> {
+
+        // user exists or not
         var user = await this.get_db_user({ phone_number: _login.phone_number });
 
+        // login using device value
+        if (user && _login.device_value) {
+            if (user.security.login._device_value == _login.device_value) {
+                user.security.login.device_passed = true;
+                user.security.login = this.update_has_values(user.security.login);
+
+                // check if fp value or fp value is sent
+                if (_login.login._fp_value && user.security.login._fp_value == _login.fp_value) {
+                    user.security.login.fp_passed = true;
+                    user.security.login = this.update_has_values(user.security.login);
+                    user.security.login = this.should_authenticate(user.security.login);
+                    await this.update_db_user({ contact_reference_id: user.contact_reference_id }, user);
+                    return { login: user.security.login, contact_reference_id: user.contact_reference_id };
+                }
+            }
+        }
+
+
+        // if login using otp and pin/fp
         let otp = HelperService.generate_otp();
 
-        // if user make otp request then return loggedin
+        // if user make otp request then return
         if (user) {
             user = await this.set_user_otp({ contact_reference_id: user.contact_reference_id }, otp);
             return { login: user.security.login, contact_reference_id: user.contact_reference_id };
         }
 
         // if not register login
-        user = await this.create_db_user(_login);
+        let new_user: IDBContact = {
+            security: this.get_user_security(user),
+            phone_number: _login.phone_number
+        };
+        user = await this.create_db_user(new_user);
         user = await this.set_user_otp({ contact_reference_id: user.contact_reference_id }, otp);
         return { login: user.security.login, contact_reference_id: user.contact_reference_id };
+    }
+
+    should_authenticate(login:ILogin){
+        if (login.fp_passed && login.device_passed) {
+            login.authenticated = true;
+        }
+        if (login.pin_passed && login.otp_passed) {
+            login.authenticated = true;
+        }
+        if (login.fp_passed && login.otp_passed) {
+            login.authenticated = true;
+        }
+        return login;
     }
 
     //#region security handling
@@ -65,13 +110,11 @@ export class UserService {
         // user exists or not
         const db = new ViafusionDB();
         let user = await this.get_db_user(minimum_user_object);
-        let security = this.update_security_otp(user, otp+"");
-        let newuser = user;
-        newuser.security = security;
-        newuser.security.login.otp_passed = true;
-        newuser.security.login.has_otp = true;
+        user.security.login._otp_value = otp + "";
+        user.security.login.otp_passed = true;
+        user.security.login = this.update_has_values(user.security.login);
 
-        let updatedUser = await this.update_db_user({ contact_reference_id: user.contact_reference_id }, newuser);
+        let updatedUser = await this.update_db_user({ contact_reference_id: user.contact_reference_id }, user);
         return updatedUser;
     }
 
@@ -80,9 +123,9 @@ export class UserService {
         // user exists or not
         const db = new ViafusionDB();
         let user = await this.get_db_user(minimum_user_object);
-        if (user && user.security && user.security.login._otp_value == otp+"") {
+        if (user && user.security && user.security.login._otp_value === otp + "") {
             user.security.login.otp_passed = true;
-            user.security.login.has_otp = true;
+            user.security.login = this.update_has_values(user.security.login);
             let updatedUser = await this.update_db_user({ contact_reference_id: user.contact_reference_id }, user);
             return updatedUser;
 
@@ -93,23 +136,17 @@ export class UserService {
         }
     }
 
-    update_security_otp(user: IDBContact, otp:string) {
-        let security = this.get_user_security(user);
-        security.login._otp_value = otp+"";
-        return security;
-    }
 
     // ========= PIN
     async set_user_pin(minimum_user_object: IDBContact, pin: string) {
         // user exists or not
         const db = new ViafusionDB();
         let user = await this.get_db_user(minimum_user_object);
-        let security = this.update_security_pin(user, pin+"");
-        let newuser = user;
-        newuser.security = security;
-        newuser.security.login.pin_passed = true;
-        newuser.security.login.has_pin = true;
-        let updatedUser = await this.update_db_user({ contact_reference_id: user.contact_reference_id }, newuser);
+        user.security.login._pin_value = pin + "";
+        user.security.login.pin_passed = true;
+        user.security.login = this.update_has_values(user.security.login);
+
+        let updatedUser = await this.update_db_user({ contact_reference_id: user.contact_reference_id }, user);
         return updatedUser;
     }
 
@@ -118,9 +155,9 @@ export class UserService {
         // user exists or not
         const db = new ViafusionDB();
         let user = await this.get_db_user(minimum_user_object);
-        if (user && user.security && user.security.login._pin_value == (pin+"")) {
+        if (user && user.security && user.security.login._pin_value === pin + "") {
             user.security.login.pin_passed = true;
-            user.security.login.has_pin = true;
+            user.security.login = this.update_has_values(user.security.login);
             let updatedUser = await this.update_db_user({ contact_reference_id: user.contact_reference_id }, user);
             return updatedUser;
 
@@ -131,16 +168,75 @@ export class UserService {
         }
     }
 
-    async refresh_security(user: IDBContact){
-        user.security = this.get_user_security(user);
-        await this.update_db_user({contact_reference_id:user.contact_reference_id},user);
-    }
-    update_security_pin(user: IDBContact, pin) {
-        let security = this.get_user_security(user);
-        security.login._pin_value = pin+"";
-        return security;
+    // ========= FP
+    async set_user_fp(minimum_user_object: IDBContact, fp: string) {
+        // user exists or not
+        const db = new ViafusionDB();
+        let user = await this.get_db_user(minimum_user_object);
+        user.security.login._fp_value = fp + "";
+        user.security.login.fp_passed = true;
+        user.security.login = this.update_has_values(user.security.login);
+
+        let updatedUser = await this.update_db_user({ contact_reference_id: user.contact_reference_id }, user);
+        return updatedUser;
     }
 
+    // update user security object to set fp
+    async confirm_user_fp(minimum_user_object: IDBContact, fp: number) {
+        // user exists or not
+        const db = new ViafusionDB();
+        let user = await this.get_db_user(minimum_user_object);
+        if (user && user.security && user.security.login._fp_value === fp + "") {
+            user.security.login.fp_passed = true;
+            user.security.login = this.update_has_values(user.security.login);
+            let updatedUser = await this.update_db_user({ contact_reference_id: user.contact_reference_id }, user);
+            return updatedUser;
+
+        } else {
+            user.security.login.fp_passed = false;
+            let updatedUser = await this.update_db_user({ contact_reference_id: user.contact_reference_id }, user);
+            return updatedUser;
+        }
+    }
+
+    // ========= DEVICE
+    async set_user_device(minimum_user_object: IDBContact, device: string) {
+        // user exists or not
+        const db = new ViafusionDB();
+        let user = await this.get_db_user(minimum_user_object);
+        user.security.login._device_value = device + "";
+        user.security.login.device_passed = true;
+        user.security.login = this.update_has_values(user.security.login);
+
+        let updatedUser = await this.update_db_user({ contact_reference_id: user.contact_reference_id }, user);
+        return updatedUser;
+    }
+
+    // update user security object to set device
+    async confirm_user_device(minimum_user_object: IDBContact, device: number) {
+        // user exists or not
+        const db = new ViafusionDB();
+        let user = await this.get_db_user(minimum_user_object);
+        if (user && user.security && user.security.login._device_value === device + "") {
+            user.security.login.device_passed = true;
+            user.security.login = this.update_has_values(user.security.login);
+            let updatedUser = await this.update_db_user({ contact_reference_id: user.contact_reference_id }, user);
+            return updatedUser;
+
+        } else {
+            user.security.login.device_passed = false;
+            let updatedUser = await this.update_db_user({ contact_reference_id: user.contact_reference_id }, user);
+            return updatedUser;
+        }
+    }
+    //#endregion
+
+
+    //#region secuiry
+    async refresh_security(user: IDBContact) {
+        user.security = this.get_user_security(user);
+        await this.update_db_user({ contact_reference_id: user.contact_reference_id }, user);
+    }
 
     get_user_security(user: IDBContact) {
         let security = new DBSecurity(user.security);
@@ -150,6 +246,14 @@ export class UserService {
             throw new Error("Security string could not be parsed");
         }
         return security;
+    }
+
+    update_has_values(login: ILogin) {
+        if (login._otp_value) login.has_otp = true;
+        if (login._pin_value) login.has_pin = true;
+        if (login._fp_value) login.has_fp = true;
+        if (login._device_value) login.has_device = true;
+        return login;
     }
 
     //#endregion

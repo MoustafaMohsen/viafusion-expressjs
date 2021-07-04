@@ -20,14 +20,14 @@ import { IPayment } from '../rapyd/ipayment';
 export interface IDBMetaContact {
   /** Internal id for calling actions */
   id?: string;
-  contact_reference_id?: contact_id;
-  transactions?: ITransaction[];
-  senders?: ISender[];
-  benes?: any[];
-  actions?: any[];
-  vcc?: any[];
-  pcc?: any[];
-  meta?: object;
+  contact_reference_id: number;
+  transactions: ITransaction[];
+  senders: ISender[];
+  benes: any[];
+  actions: any[];
+  vcc: any[];
+  pcc: any[];
+  meta: object;
 }
 
 export interface ITransaction {
@@ -36,5 +36,6 @@ export interface ITransaction {
   destination_amount?: string
   sources: PostCreatePayment.ICreate[]
   destinations: any[]
+  execute: boolean
   executed: boolean
 }

@@ -7,30 +7,30 @@ export class DBMetaContact implements IDBMetaContact {
     constructor() {
     }
 
-    async get_default?(contact_reference_id:contact_id){
+    async get_default?(contact_reference_id:number){
         this.contact_reference_id = contact_reference_id;
-        let userSrv = new  UserService();
-        let contact = await userSrv.get_db_user({contact_reference_id:contact_reference_id as any})
-        let updated = new DBMetaContact();
-        updated={
-            contact_reference_id:contact.contact_reference_id,
-            wallet_refrence_id:contact.wallet_refrence_id,
-            ewallet:contact.ewallet,
-            customer:contact.customer
+        let updated:DBMetaContact = {
+            contact_reference_id:contact_reference_id,
+            transactions: [],
+            senders: [],
+            benes: [],
+            actions: [],
+            vcc: [],
+            pcc: [],
+            meta: {}
         }
-        let def = new DBMetaContact();
-        let result = Object.assign(updated,def)
-        return result;
+        return updated;
     }
 
     /** Internal id for calling actions */
     id?: string;
-    contact_reference_id?: contact_id;
-    wallet_refrence_id?: ewallet_id;
-    customer?: customer_id;
-    meta?: object;
-    transactions?: ITransaction[];
-    senders?: ISender[];
-    bene?: any[];
+    contact_reference_id: number;
+    transactions: ITransaction[];
+    senders: ISender[];
+    benes: any[];
+    actions: any[];
+    vcc: any[];
+    pcc: any[];
+    meta: object;
 
 }
