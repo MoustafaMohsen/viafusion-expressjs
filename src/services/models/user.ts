@@ -90,10 +90,10 @@ export class UserService {
         return { login: user.security.login, contact_reference_id: user.contact_reference_id };
     }
 
-    async confirm_authenticate(user:IDBContact):Promise<ILogin>{
+    async confirm_authenticate(user:IDBContact):Promise<IDBContact>{
         user.security.login = this.should_authenticate(user.security.login);
         let newuser = await this.update_db_user({ contact_reference_id: user.contact_reference_id }, user);
-        return newuser.security.login
+        return newuser
     }
 
 
@@ -141,7 +141,7 @@ export class UserService {
         user.security.login.pin_passed = true;
         user.security.login = this.update_has_values(user.security.login);
         let updatedUser = await this.update_db_user({ contact_reference_id: user.contact_reference_id }, user);
-        this.confirm_authenticate(updatedUser);
+        updatedUser = await this.confirm_authenticate(updatedUser);
         return updatedUser;
     }
 
@@ -154,7 +154,7 @@ export class UserService {
             user.security.login.pin_passed = true;
             user.security.login = this.update_has_values(user.security.login);
             let updatedUser = await this.update_db_user({ contact_reference_id: user.contact_reference_id }, user);
-            this.confirm_authenticate(updatedUser);
+            updatedUser = await this.confirm_authenticate(updatedUser);
             return updatedUser;
 
         } else {
@@ -174,7 +174,7 @@ export class UserService {
         user.security.login = this.update_has_values(user.security.login);
 
         let updatedUser = await this.update_db_user({ contact_reference_id: user.contact_reference_id }, user);
-        this.confirm_authenticate(updatedUser);
+        updatedUser = await this.confirm_authenticate(updatedUser);
         return updatedUser;
     }
 
@@ -187,7 +187,7 @@ export class UserService {
             user.security.login.fp_passed = true;
             user.security.login = this.update_has_values(user.security.login);
             let updatedUser = await this.update_db_user({ contact_reference_id: user.contact_reference_id }, user);
-            this.confirm_authenticate(updatedUser);
+            updatedUser = await this.confirm_authenticate(updatedUser);
             return updatedUser;
 
         } else {
@@ -219,7 +219,7 @@ export class UserService {
             user.security.login.device_passed = true;
             user.security.login = this.update_has_values(user.security.login);
             let updatedUser = await this.update_db_user({ contact_reference_id: user.contact_reference_id }, user);
-            this.confirm_authenticate(updatedUser);
+            updatedUser = await this.confirm_authenticate(updatedUser);
             return updatedUser;
 
         } else {
