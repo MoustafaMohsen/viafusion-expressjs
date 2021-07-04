@@ -2,9 +2,6 @@ import { ICreateCustomer, IDBContact, ICreateCustomerResponse } from './../../in
 import { UserService } from './user';
 import { ICreateWallet, IDBWallet, IResponseCreateWallet } from '../../interfaces/db/idbwallet';
 import { ApiService } from '../api/api';
-import { IWallet } from "../../interfaces/rapyd/iwallet";
-import { ViafusionDB } from '../db/viafusiondb';
-import { IDBSelect } from '../../interfaces/db/select_rows';
 import { IContact } from '../../interfaces/rapyd/icontact';
 
 export class WalletService {
@@ -86,6 +83,10 @@ export class WalletService {
     }
 
 
+    update_contact(ewallet:string,contact:string,body:IContact) {
+        var apiSrv = new ApiService();
+        return apiSrv.post<IContact>("ewallets/" +ewallet + "/contacts/" + contact,body)
+    }
 
     // TODO: get wallet / get wallet ballance
 
