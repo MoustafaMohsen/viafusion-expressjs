@@ -16,8 +16,8 @@ export class PaymentService {
         return apiSrv.get<RequiredFields.Response>("payment_methods/required_fields/"+payment_method_type)
     }
 
-    create_payment(create_payment_object:PostCreatePayment.ICreate){
+    create_payment(create_payment_object:PostCreatePayment.Request){
         var apiSrv = new ApiService();
-        return apiSrv.post<IPayment>("payments",create_payment_object)
+        return apiSrv.post<PostCreatePayment.Response>("payments",create_payment_object)
     }
 }

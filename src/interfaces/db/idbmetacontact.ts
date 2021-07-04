@@ -35,10 +35,10 @@ export interface ITransaction {
   id: string;
   source_amount?: string;
   destination_amount?: string;
-  payments: PostCreatePayment.ICreate[];
+  payments: PostCreatePayment.Request[];
   payouts: any[];
 
-  payments_response: PostCreatePayment.ICreate[];
+  payments_response: PostCreatePayment.Response[];
   payouts_response: any[];
 
   transfer_resoponse:TransferToWallet.Response;

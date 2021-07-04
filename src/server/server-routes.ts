@@ -446,7 +446,7 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
 
             try {
                 const paymentSrv = new PaymentService();
-                let body: PostCreatePayment.ICreate = req.body;
+                let body: PostCreatePayment.Request = req.body;
                 paymentSrv.create_payment(body).then((d) => {
                     send(res, d, t0)
                 }).catch(e => {
