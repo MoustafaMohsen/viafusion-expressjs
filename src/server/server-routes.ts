@@ -1,6 +1,6 @@
 import { SenderService } from './../services/models/sender';
 import { PaymentService } from './../services/models/payment';
-import { IDBWallet } from './../interfaces/db/idbwallet';
+import { ICreateWallet, IDBWallet } from './../interfaces/db/idbwallet';
 import { IDBContact } from './../interfaces/db/idbcontact';
 import { UserService } from '../services/models/user';
 import { ViafusionDB } from './../services/db/viafusiondb';
@@ -32,12 +32,12 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
             }
         }
 
-        function err(res: express.Response, error, t0, statuscode = 400) {
+        function err(res: express.Response, message, t0, statuscode = 400) {
             // res.status(statuscode);
             let pre = performance.performance.now() - t0;
             console.log(`-->Request errored for:'${res.req.path}', from client:'${res.req.ip}' took:${pre}ms`);
-            console.error(error);
-            res.send(JSON.stringify({ data: {}, response_status: 400, error, performance: pre, success: false }))
+            console.error(message);
+            res.send(JSON.stringify({ data: {}, response_status: 400, message, performance: pre, success: false }))
         }
 
         function write_and_log(res: express.Response, msg) {
@@ -108,6 +108,22 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
                 })
             } catch (error) {
                 err(res, error, t0)
+            }
+        })
+        this.app.post('/create-wallet', async (req, res) => {
+            let t0 = performance.performance.now();
+            try {
+                const walletSrv = new WalletService();
+                let body: {
+                    form: ICreateWallet.Form, contact_reference_id: number
+                } = req.body;
+                walletSrv.create_wallet_step(body.form,body.contact_reference_id).then((d) => {
+                    send(res, d, t0)
+                }).catch(e => {
+                    err(res, e, t0)
+                })
+            } catch (message) {
+                err(res, message, t0)
             }
         })
 
@@ -355,33 +371,33 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
         //#endregion
 
         //#region Payout
-        this.app.post('/create-sender', async (req, res) => {
-            let t0 = performance.performance.now();
-            let data = {} as any;
+        // this.app.post('/create-sender', async (req, res) => {
+        //     let t0 = performance.performance.now();
+        //     let data = {} as any;
 
-            try {
-                const senderSrv = new SenderService();
-                let body: IContactAndSender = req.body;
-                senderSrv.create_sender_from_contact(body.contact,body.meta).then((d) => {
-                    send(res, d, t0)
-                }).catch(e => {
-                    err(res, e, t0)
-                })
-            } catch (error) {
-                err(res, error, t0)
-            }
-        })
+        //     try {
+        //         const senderSrv = new SenderService();
+        //         let body: IContactAndSender = req.body;
+        //         senderSrv.create_sender_from_contact(body.contact,body.meta).then((d) => {
+        //             send(res, d, t0)
+        //         }).catch(e => {
+        //             err(res, e, t0)
+        //         })
+        //     } catch (error) {
+        //         err(res, error, t0)
+        //     }
+        // })
         //#endregion
 
 
 
-        this.app.post('/create-wallet', async (req, res) => {
+        this.app.post('/create-wallet-directly', async (req, res) => {
             let t0 = performance.performance.now();
             let data = {} as any;
 
             try {
                 const walletSrv = new WalletService();
-                let body: IWallet = req.body;
+                let body: ICreateWallet.Root = req.body;
                 walletSrv.create_wallet_and_contact(body).then((d) => {
                     send(res, d, t0)
                 }).catch(e => {
