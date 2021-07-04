@@ -42,9 +42,9 @@ export class UserService {
         let result = await this.get_db_user(user);
         return result;
     }
-
-
     // TODO: delete user
+
+
 
 
     async login_or_register_to_otp(_login: ILoginTransportObj): Promise<ILoginTransportObj> {
@@ -89,18 +89,7 @@ export class UserService {
         return { login: user.security.login, contact_reference_id: user.contact_reference_id };
     }
 
-    should_authenticate(login:ILogin){
-        if (login.fp_passed && login.device_passed) {
-            login.authenticated = true;
-        }
-        if (login.pin_passed && login.otp_passed) {
-            login.authenticated = true;
-        }
-        if (login.fp_passed && login.otp_passed) {
-            login.authenticated = true;
-        }
-        return login;
-    }
+
 
     //#region security handling
 
@@ -253,6 +242,19 @@ export class UserService {
         if (login._pin_value) login.has_pin = true;
         if (login._fp_value) login.has_fp = true;
         if (login._device_value) login.has_device = true;
+        return login;
+    }
+
+    should_authenticate(login:ILogin){
+        if (login.fp_passed && login.device_passed) {
+            login.authenticated = true;
+        }
+        if (login.pin_passed && login.otp_passed) {
+            login.authenticated = true;
+        }
+        if (login.fp_passed && login.otp_passed) {
+            login.authenticated = true;
+        }
         return login;
     }
 

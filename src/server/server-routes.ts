@@ -218,6 +218,82 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
         })
         //#endregion
 
+        //#region FP
+        this.app.post('/confirm-fp', async (req, res) => {
+            let t0 = performance.performance.now();
+            try {
+                const userSrv = new UserService();
+                let body: {
+                    fp: number,
+                    user: IDBContact
+                } = req.body;
+                userSrv.confirm_user_fp(body.user, body.fp).then((d) => {
+                    send(res, d, t0)
+                }).catch(e => {
+                    err(res, e, t0)
+                })
+            } catch (error) {
+                err(res, error, t0)
+            }
+        })
+
+        this.app.post('/set-device', async (req, res) => {
+            let t0 = performance.performance.now();
+            try {
+                const userSrv = new UserService();
+                let body: {
+                    device: string,
+                    user: IDBContact
+                } = req.body;
+                userSrv.set_user_device(body.user, body.device).then((d) => {
+                    send(res, d, t0)
+                }).catch(e => {
+                    err(res, e, t0)
+                })
+            } catch (error) {
+                err(res, error, t0)
+            }
+        })
+        //#endregion
+
+        //#region PIN
+        this.app.post('/confirm-pin', async (req, res) => {
+            let t0 = performance.performance.now();
+            try {
+                const userSrv = new UserService();
+                let body: {
+                    pin: number,
+                    user: IDBContact
+                } = req.body;
+                userSrv.confirm_user_pin(body.user, body.pin).then((d) => {
+                    send(res, d, t0)
+                }).catch(e => {
+                    err(res, e, t0)
+                })
+            } catch (error) {
+                err(res, error, t0)
+            }
+        })
+
+        this.app.post('/set-pin', async (req, res) => {
+            let t0 = performance.performance.now();
+            try {
+                const userSrv = new UserService();
+                let body: {
+                    pin: string,
+                    user: IDBContact
+                } = req.body;
+                userSrv.set_user_pin(body.user, body.pin).then((d) => {
+                    send(res, d, t0)
+                }).catch(e => {
+                    err(res, e, t0)
+                })
+            } catch (error) {
+                err(res, error, t0)
+            }
+        })
+        //#endregion
+
 
         //#region Collect Payment Group
 
