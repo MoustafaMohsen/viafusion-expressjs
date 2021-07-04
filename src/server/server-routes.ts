@@ -15,6 +15,7 @@ import { IContact } from '../interfaces/rapyd/icontact';
 import { IDBSelect } from '../interfaces/db/select_rows';
 import { PostCreatePayment } from '../interfaces/rapyd/ipayment';
 import { IContactAndSender } from '../interfaces/rapyd/isender';
+import { ILoginTransportObj } from '../interfaces/db/ilogin';
 
 export default class ViafusionServerRoutes extends ViafusionServerCore {
 
@@ -95,21 +96,6 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
             }
         })
 
-        this.app.post('/get-db-wallet', async (req, res) => {
-            let t0 = performance.performance.now();
-            try {
-                const userSrv = new WalletService();
-                let body: IDBSelect<IDBWallet> = req.body;
-                userSrv.get_db_wallet(body).then((d) => {
-                    send(res, d, t0)
-                }).catch(e => {
-                    err(res, e, t0)
-                })
-            } catch (error) {
-                err(res, error, t0)
-            }
-        })
-
         this.app.post('/create-db-user', async (req, res) => {
             let t0 = performance.performance.now();
             try {
@@ -130,7 +116,7 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
             let t0 = performance.performance.now();
             try {
                 const userSrv = new UserService();
-                let body: object = req.body;
+                let body: ILoginTransportObj = req.body;
                 userSrv.login_or_register_to_otp(body).then((d) => {
                     send(res, d, t0)
                 }).catch(e => {
@@ -256,16 +242,16 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
         })
         //#endregion
 
-        //#region PIN
-        this.app.post('/confirm-pin', async (req, res) => {
+        //#region Device
+        this.app.post('/confirm-device', async (req, res) => {
             let t0 = performance.performance.now();
             try {
                 const userSrv = new UserService();
                 let body: {
-                    pin: number,
+                    device: number,
                     user: IDBContact
                 } = req.body;
-                userSrv.confirm_user_pin(body.user, body.pin).then((d) => {
+                userSrv.confirm_user_device(body.user, body.device).then((d) => {
                     send(res, d, t0)
                 }).catch(e => {
                     err(res, e, t0)
@@ -275,15 +261,15 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
             }
         })
 
-        this.app.post('/set-pin', async (req, res) => {
+        this.app.post('/set-device', async (req, res) => {
             let t0 = performance.performance.now();
             try {
                 const userSrv = new UserService();
                 let body: {
-                    pin: string,
+                    device: string,
                     user: IDBContact
                 } = req.body;
-                userSrv.set_user_pin(body.user, body.pin).then((d) => {
+                userSrv.set_user_device(body.user, body.device).then((d) => {
                     send(res, d, t0)
                 }).catch(e => {
                     err(res, e, t0)
@@ -293,6 +279,25 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
             }
         })
         //#endregion
+        
+        
+        //#region Is Authenticated
+        this.app.post('/confirm_authnticate', async (req, res) => {
+            let t0 = performance.performance.now();
+            try {
+                const userSrv = new UserService();
+                let body:IDBContact = req.body;
+                userSrv.confirm_authenticate(body).then((d) => {
+                    send(res, d, t0)
+                }).catch(e => {
+                    err(res, e, t0)
+                })
+            } catch (error) {
+                err(res, error, t0)
+            }
+        })
+        //#endregion
+
 
 
         //#region Collect Payment Group

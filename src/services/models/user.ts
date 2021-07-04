@@ -89,6 +89,11 @@ export class UserService {
         return { login: user.security.login, contact_reference_id: user.contact_reference_id };
     }
 
+    async confirm_authenticate(user:IDBContact):Promise<ILogin>{
+        user.security.login = this.should_authenticate(user.security.login);
+        let newuser = await this.update_db_user({ contact_reference_id: user.contact_reference_id }, user);
+        return newuser.security.login
+    }
 
 
     //#region security handling
