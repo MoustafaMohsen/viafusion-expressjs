@@ -1,3 +1,4 @@
+import { IWallet } from './../rapyd/iwallet';
 import { customer_id, kycid_id, sender_id } from './../rapyd/types.d';
 import { IContact } from "../rapyd/icontact";
 import { ewallet_id } from "../rapyd/types";
@@ -44,6 +45,8 @@ export interface IDBContact {
     
     /** data stored in rapyd servers */
     rapyd_contact_data?:IContact;
+    /** data stored in rapyd servers */
+    rapyd_wallet_data?:IWallet;
 
     phone_number?: string;
     security?:IDBSecurity;

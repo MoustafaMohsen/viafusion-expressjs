@@ -22,7 +22,7 @@ export class UserService {
 
         // create contact meta object
         let contactmeta = new DBMetaContact().get_default(result.contact_reference_id)
-        let metaresult = await db.insert_object(contactmeta, 'dbcontact');
+        let metaresult = await db.insert_object(contactmeta, 'dbmetacontact');
         return result;
     }
 
@@ -271,17 +271,23 @@ export class UserService {
             user.security = this.parse_if_string(user.security) as any;
             user.meta = this.parse_if_string(user.meta) as any;
             user.rapyd_contact_data = this.parse_if_string(user.rapyd_contact_data) as any;
+            user.rapyd_wallet_data = this.parse_if_string(user.rapyd_wallet_data) as any;
             return user;
         } catch (error) {
             console.error(error);
-            return null
+            return user
         }
     }
 
     parse_if_string(str: string | object) {
         let temp = str;
-        if (typeof str == "string") {
-            temp = JSON.parse(str);
+        if (str && typeof str === "string") {
+            try {
+                temp = JSON.parse(str);
+            } catch (error) {
+                console.error(error);
+                temp = str;
+            }
         } else {
             temp = str;
         }

@@ -91,7 +91,7 @@ export class ViafusionDB {
         return result;
     }
 
-    async create_contactmeta_tabel(client: Client, tablename = "dbcontactmeta") {
+    async create_contactmeta_tabel(client: Client, tablename = "dbmetacontact") {
         await client.query("DROP TABLE IF EXISTS " + tablename + ";")
         let result = await client.query(`CREATE TABLE IF NOT EXISTS ${tablename} (
             meta_id SERIAL PRIMARY KEY,
