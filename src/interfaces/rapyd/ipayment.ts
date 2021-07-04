@@ -184,15 +184,15 @@ export namespace PostCreatePayment {
         /**Determines when the payment is processed for capture. When true, the payment is captured immediately. When false, the payment is captured at a later time. Relevant to cards. Default is true. */
         capture?: boolean //must
         /**URL where the customer is redirected after a successful payment. Required for bank redirect payment methods. */
-        complete_payment_url:string; //must
+        complete_payment_url: string; //must
         /**URL where the customer is redirected in case of an error in the payment. Required for bank redirect payment methods. */
-        error_payment_url:string; //must
+        error_payment_url: string; //must
 
-        ewallets:PostCreatePayment.ISplitWallet[] //must
-        "3DS_requirede"?: boolean //must
-        description?: string //must
+        ewallets: PostCreatePayment.ISplitWallet[] //must
+        "3DS_requirede": boolean //must
+        description: string //must
         statement_descriptor?: string
-        address:IAddress //must
+        address: IAddress //must
         category?: string
         metadata?: any
     }
@@ -214,7 +214,7 @@ export namespace PostCreatePayment {
         expiration_year?: string
         name?: string
         cvv?: string
-        [key:string]:string
+        [key: string]: string
     }
 }
 
