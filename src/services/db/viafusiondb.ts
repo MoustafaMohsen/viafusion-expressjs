@@ -34,7 +34,7 @@ export class ViafusionDB {
         return await client.query(query);
     }
 
-
+ 
 
     async connect(database?) {
         const set = database ? { ...this.dbsettings, database } : this.dbsettings;
@@ -84,7 +84,7 @@ export class ViafusionDB {
             rapyd_contact_data TEXT,
             rapyd_wallet_data TEXT,
             phone_number VARCHAR ( 255 ) NOT NULL UNIQUE,
-            security TEXT NOT NULL
+            security TEXT NOT NULL,
             email VARCHAR ( 255 ),
             meta TEXT
 );`)
@@ -95,7 +95,7 @@ export class ViafusionDB {
         await client.query("DROP TABLE IF EXISTS " + tablename + ";")
         let result = await client.query(`CREATE TABLE IF NOT EXISTS ${tablename} (
             meta_id SERIAL PRIMARY KEY,
-            contact_reference_id UNIQUE,
+            contact_reference_id VARCHAR ( 255 ) NOT NULL UNIQUE,
             transactions TEXT NOT NULL,
             senders TEXT,
             benes TEXT,

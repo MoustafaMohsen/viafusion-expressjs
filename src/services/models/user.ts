@@ -21,7 +21,7 @@ export class UserService {
 
 
         // create contact meta object
-        let contactmeta = new DBMetaContact().get_default(result.contact_reference_id)
+        let contactmeta = await new DBMetaContact().get_default(result.contact_reference_id)
         let metaresult = await db.insert_object(contactmeta, 'dbmetacontact');
         return result;
     }
@@ -80,6 +80,7 @@ export class UserService {
         }
 
         // if not register login
+        user = {};
         let new_user: IDBContact = {
             security: this.get_user_security(user),
             phone_number: _login.phone_number
@@ -139,8 +140,8 @@ export class UserService {
         user.security.login._pin_value = pin + "";
         user.security.login.pin_passed = true;
         user.security.login = this.update_has_values(user.security.login);
-
         let updatedUser = await this.update_db_user({ contact_reference_id: user.contact_reference_id }, user);
+        this.confirm_authenticate(updatedUser);
         return updatedUser;
     }
 
@@ -153,6 +154,7 @@ export class UserService {
             user.security.login.pin_passed = true;
             user.security.login = this.update_has_values(user.security.login);
             let updatedUser = await this.update_db_user({ contact_reference_id: user.contact_reference_id }, user);
+            this.confirm_authenticate(updatedUser);
             return updatedUser;
 
         } else {
@@ -172,6 +174,7 @@ export class UserService {
         user.security.login = this.update_has_values(user.security.login);
 
         let updatedUser = await this.update_db_user({ contact_reference_id: user.contact_reference_id }, user);
+        this.confirm_authenticate(updatedUser);
         return updatedUser;
     }
 
@@ -184,6 +187,7 @@ export class UserService {
             user.security.login.fp_passed = true;
             user.security.login = this.update_has_values(user.security.login);
             let updatedUser = await this.update_db_user({ contact_reference_id: user.contact_reference_id }, user);
+            this.confirm_authenticate(updatedUser);
             return updatedUser;
 
         } else {
@@ -201,7 +205,7 @@ export class UserService {
         user.security.login._device_value = device + "";
         user.security.login.device_passed = true;
         user.security.login = this.update_has_values(user.security.login);
-
+        this.confirm_authenticate(user);
         let updatedUser = await this.update_db_user({ contact_reference_id: user.contact_reference_id }, user);
         return updatedUser;
     }
@@ -215,6 +219,7 @@ export class UserService {
             user.security.login.device_passed = true;
             user.security.login = this.update_has_values(user.security.login);
             let updatedUser = await this.update_db_user({ contact_reference_id: user.contact_reference_id }, user);
+            this.confirm_authenticate(updatedUser);
             return updatedUser;
 
         } else {
