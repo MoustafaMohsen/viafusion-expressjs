@@ -1,8 +1,10 @@
+import { resolve } from 'path';
 import { ICreateCustomer, IDBContact, ICreateCustomerResponse } from './../../interfaces/db/idbcontact';
 import { UserService } from './user';
 import { ICreateWallet, IDBWallet, IResponseCreateWallet } from '../../interfaces/db/idbwallet';
 import { ApiService } from '../api/api';
 import { IContact } from '../../interfaces/rapyd/icontact';
+import { WalletBallanceResponse } from '../../interfaces/rapyd/iwallet';
 
 export class WalletService {
     constructor() { }
@@ -12,7 +14,7 @@ export class WalletService {
         return apiSrv.post<IResponseCreateWallet.Root>("user", wallet)
     }
 
-    async create_wallet_step(form: ICreateWallet.Form, contact_reference_id: number):Promise<IDBContact> {
+    async create_wallet_step(form: ICreateWallet.Form, contact_reference_id: number): Promise<IDBContact> {
         let userSrv = new UserService();
         let user = await userSrv.get_db_user({ contact_reference_id });
 
@@ -66,6 +68,7 @@ export class WalletService {
                         console.error(error);
                         reject(error);
                     });
+                    user = await this.update_wallet_accounts(user.contact_reference_id);
                     resolve(user)
 
                 }).catch(error => {
@@ -83,12 +86,13 @@ export class WalletService {
     }
 
 
-    update_contact(ewallet:string,contact:string,body:IContact) {
+    update_contact(ewallet: string, contact: string, body: IContact) {
         var apiSrv = new ApiService();
-        return apiSrv.post<IContact>("ewallets/" +ewallet + "/contacts/" + contact,body)
+        return apiSrv.post<IContact>("ewallets/" + ewallet + "/contacts/" + contact, body)
     }
 
     // TODO: get wallet / get wallet ballance
+
 
     create_customer(customer: ICreateCustomer) {
         var apiSrv = new ApiService();
@@ -103,6 +107,25 @@ export class WalletService {
             currency
         })
     }
+
+    async update_wallet_accounts(contact_reference_id: number) {
+        var userSrv = new UserService();
+        var user = await userSrv.get_db_user({ contact_reference_id })
+        let wallet_id = user.rapyd_contact_data.ewallet;
+        user.meta = user.meta || {};
+
+        var apiSrv = new ApiService();
+        return new Promise((resolve,reject)=>{
+            apiSrv.get<WalletBallanceResponse[]>("user/"+wallet_id+"/accounts").then( async (res)=>{
+                let wallet_accounts = res.body.data;
+                user.rapyd_wallet_data.accounts = wallet_accounts;
+                user = await userSrv.update_db_user({ contact_reference_id } , {meta:user.meta});
+                resolve(user);
+            })
+        })
+    }
+
+
 
     makeid(length) {
         var result = '';

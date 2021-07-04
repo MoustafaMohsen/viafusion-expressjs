@@ -1,3 +1,4 @@
+import { DBMetaContact } from './../services/models/metacontact-class';
 import { VccService } from './../services/models/vcc';
 import { IAPIServerResponse } from './../interfaces/rapyd/types.d';
 import { SenderService } from './../services/models/sender';
@@ -19,6 +20,8 @@ import { PostCreatePayment } from '../interfaces/rapyd/ipayment';
 import { IContactAndSender } from '../interfaces/rapyd/isender';
 import { ILoginTransportObj } from '../interfaces/db/ilogin';
 import { IssueVccRequestForm } from '../interfaces/rapyd/ivcc';
+import { MetaContactService } from '../services/models/metacontact';
+import { IDBMetaContact } from '../interfaces/db/idbmetacontact';
 
 export default class ViafusionServerRoutes extends ViafusionServerCore {
 
@@ -84,6 +87,22 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
             }
         })
 
+        this.app.post('/create-db-user', async (req, res) => {
+            let t0 = performance.performance.now();
+            try {
+                const userSrv = new UserService();
+                let body: IDBContact = req.body;
+                userSrv.create_db_user(body).then((d) => {
+                    send(res, d, t0)
+                }).catch(e => {
+                    err(res, e, t0)
+                })
+            } catch (error) {
+                err(res, error, t0)
+            }
+        })
+
+        
         this.app.post('/get-db-user', async (req, res) => {
             let t0 = performance.performance.now();
             try {
@@ -99,12 +118,13 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
             }
         })
 
-        this.app.post('/create-db-user', async (req, res) => {
+
+        this.app.post('/update-db-user', async (req, res) => {
             let t0 = performance.performance.now();
             try {
                 const userSrv = new UserService();
                 let body: IDBContact = req.body;
-                userSrv.create_db_user(body).then((d) => {
+                userSrv.update_db_user({contact_reference_id:body.contact_reference_id},body).then((d) => {
                     send(res, d, t0)
                 }).catch(e => {
                     err(res, e, t0)
@@ -113,6 +133,40 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
                 err(res, error, t0)
             }
         })
+
+        
+        this.app.post('/get-db-metacontact', async (req, res) => {
+            let t0 = performance.performance.now();
+            try {
+                const metacontactSrv = new MetaContactService();
+                let body: IDBMetaContact = req.body;
+                metacontactSrv.get_db_metacontact(body).then((d) => {
+                    send(res, d, t0)
+                }).catch(e => {
+                    err(res, e, t0)
+                })
+            } catch (error) {
+                err(res, error, t0)
+            }
+        })
+
+
+        this.app.post('/update-db-metacontact', async (req, res) => {
+            let t0 = performance.performance.now();
+            try {
+                const metacontactSrv = new MetaContactService();
+                let body: IDBMetaContact = req.body;
+                metacontactSrv.update_db_metacontact({contact_reference_id:body.contact_reference_id} as any,body).then((d) => {
+                    send(res, d, t0)
+                }).catch(e => {
+                    err(res, e, t0)
+                })
+            } catch (error) {
+                err(res, error, t0)
+            }
+        })
+
+        
         this.app.post('/create-wallet', async (req, res) => {
             let t0 = performance.performance.now();
             try {
@@ -137,6 +191,21 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
                     form: IssueVccRequestForm, contact_reference_id: number
                 } = req.body;
                 vccSrv.create_vcc_step(body.form,body.contact_reference_id).then((d) => {
+                    send(res, d, t0)
+                }).catch(e => {
+                    err(res, e, t0)
+                })
+            } catch (message) {
+                err(res, message, t0)
+            }
+        })
+
+        this.app.post('/update-accounts', async (req, res) => {
+            let t0 = performance.performance.now();
+            try {
+                const walletSrv = new WalletService();
+                let body: {contact_reference_id: number} = req.body;
+                walletSrv.update_wallet_accounts(body.contact_reference_id).then((d) => {
                     send(res, d, t0)
                 }).catch(e => {
                     err(res, e, t0)

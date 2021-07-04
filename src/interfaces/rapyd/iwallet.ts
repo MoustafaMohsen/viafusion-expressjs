@@ -26,3 +26,15 @@ export interface IWallet {
     }
 }
 
+
+export interface WalletBallanceResponse {
+    id: string
+    currency: string
+    alias: string
+    balance: number
+    received_balance: number
+    on_hold_balance: number
+    reserve_balance: number
+    limits: any
+    limit: any
+}

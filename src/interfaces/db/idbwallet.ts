@@ -50,7 +50,7 @@ export namespace ICreateWallet {
         country: string
     }
 
-    export interface Form{
+    export interface Form {
         first_name: string
         last_name: string
         email: string
@@ -58,7 +58,7 @@ export namespace ICreateWallet {
     }
 }
 
-export namespace IResponseCreateWallet{
+export namespace IResponseCreateWallet {
     export interface Root {
         phone_number: string
         email: string
@@ -73,16 +73,16 @@ export namespace IResponseCreateWallet{
         ewallet_reference_id: string
         category: any
         contacts: Contacts
-      }
-      
-      export interface Contacts {
+    }
+
+    export interface Contacts {
         data: Daum[]
         has_more: boolean
         total_count: number
         url: string
-      }
-      
-      export interface Daum {
+    }
+
+    export interface Daum {
         id: string
         first_name: string
         last_name: string
@@ -109,6 +109,6 @@ export namespace IResponseCreateWallet{
         verification_status: string
         send_notifications: boolean
         mothers_name: string
-      }
-      
+    }
+
 }
