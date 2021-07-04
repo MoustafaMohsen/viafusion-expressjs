@@ -1,14 +1,6 @@
-import { DBSecurity } from './security';
-import { IDBSecurity } from '../../interfaces/db/isecurity';
-import { ILogin } from '../../interfaces/db/ilogin';
-import { HelperService } from '../util/helper';
 import { IDBMetaContact } from '../../interfaces/db/idbmetacontact';
 import { ViafusionDB } from '../db/viafusiondb';
-import { ApiService } from '../api/api';
-import { IWallet } from "../../interfaces/rapyd/iwallet";
-import { IContact } from '../../interfaces/rapyd/icontact';
 import { IDBSelect } from '../../interfaces/db/select_rows';
-import { DBMetaContact } from './metacontact-class';
 
 export class MetaContactService {
 
