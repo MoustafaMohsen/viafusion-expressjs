@@ -15,7 +15,7 @@ export interface IWallet {
     type?: IAccType
     contact?: IContact
     contacts?: {
-        data:IContact[];
+        data: IContact[];
         has_more: boolean,
         total_count: number,
         /**
@@ -37,4 +37,58 @@ export interface WalletBallanceResponse {
     reserve_balance: number
     limits: any
     limit: any
+}
+
+
+export namespace TransferToWallet {
+    export interface Request {
+        source_ewallet: string
+        amount: number
+        currency: string
+        destination_ewallet: string
+        metadata: any
+    }
+    export interface Response {
+
+        id: string
+        /**
+         ** accept - The transferee accepts the transfer.
+        * cancel - The sender cancels the transaction.
+        * decline - The transferee declines to accept the transfer.
+
+        Response - One of the following:
+        * CAN - The sender canceled the transaction.
+        * DEC - The transferee declined to accept the transfer.
+        * PEN - Pending. Waiting for the transferee to respond.
+        * CLO - Closed. The transferee accepted the transfer.
+
+        Other transactions:
+        * CANCELED
+        * CLOSED
+         */
+        status: "PEN" | "CLO" | "DEC"|  "CAN"
+        amount: number
+        currency_code: string
+        destination_phone_number: string
+        destination_ewallet_id: string
+        destination_transaction_id: string
+        source_ewallet_id: string
+        source_transaction_id: string
+        transfer_response_at: number
+        created_at: number
+
+        /** metadata set by who made the request  (source's metadata)*/
+        metadata: any
+        /** metadata set by the response (destination's metadata)*/
+        response_metadata: any
+
+    }
+
+    export interface Set_Response{
+        /** The transfer id */
+        id:string;
+        /** The desired status */
+        status:"accept" | "cancel" | "decline";
+        metadata?:any
+    }
 }

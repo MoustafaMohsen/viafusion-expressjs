@@ -1,5 +1,5 @@
 import { IAddress } from "./iaddress";
-import { ewallet_id } from "./types";
+import { categories, ewallet_id, payment_flow_type } from "./types";
 
 export interface IPayment {
     /**
@@ -193,7 +193,7 @@ export namespace PostCreatePayment {
         description: string //must
         statement_descriptor?: string
         address: IAddress //must
-        category?: string
+        category?: categories
         metadata?: any
     }
 
@@ -223,10 +223,10 @@ export namespace ListPayments {
     export interface Response {
         type: string
         name: string
-        category: "bank_redirect" | "bank_transfer" | "card" | "cash" | "ewallet" | "rapyd_ewallet"
+        category: categories
         image: string
         country: string
-        payment_flow_type: "redirect_url" | "bank_redirect" | "bank_transfer" | "card" | "cash" | "ewallet" | "rapyd_ewallet" | "rapyd_ewallet"
+        payment_flow_type: payment_flow_type
         currencies: string[]
         status: number
         is_cancelable: boolean

@@ -7,6 +7,9 @@ export type kycid_id = `kycid_${string}`;
 export type contact_id = `cont_${string}`;
 export type address_id = `address_${string}`;
 
+export type categories = "bank_redirect" | "bank_transfer" | "card" | "cash" | "ewallet" | "rapyd_ewallet";
+export type payment_flow_type = "redirect_url" | categories | "rapyd_ewallet";
+
 
 
 export type MM = '00'|'01'|'02'|'03'|'04'|'05'|'06'|'07'|'08'|'09'|'10'|'11'|'12'

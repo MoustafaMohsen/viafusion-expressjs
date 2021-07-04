@@ -1,8 +1,9 @@
 import { ISender } from '../rapyd/isender';
 import { PostCreatePayment } from '../rapyd/ipayment';
-import { contact_id, customer_id } from '../rapyd/types';
+import { categories, contact_id, customer_id } from '../rapyd/types';
 import { ewallet_id } from "../rapyd/types";
 import { IPayment } from '../rapyd/ipayment';
+import { TransferToWallet } from '../rapyd/iwallet';
 /**
  *
             meta_id SERIAL PRIMARY KEY,
@@ -31,11 +32,18 @@ export interface IDBMetaContact {
 }
 
 export interface ITransaction {
-  id: string
-  source_amount?: string
-  destination_amount?: string
-  sources: PostCreatePayment.ICreate[]
-  destinations: any[]
-  execute: boolean
-  executed: boolean
+  id: string;
+  source_amount?: string;
+  destination_amount?: string;
+  payments: PostCreatePayment.ICreate[];
+  payouts: any[];
+
+  payments_response: PostCreatePayment.ICreate[];
+  payouts_response: any[];
+
+  transfer_resoponse:TransferToWallet.Response;
+  
+  execute: boolean;
+  executed: boolean;
+  type: "w2w"| `${categories}2${categories}`
 }

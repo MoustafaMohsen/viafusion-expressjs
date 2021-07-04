@@ -1,10 +1,11 @@
-import { resolve } from 'path';
+import { MetaContactService } from './metacontact';
 import { ICreateCustomer, IDBContact, ICreateCustomerResponse } from './../../interfaces/db/idbcontact';
 import { UserService } from './user';
 import { ICreateWallet, IDBWallet, IResponseCreateWallet } from '../../interfaces/db/idbwallet';
 import { ApiService } from '../api/api';
 import { IContact } from '../../interfaces/rapyd/icontact';
-import { WalletBallanceResponse } from '../../interfaces/rapyd/iwallet';
+import { TransferToWallet, WalletBallanceResponse } from '../../interfaces/rapyd/iwallet';
+import { ITransaction } from '../../interfaces/db/idbmetacontact';
 
 export class WalletService {
     constructor() { }
@@ -91,7 +92,83 @@ export class WalletService {
         return apiSrv.post<IContact>("ewallets/" + ewallet + "/contacts/" + contact, body)
     }
 
-    // TODO: get wallet / get wallet ballance
+    async transfer_money_to_phone_number(contact_reference_id: number, amount: number, phone_number: string, currency = "USD") {
+        // check wallet has this ballance
+        let userSrv = new UserService();
+        await this.update_wallet_accounts(contact_reference_id);
+        var user = await userSrv.get_db_user({ contact_reference_id });
+        let balance = this.reduce_accounts_to_amount(user.rapyd_wallet_data.accounts, currency);
+        if (balance >= amount) {
+            // check user exsits
+            let user = await userSrv.get_db_user({ phone_number });
+            if (user) {
+                let source_ewallet = user.ewallet;
+                let destination_ewallet = user.ewallet;
+                let transfer_object: TransferToWallet.Request = {
+                    source_ewallet,
+                    destination_ewallet,
+                    amount,
+                    currency,
+                    metadata: {
+                        tran: "w2w"
+                    }
+                }
+                new Promise((resolve, reject) => {
+                    this.transfer_to_wallet(transfer_object).then(
+                        async (res) => {
+                            // set transfer response
+                            this.set_transfer_response({ id: res.body.data.id, status: "accept", metadata: { type: "w2w" } }).then(async (res) => {
+                                // save response
+                                let transfer_resoponse = res.body.data;
+                                let metacontactSrv = new MetaContactService();
+                                let metacontact = await metacontactSrv.get_db_metacontact({ contact_reference_id } as any);
+                                metacontact.transactions.push({
+                                    type: "w2w",
+                                    transfer_resoponse
+                                } as any);
+
+                                metacontact = await metacontactSrv.update_db_metacontact({ contact_reference_id } as any, {
+                                    transactions: JSON.stringify(metacontact.transactions)
+                                } as any);
+                                resolve(metacontact)
+                            }).catch(error => {
+                                console.error(error);
+                                reject(reject)
+                            })
+                        }
+                    ).catch(error => {
+                        console.error(error);
+                        reject(reject)
+                    })
+                })
+            } else {
+                // handle send anyway
+
+            }
+        }
+    }
+
+    reduce_accounts_to_amount(accounts: WalletBallanceResponse[], currency: string) {
+        let filterd = accounts.filter(a => a.currency == currency);
+        if (filterd) {
+            let balance: number = filterd.reduce((a, b) => {
+                return (a.balance + b.balance) as any
+            }) as any
+            return balance;
+        } else {
+            return 0
+        }
+    }
+
+    transfer_to_wallet(transfer_object: TransferToWallet.Request) {
+        var apiSrv = new ApiService();
+        return apiSrv.post<TransferToWallet.Response>("account/transfer", transfer_object)
+    }
+
+    set_transfer_response(set_object: TransferToWallet.Set_Response) {
+        var apiSrv = new ApiService();
+        return apiSrv.post<TransferToWallet.Response>("account/transfer/response", set_object)
+    }
 
 
     create_customer(customer: ICreateCustomer) {
@@ -115,11 +192,11 @@ export class WalletService {
         user.meta = user.meta || {};
 
         var apiSrv = new ApiService();
-        return new Promise((resolve,reject)=>{
-            apiSrv.get<WalletBallanceResponse[]>("user/"+wallet_id+"/accounts").then( async (res)=>{
+        return new Promise((resolve, reject) => {
+            apiSrv.get<WalletBallanceResponse[]>("user/" + wallet_id + "/accounts").then(async (res) => {
                 let wallet_accounts = res.body.data;
                 user.rapyd_wallet_data.accounts = wallet_accounts;
-                user = await userSrv.update_db_user({ contact_reference_id } , {meta:user.meta});
+                user = await userSrv.update_db_user({ contact_reference_id }, { meta: user.meta });
                 resolve(user);
             })
         })

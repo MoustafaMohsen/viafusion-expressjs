@@ -1,5 +1,5 @@
 import { contact_id, customer_id } from './../rapyd/types.d';
-import { IWallet } from './../rapyd/iwallet';
+import { IWallet, WalletBallanceResponse } from './../rapyd/iwallet';
 import { ewallet_id } from "../rapyd/types";
 import { IDBSecurity } from './isecurity';
 /**
@@ -66,7 +66,7 @@ export namespace IResponseCreateWallet {
         last_name: string
         id: string
         status: string
-        accounts: any[]
+        accounts: WalletBallanceResponse[]
         verification_status: string
         type: string
         metadata: any
