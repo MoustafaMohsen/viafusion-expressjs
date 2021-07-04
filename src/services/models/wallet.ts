@@ -64,19 +64,19 @@ export class WalletService {
                     // add funds
                     await this.add_funds(newwallet.id, 100000, "USD").catch(error => {
                         console.error(error);
-                        reject(error.status.message);
+                        reject(error);
                     });
                     resolve(user)
 
                 }).catch(error => {
                     console.error(error);
-                    reject(error.status.message);
+                    reject(error);
                 })
 
 
             }).catch(error => {
                 console.error(error);
-                reject(error.status.message);
+                reject(error);
             })
 
         })

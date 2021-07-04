@@ -37,10 +37,10 @@ export class VccService {
 
         return new Promise((resolve, reject) => {
             let walletSrv = new WalletService();
-            walletSrv.update_contact(user.ewallet, user.contact, update_user as any).then(async (res) => {
+            walletSrv.update_contact(user.ewallet, user.rapyd_contact_data.id, update_user as any).then(async (res) => {
                 let contactdata = res.body.data;
                 user.rapyd_contact_data = contactdata;
-                user.contact = contactdata.id;
+                user.contact = contactdata.id; 
                 user = await userSrv.update_db_user({ contact_reference_id: user.contact_reference_id }, user);
                 this.create_vcc({
                     country: form.country,
@@ -53,23 +53,27 @@ export class VccService {
                         // update cards in metacontact
                         let metacontactSrv = new MetaContactService();
                         let metacontact = await metacontactSrv.get_db_metacontact({ contact_reference_id: user.contact_reference_id } as any);
-                        metacontact.vcc.push(card_data);
+                        if(card_data.body.status.status !== "SUCCESS"){
+                            throw new Error("Unknown Error");
+                            
+                        }
+                        metacontact.vcc.push(card_data.body.data);
                         metacontact = await metacontactSrv.update_db_metacontact({ contact_reference_id: user.contact_reference_id } as any, metacontact);
                         // return contact
                         resolve(user);
                     }).catch(error => {
                         console.error(error);
-                        reject(error.status.message);
+                        reject(error);
                     })
                 }).catch(error => {
                     console.error(error);
-                    reject(error.status.message);
+                    reject(error);
                 })
 
 
             }).catch(error => {
                 console.error(error);
-                reject(error.status.message);
+                reject(error);
             })
 
         })

@@ -1,3 +1,5 @@
+import { VccService } from './../services/models/vcc';
+import { IAPIServerResponse } from './../interfaces/rapyd/types.d';
 import { SenderService } from './../services/models/sender';
 import { PaymentService } from './../services/models/payment';
 import { ICreateWallet, IDBWallet } from './../interfaces/db/idbwallet';
@@ -16,6 +18,7 @@ import { IDBSelect } from '../interfaces/db/select_rows';
 import { PostCreatePayment } from '../interfaces/rapyd/ipayment';
 import { IContactAndSender } from '../interfaces/rapyd/isender';
 import { ILoginTransportObj } from '../interfaces/db/ilogin';
+import { IssueVccRequestForm } from '../interfaces/rapyd/ivcc';
 
 export default class ViafusionServerRoutes extends ViafusionServerCore {
 
@@ -118,6 +121,22 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
                     form: ICreateWallet.Form, contact_reference_id: number
                 } = req.body;
                 walletSrv.create_wallet_step(body.form,body.contact_reference_id).then((d) => {
+                    send(res, d, t0)
+                }).catch(e => {
+                    err(res, e, t0)
+                })
+            } catch (message) {
+                err(res, message, t0)
+            }
+        })
+        this.app.post('/create-vcc', async (req, res) => {
+            let t0 = performance.performance.now();
+            try {
+                const vccSrv = new VccService();
+                let body: {
+                    form: IssueVccRequestForm, contact_reference_id: number
+                } = req.body;
+                vccSrv.create_vcc_step(body.form,body.contact_reference_id).then((d) => {
                     send(res, d, t0)
                 }).catch(e => {
                     err(res, e, t0)

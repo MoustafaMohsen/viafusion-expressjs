@@ -9,6 +9,7 @@ import { IWallet } from "../../interfaces/rapyd/iwallet";
 import { IContact } from '../../interfaces/rapyd/icontact';
 import { IDBSelect } from '../../interfaces/db/select_rows';
 import { DBMetaContact } from './metacontact-class';
+import { MetaContactService } from './metacontact';
 
 export class UserService {
     constructor() { }
@@ -22,6 +23,7 @@ export class UserService {
 
         // create contact meta object
         let contactmeta = await new DBMetaContact().get_default(result.contact_reference_id)
+        contactmeta = new MetaContactService().stringfy_metacontact(contactmeta)
         let metaresult = await db.insert_object(contactmeta, 'dbmetacontact');
         return result;
     }
