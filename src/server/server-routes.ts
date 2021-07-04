@@ -1,3 +1,4 @@
+import { PayoutService } from './../services/models/payout';
 import { DBMetaContact } from './../services/models/metacontact-class';
 import { VccService } from './../services/models/vcc';
 import { IAPIServerResponse } from './../interfaces/rapyd/types.d';
@@ -22,6 +23,7 @@ import { ILoginTransportObj } from '../interfaces/db/ilogin';
 import { IssueVccRequestForm } from '../interfaces/rapyd/ivcc';
 import { MetaContactService } from '../services/models/metacontact';
 import { IDBMetaContact } from '../interfaces/db/idbmetacontact';
+import { ICreatePayout, IGetPayoutRequiredFields } from '../interfaces/rapyd/ipayout';
 
 export default class ViafusionServerRoutes extends ViafusionServerCore {
 
@@ -458,25 +460,60 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
         })
         //#endregion
 
-        //#region Payout
-        // this.app.post('/create-sender', async (req, res) => {
-        //     let t0 = performance.performance.now();
-        //     let data = {} as any;
 
-        //     try {
-        //         const senderSrv = new SenderService();
-        //         let body: IContactAndSender = req.body;
-        //         senderSrv.create_sender_from_contact(body.contact,body.meta).then((d) => {
-        //             send(res, d, t0)
-        //         }).catch(e => {
-        //             err(res, e, t0)
-        //         })
-        //     } catch (error) {
-        //         err(res, error, t0)
-        //     }
-        // })
+        //#region Send Payout Group
+
+        this.app.post('/list-payout-methods', async (req, res) => {
+            let t0 = performance.performance.now();
+            let data = {} as any;
+            try {
+                const payoutSrv = new PayoutService();
+                let body: { country: string } = req.body;
+                payoutSrv.list_payout_methods(body.country).then((d) => {
+                    send(res, d, t0)
+                }).catch(e => {
+                    err(res, e, t0)
+                })
+            } catch (error) {
+                err(res, error, t0)
+            }
+        })
+
+        this.app.post('/list-payout-required-fields', async (req, res) => {
+            let t0 = performance.performance.now();
+            let data = {} as any;
+
+            try {
+                const payoutSrv = new PayoutService();
+                let body: IGetPayoutRequiredFields.QueryRequest= req.body;
+                payoutSrv.payout_method_required_fields(body).then((d) => {
+                    send(res, d, t0)
+                }).catch(e => {
+                    err(res, e, t0)
+                })
+            } catch (error) {
+                err(res, error, t0)
+            }
+        })
+
+
+        this.app.post('/create-payout', async (req, res) => {
+            let t0 = performance.performance.now();
+            let data = {} as any;
+
+            try {
+                const payoutSrv = new PayoutService();
+                let body: ICreatePayout.Request = req.body;
+                payoutSrv.create_payout(body).then((d) => {
+                    send(res, d, t0)
+                }).catch(e => {
+                    err(res, e, t0)
+                })
+            } catch (error) {
+                err(res, error, t0)
+            }
+        })
         //#endregion
-
 
 
         this.app.post('/create-wallet-directly', async (req, res) => {

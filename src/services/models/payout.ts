@@ -1,14 +1,14 @@
 import { ApiService } from '../api/api';
 import { ViafusionDB } from '../db/viafusiondb';
 import { IDBSelect } from '../../interfaces/db/select_rows';
-import { IGetPayoutRequiredFields, IListPayout } from '../../interfaces/rapyd/ipayout';
+import { ICreatePayout, IGetPayoutRequiredFields, IListPayout } from '../../interfaces/rapyd/ipayout';
 
 export class PayoutService {
     constructor() {}
 
-    list_payout_methods(beneficiary_country:string,payout_currency:string){
+    list_payout_methods(country:string){
         var apiSrv = new ApiService();
-        return apiSrv.get<IListPayout.Response[]>("payouts/supported_types?beneficiary_country="+beneficiary_country)
+        return apiSrv.get<IListPayout.Response[]>("payouts/supported_types?beneficiary_country="+country)
     }
 
     /** entity is alway "individual" and sender currency is always "USD" */
@@ -18,7 +18,7 @@ export class PayoutService {
     }
 
     // TODO: make request
-    create_payout(create_payout_object:IGetPayoutRequiredFields.QueryRequest){
+    create_payout(create_payout_object:ICreatePayout.Request){
         var apiSrv = new ApiService();
         return apiSrv.post<any>("payouts",create_payout_object)
     }

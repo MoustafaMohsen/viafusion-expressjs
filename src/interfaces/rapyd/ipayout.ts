@@ -1,6 +1,7 @@
 import { RequiredFields } from "./ipayment";
 
 export namespace IListPayout {
+
     export interface Response {
         payout_method_type: string
         name: string
@@ -54,11 +55,138 @@ export namespace IGetPayoutRequiredFields {
         batch_file_header: string
     }
 
-    export interface QueryRequest{
-        sender_country:string
-        beneficiary_country:string
-        payout_currency:string
-        payout_amount:number
-        payout_method_type:string
+    export interface QueryRequest {
+        sender_country: string
+        beneficiary_country: string
+        payout_currency: string
+        payout_amount: number
+        payout_method_type: string
     }
+}
+
+export namespace ICreatePayout {
+    export interface Request {
+        beneficiary: Beneficiary
+        beneficiary_country: string
+        beneficiary_entity_type: string
+        description: string
+        payout_method_type: string
+        ewallet: string
+        metadata?: any
+        payout_amount: any
+        payout_currency: string
+        sender_country: string
+        sender_currency: string
+        sender_entity_type: string
+        merchant_reference_id?: string
+        sender?: Sender
+        statement_descriptor?: string
+        confirm_automatically?: boolean
+    }
+    export interface Beneficiary {
+        first_name?: string
+        last_name?: string
+        account_number?: string
+        payment_type?: string
+        address?: string
+        city?: string
+        country?: string
+        state?: string
+        phone_number?: string
+        postcode?: string
+        aba?: string
+        identification_type?: string
+        identification_value?: string
+        email?: string
+        card_number?: string
+        card_expiration_month?: string
+        card_expiration_year?: string
+        card_cvv?: string
+        company_name?: string
+
+        // response
+        entity_type: string
+        name: string
+        currency: string
+        id?: string
+
+    }
+    export interface Sender {
+        first_name?: string
+        last_name?: string
+        identification_type?: string
+        identification_value?: string
+        phone_number: string
+        occupation?: string
+        source_of_income?: string
+        date_of_birth?: string
+        address?: string
+        purpose_code?: string
+        beneficiary_relationship?: string
+        company_name?: string
+        city?: string
+        state?: string
+
+        // response
+        country: string
+        entity_type: string
+        currency: string
+        id?: string
+        name?: string
+    }
+
+    // send
+    export interface Response {
+        id: string
+        payout_type: string
+        payout_method_type: string
+        amount: number
+        payout_currency: string
+        sender_amount: number
+        sender_currency: string
+        status: string
+        sender_country: string
+        sender: Sender
+        beneficiary_country: string
+        beneficiary: Beneficiary
+        fx_rate: number
+        instructions: Instructions
+        ewallets: Ewallet[]
+        metadata: Metadata
+        description: string
+        created_at: number
+        payout_fees: any
+        expiration: any
+        paid_at: any
+        identifier_type: any
+        identifier_value: any
+        error: any
+        paid_amount: number
+        statement_descriptor: any
+        gc_error_code?: string
+        merchant_reference_id?: string
+    }
+
+
+
+    export interface Instructions {
+        name?: string
+        steps?: Step[]
+    }
+
+    export interface Step {
+        step1: string
+    }
+
+    export interface Ewallet {
+        ewallet_id: string
+        amount: number
+        percent: number
+    }
+
+    export interface Metadata {
+        merchant_defined: boolean
+    }
+
+
 }
