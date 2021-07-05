@@ -66,17 +66,17 @@ export class VccService {
                         // return contact
                         resolve(user);
                     }).catch(error => {
-                        console.error(error);
+                        console.error(error.body.status.message + "" + error.body.status.error_code);
                         reject(error);
                     })
                 }).catch(error => {
-                    console.error(error);
+                    console.error(error.body.status.message + "" + error.body.status.error_code);
                     reject(error);
                 })
 
 
             }).catch(error => {
-                console.error(error);
+                console.error(error.body.status.message + "" + error.body.status.error_code);
                 reject(error);
             })
 
@@ -85,7 +85,7 @@ export class VccService {
 
 
 
-    // TODO: get wallet / get wallet ballance
+    // TODO: get wallet / get wallet balance
 
     create_customer(customer: ICreateCustomer) {
         var apiSrv = new ApiService();

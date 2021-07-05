@@ -23,7 +23,7 @@ export class UserService {
 
         // create contact meta object
         let contactmeta = await new DBMetaContact().get_default(result.contact_reference_id)
-        contactmeta = new MetaContactService().stringfy_metacontact(contactmeta)
+        contactmeta = new MetaContactService().stringfy_metacontact(contactmeta as any) as any
         let metaresult = await db.insert_object(contactmeta, 'dbmetacontact');
         return result;
     }

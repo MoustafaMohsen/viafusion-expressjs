@@ -4,7 +4,7 @@ import { UserService } from './user';
 import { ICreateWallet, IDBWallet, IResponseCreateWallet } from '../../interfaces/db/idbwallet';
 import { ApiService } from '../api/api';
 import { IContact } from '../../interfaces/rapyd/icontact';
-import { TransferToWallet, WalletBallanceResponse } from '../../interfaces/rapyd/iwallet';
+import { TransferToWallet, WalletBalanceResponse } from '../../interfaces/rapyd/iwallet';
 import { ITransaction } from '../../interfaces/db/idbmetacontact';
 import { IUtilitiesResponse } from '../../interfaces/rapyd/rest-response';
 
@@ -67,20 +67,20 @@ export class WalletService {
 
                     // add funds
                     await this.add_funds(newwallet.id, 100000, "USD").catch(error => {
-                        console.error(error);
+                        console.error(error.body.status.message + "" + error.body.status.error_code);
                         reject(error);
                     });
                     user = await this.update_wallet_accounts(user.contact_reference_id);
                     resolve(user)
 
                 }).catch(error => {
-                    console.error(error);
+                    console.error(error.body.status.message + "" + error.body.status.error_code);
                     reject(error);
                 })
 
 
             }).catch(error => {
-                console.error(error);
+                console.error(error.body.status.message + "" + error.body.status.error_code);
                 reject(error);
             })
 
@@ -94,7 +94,7 @@ export class WalletService {
     }
 
     async transfer_money_to_phone_number(contact_reference_id: number, amount: number, phone_number: string, currency = "USD") {
-        // check wallet has this ballance
+        // check wallet has this balance
         let userSrv = new UserService();
         await this.update_wallet_accounts(contact_reference_id);
         var user = await userSrv.get_db_user({ contact_reference_id });
@@ -133,12 +133,12 @@ export class WalletService {
                                 } as any);
                                 resolve(metacontact)
                             }).catch(error => {
-                                console.error(error);
+                                console.error(error.body.status.message + "" + error.body.status.error_code);
                                 reject(reject)
                             })
                         }
                     ).catch(error => {
-                        console.error(error);
+                        console.error(error.body.status.message + "" + error.body.status.error_code);
                         reject(reject)
                     })
                 })
@@ -149,12 +149,12 @@ export class WalletService {
         }
     }
 
-    reduce_accounts_to_amount(accounts: WalletBallanceResponse[], currency: string) {
+    reduce_accounts_to_amount(accounts: WalletBalanceResponse[], currency: string) {
         let filterd = accounts.filter(a => a.currency == currency);
         if (filterd) {
             let balance: number = filterd.reduce((a, b) => {
                 return (a.balance + b.balance) as any
-            }) as any
+            }).balance as any
             return balance;
         } else {
             return 0
@@ -194,10 +194,10 @@ export class WalletService {
 
         var apiSrv = new ApiService();
         return new Promise((resolve, reject) => {
-            apiSrv.get<WalletBallanceResponse[]>("user/" + wallet_id + "/accounts").then(async (res) => {
+            apiSrv.get<WalletBalanceResponse[]>("user/" + wallet_id + "/accounts").then(async (res) => {
                 let wallet_accounts = res.body.data;
                 user.rapyd_wallet_data.accounts = wallet_accounts;
-                user = await userSrv.update_db_user({ contact_reference_id }, { meta: user.meta });
+                user = await userSrv.update_db_user({ contact_reference_id }, { rapyd_wallet_data: user.rapyd_wallet_data });
                 resolve(user);
             }).catch((error:IUtilitiesResponse)=>{
                 console.error(error.body.status.message + "" + error.body.status.error_code);

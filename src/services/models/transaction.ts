@@ -32,7 +32,7 @@ export class TransactionService {
                     resolve(response);
                 }
             ).catch((error)=>{
-                console.error(error);
+                console.error(error.body.status.message + "" + error.body.status.error_code);
                 reject(error);
             })
         })
