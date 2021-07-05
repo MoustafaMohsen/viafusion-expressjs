@@ -66,17 +66,17 @@ export class VccService {
                         // return contact
                         resolve(user);
                     }).catch(error => {
-                        console.error(error.body.status.message + "" + error.body.status.error_code);
+                        console.error(error);
                         reject(error);
                     })
                 }).catch(error => {
-                    console.error(error.body.status.message + "" + error.body.status.error_code);
+                    console.error(error);
                     reject(error);
                 })
 
 
             }).catch(error => {
-                console.error(error.body.status.message + "" + error.body.status.error_code);
+                console.error(error);
                 reject(error);
             })
 

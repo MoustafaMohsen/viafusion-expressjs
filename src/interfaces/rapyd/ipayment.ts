@@ -410,3 +410,153 @@ export namespace RequiredFields {
 
 
 }
+
+
+export namespace CompeletePaymentRequest{
+    export interface Cash{
+        /** Payment Id */
+        token:string;
+    }
+    export interface Card{
+        /** Payment Id */
+        token:string;
+    }
+    export interface BankTransfer{
+        /** Payment Id */
+        token:string;
+        /** Original Payment Amount */
+        param2:string;
+    }
+    export interface BankRedirect{
+        /** Payment Id */
+        token:string;
+        /** rapyd */
+        param1:string;
+        /** success */
+        param2:string;
+    }
+
+}
+export namespace CompeletePaymentResponse{
+    export interface Response extends PostCreatePayment.Response {
+        id: string
+        amount: number
+        original_amount: number
+        is_partial: boolean
+        currency_code: string
+        country_code: string
+        status: string
+        description: string
+        merchant_reference_id: string
+        customer_token: string
+        payment_method: string
+        payment_method_data: PaymentMethodData
+        expiration: number
+        captured: boolean
+        refunded: boolean
+        refunded_amount: number
+        receipt_email: string
+        redirect_url: string
+        complete_payment_url: string
+        error_payment_url: string
+        receipt_number: string
+        flow_type: string
+        address: Address
+        statement_descriptor: string
+        transaction_id: string
+        created_at: number
+        metadata: Metadata2
+        failure_code: string
+        failure_message: string
+        paid: boolean
+        paid_at: number
+        dispute: any
+        refunds: any
+        order: any
+        outcome: any
+        visual_codes: VisualCodes
+        textual_codes: TextualCodes
+        instructions: any[]
+        ewallet_id: string
+        ewallets: Ewallet[]
+        payment_method_options: PaymentMethodOptions
+        payment_method_type: string
+        payment_method_type_category: string
+        fx_rate: number
+        merchant_requested_currency: any
+        merchant_requested_amount: any
+        fixed_side: string
+        payment_fees: any
+        invoice: string
+        escrow: any
+        group_payment: string
+        cancel_reason: any
+        initiation_type: string
+        mid: string
+        next_action: string
+      }
+      
+      export interface PaymentMethodData {
+        id: string
+        type: string
+        category: string
+        metadata: any
+        image: string
+        webhook_url: string
+        supporting_documentation: string
+        name: string
+        last4: string
+        acs_check: string
+        cvv_check: string
+        bin_details: BinDetails
+        expiration_year: string
+        expiration_month: string
+        fingerprint_token: string
+      }
+      
+      export interface BinDetails {
+        brand: any
+        bin_number: string
+      }
+      
+      export interface Address {
+        id: string
+        name: string
+        line_1: string
+        line_2: string
+        line_3: string
+        city: string
+        state: string
+        country: string
+        zip: string
+        phone_number: string
+        metadata: Metadata
+        canton: string
+        district: string
+        created_at: number
+      }
+      
+      export interface Metadata {}
+      
+      export interface Metadata2 {
+        name: string
+        image: string
+        category: string
+      }
+      
+      export interface VisualCodes {}
+      
+      export interface TextualCodes {}
+      
+      export interface Ewallet {
+        ewallet_id: string
+        amount: number
+        percent: number
+        refunded_amount: number
+      }
+      
+      export interface PaymentMethodOptions {
+        "3d_required": boolean
+      }
+      
+}

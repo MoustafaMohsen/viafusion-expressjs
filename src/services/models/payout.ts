@@ -18,8 +18,37 @@ export class PayoutService {
     }
 
     // TODO: make request
-    create_payout(create_payout_object:ICreatePayout.Request){
+    create_payout(create_payout_object: ICreatePayout.Request) {
         var apiSrv = new ApiService();
-        return apiSrv.post<any>("payouts",create_payout_object)
+        return apiSrv.post<ICreatePayout.Response>("payouts", create_payout_object)
+    }
+
+    get_payout(payout_id: string) {
+        var apiSrv = new ApiService();
+        return apiSrv.get<ICreatePayout.Response>("payouts/" + payout_id);
+    }
+
+    compelete_payout(payout_id: string) {
+        return new Promise((resolve, reject) => {
+            this.get_payout(payout_id).then(res => {
+                let payout = res.body.data;
+                if (payout.status == "CLO") {
+                    resolve(payout);
+                    return;
+                }
+                var apiSrv = new ApiService();
+                apiSrv.post<ICreatePayout.Response>("payouts/complete/"+payout.id+"/"+payout.amount,{}).then(res => {
+                    let payout = res.body.data
+                    resolve(payout);
+                }).catch(error => {
+                    console.error(error);
+                    reject(error)
+                })
+
+            }).catch(error => {
+                console.error(error);
+                reject(error)
+            })
+        })
     }
 }

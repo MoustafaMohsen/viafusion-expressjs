@@ -67,20 +67,20 @@ export class WalletService {
 
                     // add funds
                     await this.add_funds(newwallet.id, 100000, "USD").catch(error => {
-                        console.error(error.body.status.message + "" + error.body.status.error_code);
+                        console.error(error);
                         reject(error);
                     });
                     user = await this.update_wallet_accounts(user.contact_reference_id);
                     resolve(user)
 
                 }).catch(error => {
-                    console.error(error.body.status.message + "" + error.body.status.error_code);
+                    console.error(error);
                     reject(error);
                 })
 
 
             }).catch(error => {
-                console.error(error.body.status.message + "" + error.body.status.error_code);
+                console.error(error);
                 reject(error);
             })
 
@@ -133,12 +133,12 @@ export class WalletService {
                                 } as any);
                                 resolve(metacontact)
                             }).catch(error => {
-                                console.error(error.body.status.message + "" + error.body.status.error_code);
+                                console.error(error);
                                 reject(reject)
                             })
                         }
                     ).catch(error => {
-                        console.error(error.body.status.message + "" + error.body.status.error_code);
+                        console.error(error);
                         reject(reject)
                     })
                 })
@@ -200,7 +200,7 @@ export class WalletService {
                 user = await userSrv.update_db_user({ contact_reference_id }, { rapyd_wallet_data: user.rapyd_wallet_data });
                 resolve(user);
             }).catch((error:IUtilitiesResponse)=>{
-                console.error(error.body.status.message + "" + error.body.status.error_code);
+                console.error(error);
                 reject(error)
             })
         })
