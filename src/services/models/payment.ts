@@ -26,7 +26,7 @@ export class PaymentService {
         return apiSrv.get<PostCreatePayment.Response>("payments/" + payment_id);
     }
 
-    compelete_payment(payment_id: string) {
+    complete_payment(payment_id: string) {
         return new Promise((resolve, reject) => {
             this.get_payment(payment_id).then(res => {
                 let payment = res.body.data;

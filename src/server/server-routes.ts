@@ -167,7 +167,7 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
                 err(res, error, t0)
             }
         })
-        
+
         this.app.post('/create-db-metacontact', async (req, res) => {
             let t0 = performance.performance.now();
             try {
@@ -249,7 +249,7 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
         })
 
 
-        //#region Transaction
+        //#region Payments
         this.app.post('/execute-payments', async (req, res) => {
             let t0 = performance.performance.now();
             try {
@@ -259,18 +259,52 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
                 var contact_reference_id = body.contact_reference_id
                 var tran_id = body.tran_id
                 let tranSrv = new TransactionService()
-                tranSrv.do_payments(contact_reference_id,tran_id).then(re=>{
+                tranSrv.do_payments(contact_reference_id, tran_id).then(re => {
                     send(res, re, t0)
                 }).catch(e => {
                     err(res, e, t0)
                 })
-                
-                return ;
+
+                return;
+            } catch (message) {
+                err(res, message, t0)
+            }
+        })
+
+        this.app.post('/complete-payment', async (req, res) => {
+            let t0 = performance.performance.now();
+            try {
+                var payment_id = req.body.payment_id
+                let paymentSrv = new PaymentService()
+                paymentSrv.complete_payment(payment_id).then(re => {
+                    send(res, re, t0)
+                }).catch(e => {
+                    err(res, e, t0)
+                })
+
+                return;
+            } catch (message) {
+                err(res, message, t0)
+            }
+        })
+        this.app.post('/get-payment', async (req, res) => {
+            let t0 = performance.performance.now();
+            try {
+                var payment_id = req.body.payment_id
+                let paymentSrv = new PaymentService()
+                paymentSrv.get_payment(payment_id).then(re => {
+                    send(res, re, t0)
+                }).catch(e => {
+                    err(res, e, t0)
+                })
+
+                return;
             } catch (message) {
                 err(res, message, t0)
             }
         })
         //#endregion
+
 
         //#region Transaction
         this.app.post('/execute-payouts', async (req, res) => {
@@ -282,18 +316,51 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
                 var contact_reference_id = body.contact_reference_id
                 var tran_id = body.tran_id
                 let tranSrv = new TransactionService()
-                tranSrv.do_payouts(contact_reference_id,tran_id).then(re=>{
+                tranSrv.do_payouts(contact_reference_id, tran_id).then(re => {
                     send(res, re, t0)
                 }).catch(e => {
                     err(res, e, t0)
                 })
-                
-                return ;
+
+                return;
+            } catch (message) {
+                err(res, message, t0)
+            }
+        })
+        this.app.post('/complete-payout', async (req, res) => {
+            let t0 = performance.performance.now();
+            try {
+                var payout_id = req.body.payout_id
+                let payoutSrv = new PayoutService()
+                payoutSrv.complete_payout(payout_id).then(re => {
+                    send(res, re, t0)
+                }).catch(e => {
+                    err(res, e, t0)
+                })
+
+                return;
+            } catch (message) {
+                err(res, message, t0)
+            }
+        })
+        this.app.post('/get-payout', async (req, res) => {
+            let t0 = performance.performance.now();
+            try {
+                var payout_id = req.body.payout_id
+                let payoutSrv = new PayoutService()
+                payoutSrv.get_payout(payout_id).then(re => {
+                    send(res, re, t0)
+                }).catch(e => {
+                    err(res, e, t0)
+                })
+
+                return;
             } catch (message) {
                 err(res, message, t0)
             }
         })
         //#endregion
+
 
 
         //#region OTP

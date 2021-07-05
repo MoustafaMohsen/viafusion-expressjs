@@ -28,7 +28,7 @@ export class PayoutService {
         return apiSrv.get<ICreatePayout.Response>("payouts/" + payout_id);
     }
 
-    compelete_payout(payout_id: string) {
+    complete_payout(payout_id: string) {
         return new Promise((resolve, reject) => {
             this.get_payout(payout_id).then(res => {
                 let payout = res.body.data;

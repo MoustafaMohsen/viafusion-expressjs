@@ -412,7 +412,7 @@ export namespace RequiredFields {
 }
 
 
-export namespace CompeletePaymentRequest{
+export namespace completePaymentRequest{
     export interface Cash{
         /** Payment Id */
         token:string;
@@ -437,7 +437,7 @@ export namespace CompeletePaymentRequest{
     }
 
 }
-export namespace CompeletePaymentResponse{
+export namespace completePaymentResponse{
     export interface Response extends PostCreatePayment.Response {
         id: string
         amount: number
