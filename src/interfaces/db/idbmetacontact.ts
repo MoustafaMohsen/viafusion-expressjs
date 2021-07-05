@@ -1,4 +1,4 @@
-import { ISender } from '../rapyd/isender';
+import { IUtilitiesResponse } from './../rapyd/rest-response';
 import { PostCreatePayment } from '../rapyd/ipayment';
 import { categories, contact_id, customer_id } from '../rapyd/types';
 import { ewallet_id } from "../rapyd/types";
@@ -41,12 +41,17 @@ export interface ITransaction {
   payments: PostCreatePayment.Request[];
   payouts: ICreatePayout.Request[];
 
-  payments_response: PostCreatePayment.Response[];
-  payouts_response: ICreatePayout.Response[];
+  payments_response: IUtilitiesResponse<PostCreatePayment.Response>[];
+  payouts_response: IUtilitiesResponse<ICreatePayout.Response>[];
 
   transfer_resoponse:TransferToWallet.Response;
   
   execute: boolean;
   executed: boolean;
   type: "w2w"| `${categories}2${categories}`
+}
+
+export interface IExcuteTransaction{
+  contact_reference_id:number,
+  tran_id:string
 }

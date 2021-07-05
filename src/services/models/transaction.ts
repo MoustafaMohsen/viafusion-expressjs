@@ -7,60 +7,88 @@ import { ListPayments, RequiredFields, PostCreatePayment, IPayment } from '../..
 import { ViafusionDB } from '../db/viafusiondb';
 import { IDBSelect } from '../../interfaces/db/select_rows';
 import { ICreatePayout } from '../../interfaces/rapyd/ipayout';
+import { IUtilitiesResponse } from '../../interfaces/rapyd/rest-response';
 
 export class TransactionService {
-    constructor() {}
+    constructor() { }
 
-    async execute_create_payment(transaction:ITransaction){
+    execute_transaction(_transaction: ITransaction){
+         
+    }
+
+    execute_create_payment(_transaction: ITransaction):Promise<ITransaction> {
+        var transaction = {..._transaction};
         const payments = transaction.payments;
-        for (let i = 0; i < payments.length; i++) {
-            const payment = payments[i];
-            this.create_payment(payment).then(
-                res=>{
-                    transaction.payments_response = transaction.payments_response || [] ;
-                    transaction.payments_response.push(res)
-                }
-            )
-        }
+        return new Promise((resolve, reject) => {
+            for (let i = 0; i < payments.length; i++) {
+                const payment = payments[i];
+                this.create_payment(payment).then(
+                    res => {
+                        transaction.payments_response.push(res)
+                        if (transaction.payments_response.length == payments.length) {
+                            resolve(transaction)
+                        }
+                    }
+                ).catch((error) => {
+                    console.error(error);
+                    transaction.payments_response.push(error)
+                    if (transaction.payments_response.length == payments.length) {
+                        resolve(transaction)
+                    }
+                })
+            }
+        })
+
     }
 
-    async execute_create_payout(transaction:ITransaction){
+    execute_create_payout(_transaction: ITransaction):Promise<ITransaction> {
+        var transaction = {..._transaction};
+        transaction.payouts_response = transaction.payouts_response || [];
         const payouts = transaction.payouts;
-        for (let i = 0; i < payouts.length; i++) {
-            const payout = payouts[i];
-            this.create_payout(payout).then(
-                res=>{
-                    transaction.payouts_response = transaction.payouts_response || [] ;
-                    transaction.payouts_response.push(res)
-                }
-            )
-        }
+
+        return new Promise((resolve, reject) => {
+            for (let i = 0; i < payouts.length; i++) {
+                const payout = payouts[i];
+                this.create_payout(payout).then(
+                    res => {
+                        transaction.payouts_response.push(res)
+                        if (transaction.payouts_response.length == payouts.length) {
+                            resolve(transaction)
+                        }
+                    }
+                ).catch((error) => {
+                    console.error(error);
+                    transaction.payouts_response.push(error)
+                    if (transaction.payouts_response.length == payouts.length) {
+                        resolve(transaction)
+                    }
+                })
+            }
+        })
     }
 
-    create_payment(payment:PostCreatePayment.Request):Promise<PostCreatePayment.Response>{
+    create_payment(payment: PostCreatePayment.Request): Promise<IUtilitiesResponse<PostCreatePayment.Response>> {
         let paymentSrv = new PaymentService();
-        return new Promise((resolve,reject)=>{
+        return new Promise((resolve, reject) => {
             paymentSrv.create_payment(payment).then(
-                res=>{
-                    let response = res.body.data;
-                    resolve(response);
+                res => {
+                    resolve(res);
                 }
-            ).catch((error)=>{
+            ).catch((error) => {
                 console.error(error);
                 reject(error);
             })
         })
     }
-    
-    create_payout(payment:ICreatePayout.Request):Promise<ICreatePayout.Response>{
-        let paymentSrv = new PayoutService();
-        return new Promise((resolve,reject)=>{
-            paymentSrv.create_payout(payment).then(
-                res=>{
-                    let response = res.body.data;
-                    resolve(response);
+
+    create_payout(payout: ICreatePayout.Request): Promise<IUtilitiesResponse<ICreatePayout.Response>> {
+        let payoutSrv = new PayoutService();
+        return new Promise((resolve, reject) => {
+            payoutSrv.create_payout(payout).then(
+                res => {
+                    resolve(res);
                 }
-            ).catch((error)=>{
+            ).catch((error) => {
                 console.error(error);
                 reject(error);
             })

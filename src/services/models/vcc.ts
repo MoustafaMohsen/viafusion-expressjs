@@ -54,7 +54,7 @@ export class VccService {
                         let metacontactSrv = new MetaContactService();
                         let metacontact = await metacontactSrv.get_db_metacontact({ contact_reference_id: user.contact_reference_id } as any);
                         if(card_data.body.status.status !== "SUCCESS"){
-                            throw new Error("Unknown Error");
+                            throw card_data;
                             
                         }
                         let updated = {

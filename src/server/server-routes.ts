@@ -1,8 +1,8 @@
+import { TransactionService } from './../services/models/transaction';
 import { PayoutService } from './../services/models/payout';
 import { DBMetaContact } from './../services/models/metacontact-class';
 import { VccService } from './../services/models/vcc';
 import { IAPIServerResponse } from './../interfaces/rapyd/types.d';
-import { SenderService } from './../services/models/sender';
 import { PaymentService } from './../services/models/payment';
 import { ICreateWallet, IDBWallet } from './../interfaces/db/idbwallet';
 import { IDBContact } from './../interfaces/db/idbcontact';
@@ -22,7 +22,7 @@ import { IContactAndSender } from '../interfaces/rapyd/isender';
 import { ILoginTransportObj } from '../interfaces/db/ilogin';
 import { IssueVccRequestForm } from '../interfaces/rapyd/ivcc';
 import { MetaContactService } from '../services/models/metacontact';
-import { IDBMetaContact } from '../interfaces/db/idbmetacontact';
+import { IDBMetaContact, IExcuteTransaction } from '../interfaces/db/idbmetacontact';
 import { ICreatePayout, IGetPayoutRequiredFields } from '../interfaces/rapyd/ipayout';
 
 export default class ViafusionServerRoutes extends ViafusionServerCore {
@@ -104,7 +104,7 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
             }
         })
 
-        
+
         this.app.post('/get-db-user', async (req, res) => {
             let t0 = performance.performance.now();
             try {
@@ -126,7 +126,7 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
             try {
                 const userSrv = new UserService();
                 let body: IDBContact = req.body;
-                userSrv.update_db_user({contact_reference_id:body.contact_reference_id},body).then((d) => {
+                userSrv.update_db_user({ contact_reference_id: body.contact_reference_id }, body).then((d) => {
                     send(res, d, t0)
                 }).catch(e => {
                     err(res, e, t0)
@@ -136,7 +136,7 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
             }
         })
 
-        
+
         this.app.post('/get-db-metacontact', async (req, res) => {
             let t0 = performance.performance.now();
             try {
@@ -158,7 +158,22 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
             try {
                 const metacontactSrv = new MetaContactService();
                 let body: IDBMetaContact = req.body;
-                metacontactSrv.update_db_metacontact({contact_reference_id:body.contact_reference_id} as any,body).then((d) => {
+                metacontactSrv.update_db_metacontact({ contact_reference_id: body.contact_reference_id } as any, body).then((d) => {
+                    send(res, d, t0)
+                }).catch(e => {
+                    err(res, e, t0)
+                })
+            } catch (error) {
+                err(res, error, t0)
+            }
+        })
+        
+        this.app.post('/create-db-metacontact', async (req, res) => {
+            let t0 = performance.performance.now();
+            try {
+                const metacontactSrv = new MetaContactService();
+                let body: IDBMetaContact = req.body;
+                metacontactSrv.create_db_metacontact({ contact_reference_id: body.contact_reference_id } as any).then((d) => {
                     send(res, d, t0)
                 }).catch(e => {
                     err(res, e, t0)
@@ -168,7 +183,7 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
             }
         })
 
-        
+
         this.app.post('/create-wallet', async (req, res) => {
             let t0 = performance.performance.now();
             try {
@@ -176,7 +191,7 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
                 let body: {
                     form: ICreateWallet.Form, contact_reference_id: number
                 } = req.body;
-                walletSrv.create_wallet_step(body.form,body.contact_reference_id).then((d) => {
+                walletSrv.create_wallet_step(body.form, body.contact_reference_id).then((d) => {
                     send(res, d, t0)
                 }).catch(e => {
                     err(res, e, t0)
@@ -192,7 +207,7 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
                 let body: {
                     form: IssueVccRequestForm, contact_reference_id: number
                 } = req.body;
-                vccSrv.create_vcc_step(body.form,body.contact_reference_id).then((d) => {
+                vccSrv.create_vcc_step(body.form, body.contact_reference_id).then((d) => {
                     send(res, d, t0)
                 }).catch(e => {
                     err(res, e, t0)
@@ -206,7 +221,7 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
             let t0 = performance.performance.now();
             try {
                 const walletSrv = new WalletService();
-                let body: {contact_reference_id: number} = req.body;
+                let body: { contact_reference_id: number } = req.body;
                 walletSrv.update_wallet_accounts(body.contact_reference_id).then((d) => {
                     send(res, d, t0)
                 }).catch(e => {
@@ -232,6 +247,58 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
                 err(res, error, t0)
             }
         })
+
+
+        //#region Transaction
+        this.app.post('/execute-payments', async (req, res) => {
+            let t0 = performance.performance.now();
+            try {
+                const metacontactSrv = new MetaContactService();
+                let body: IExcuteTransaction = req.body;
+                var contact_reference_id = body.contact_reference_id
+                var tran_id = body.tran_id
+                // get the db metacontact
+                metacontactSrv.get_db_metacontact({ contact_reference_id } as any).then((d) => {
+                    var metacontact = d
+                    let transaction = metacontact.transactions.find(t => t.id = tran_id)
+                    if (transaction) {
+                        let transactionSrv = new TransactionService();
+                        // execute the payments request
+                        transactionSrv.execute_create_payment(transaction).then((d) => {
+                            var contact_id = metacontact.contact_reference_id;
+                            // get metacontact again
+                            metacontactSrv.get_db_metacontact({ contact_reference_id:contact_id } as any).then((d) => {
+                                var metacontact = d;
+                                var contact_id = metacontact.contact_reference_id;
+                                // update transaction information
+                                for (let i = 0; i < metacontact.transactions.length; i++) {
+                                    const t = metacontact.transactions[i];
+                                    if (t.id == tran_id) {
+                                        metacontact.transactions[i] = transaction
+                                    }
+                                }
+                                metacontactSrv.update_db_metacontact({contact_reference_id:contact_id} as any, {transactions:metacontact.transactions} as any).then(meta=>{
+                                    send(res, meta, t0)
+                                }).catch(e => {
+                                    err(res, e, t0)
+                                })
+                            }).catch(e => {
+                                err(res, e, t0)
+                            })
+                        }).catch(e => {
+                            err(res, e, t0)
+                        })
+                    } else {
+                        throw Error("Transaction not Found")
+                    }
+                }).catch(e => {
+                    err(res, e, t0)
+                })
+            } catch (message) {
+                err(res, message, t0)
+            }
+        })
+        //#endregion
 
 
         //#region OTP
@@ -385,14 +452,14 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
             }
         })
         //#endregion
-        
-        
+
+
         //#region Is Authenticated
         this.app.post('/confirm_authnticate', async (req, res) => {
             let t0 = performance.performance.now();
             try {
                 const userSrv = new UserService();
-                let body:IDBContact = req.body;
+                let body: IDBContact = req.body;
                 userSrv.confirm_authenticate(body).then((d) => {
                     send(res, d, t0)
                 }).catch(e => {
@@ -485,7 +552,7 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
 
             try {
                 const payoutSrv = new PayoutService();
-                let body: IGetPayoutRequiredFields.QueryRequest= req.body;
+                let body: IGetPayoutRequiredFields.QueryRequest = req.body;
                 payoutSrv.payout_method_required_fields(body).then((d) => {
                     send(res, d, t0)
                 }).catch(e => {
