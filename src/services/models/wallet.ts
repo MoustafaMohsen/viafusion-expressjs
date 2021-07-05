@@ -6,6 +6,7 @@ import { ApiService } from '../api/api';
 import { IContact } from '../../interfaces/rapyd/icontact';
 import { TransferToWallet, WalletBallanceResponse } from '../../interfaces/rapyd/iwallet';
 import { ITransaction } from '../../interfaces/db/idbmetacontact';
+import { IUtilitiesResponse } from '../../interfaces/rapyd/rest-response';
 
 export class WalletService {
     constructor() { }
@@ -185,7 +186,7 @@ export class WalletService {
         })
     }
 
-    async update_wallet_accounts(contact_reference_id: number) {
+    async update_wallet_accounts(contact_reference_id: number):Promise<IDBContact>    {
         var userSrv = new UserService();
         var user = await userSrv.get_db_user({ contact_reference_id })
         let wallet_id = user.rapyd_contact_data.ewallet;
@@ -198,6 +199,9 @@ export class WalletService {
                 user.rapyd_wallet_data.accounts = wallet_accounts;
                 user = await userSrv.update_db_user({ contact_reference_id }, { meta: user.meta });
                 resolve(user);
+            }).catch((error:IUtilitiesResponse)=>{
+                console.error(error.body.status.message + "" + error.body.status.error_code);
+                reject(error)
             })
         })
     }
