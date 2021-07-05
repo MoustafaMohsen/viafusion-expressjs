@@ -8,7 +8,7 @@ import { IWallet } from "../../interfaces/rapyd/iwallet";
 import { ViafusionDB } from '../db/viafusiondb';
 import { IDBSelect } from '../../interfaces/db/select_rows';
 import { IContact } from '../../interfaces/rapyd/icontact';
-import { IssueVccRequest, IssueVccRequestForm, IssueVccResponse } from '../../interfaces/rapyd/ivcc';
+import { IssueVccRequest, IssueVccRequestForm, IssueVccResponse, ListIssuedVcc } from '../../interfaces/rapyd/ivcc';
 
 export class VccService {
     constructor() { }
@@ -23,6 +23,27 @@ export class VccService {
         return apiSrv.post<IssueVccResponse>("issuing/cards/activate", {
             card: card_number
         })
+    }
+
+    list_cards() {
+        var apiSrv = new ApiService();
+        return apiSrv.get<ListIssuedVcc.Response[]>("issuing/cards/")
+    }
+
+    async get_contact_cards(contact_reference_id):Promise<ListIssuedVcc.Response[]>{
+        let res = await this.list_cards();
+
+        let userSrv = new UserService()
+        let contact = await userSrv.get_db_user({contact_reference_id})
+
+        if (contact && res.body.status.status == "SUCCESS") {
+            if (res.body.data) {
+                let cards = res.body.data;
+                cards = cards.filter(c=>c.ewallet_contact.id == contact.rapyd_contact_data.id );
+                return cards;
+            }
+        }
+        return [];
     }
 
     async create_vcc_step(form: IssueVccRequestForm, contact_reference_id: number): Promise<IDBContact> {
@@ -44,7 +65,10 @@ export class VccService {
                 user = await userSrv.update_db_user({ contact_reference_id: user.contact_reference_id }, user);
                 this.create_vcc({
                     country: form.country,
-                    ewallet_contact: user.contact
+                    ewallet_contact: user.contact,
+                    metadata:{
+                        name:"First Card"
+                    }
                 }).then(async (card) => {
 
 

@@ -216,6 +216,20 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
                 err(res, message, t0)
             }
         })
+        this.app.post('/list-vccs', async (req, res) => {
+            let t0 = performance.performance.now();
+            try {
+                const vccSrv = new VccService();
+                let body: {contact_reference_id: number} = req.body;
+                vccSrv.get_contact_cards(body.contact_reference_id).then((d) => {
+                    send(res, d, t0)
+                }).catch(e => {
+                    err(res, e, t0)
+                })
+            } catch (message) {
+                err(res, message, t0)
+            }
+        })
 
         this.app.post('/update-accounts', async (req, res) => {
             let t0 = performance.performance.now();
