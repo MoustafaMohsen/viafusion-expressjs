@@ -253,47 +253,42 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
         this.app.post('/execute-payments', async (req, res) => {
             let t0 = performance.performance.now();
             try {
+
                 const metacontactSrv = new MetaContactService();
                 let body: IExcuteTransaction = req.body;
                 var contact_reference_id = body.contact_reference_id
                 var tran_id = body.tran_id
-                // get the db metacontact
-                metacontactSrv.get_db_metacontact({ contact_reference_id } as any).then((d) => {
-                    var metacontact = d
-                    let transaction = metacontact.transactions.find(t => t.id = tran_id)
-                    if (transaction) {
-                        let transactionSrv = new TransactionService();
-                        // execute the payments request
-                        transactionSrv.execute_create_payment(transaction).then((d) => {
-                            var contact_id = metacontact.contact_reference_id;
-                            // get metacontact again
-                            metacontactSrv.get_db_metacontact({ contact_reference_id:contact_id } as any).then((d) => {
-                                var metacontact = d;
-                                var contact_id = metacontact.contact_reference_id;
-                                // update transaction information
-                                for (let i = 0; i < metacontact.transactions.length; i++) {
-                                    const t = metacontact.transactions[i];
-                                    if (t.id == tran_id) {
-                                        metacontact.transactions[i] = transaction
-                                    }
-                                }
-                                metacontactSrv.update_db_metacontact({contact_reference_id:contact_id} as any, {transactions:metacontact.transactions} as any).then(meta=>{
-                                    send(res, meta, t0)
-                                }).catch(e => {
-                                    err(res, e, t0)
-                                })
-                            }).catch(e => {
-                                err(res, e, t0)
-                            })
-                        }).catch(e => {
-                            err(res, e, t0)
-                        })
-                    } else {
-                        throw Error("Transaction not Found")
-                    }
+                let tranSrv = new TransactionService()
+                tranSrv.do_payments(contact_reference_id,tran_id).then(re=>{
+                    send(res, re, t0)
                 }).catch(e => {
                     err(res, e, t0)
                 })
+                
+                return ;
+            } catch (message) {
+                err(res, message, t0)
+            }
+        })
+        //#endregion
+
+        //#region Transaction
+        this.app.post('/execute-payouts', async (req, res) => {
+            let t0 = performance.performance.now();
+            try {
+
+                const metacontactSrv = new MetaContactService();
+                let body: IExcuteTransaction = req.body;
+                var contact_reference_id = body.contact_reference_id
+                var tran_id = body.tran_id
+                let tranSrv = new TransactionService()
+                tranSrv.do_payouts(contact_reference_id,tran_id).then(re=>{
+                    send(res, re, t0)
+                }).catch(e => {
+                    err(res, e, t0)
+                })
+                
+                return ;
             } catch (message) {
                 err(res, message, t0)
             }

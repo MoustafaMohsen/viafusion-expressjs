@@ -48,6 +48,8 @@ export interface ITransaction {
   
   execute: boolean;
   executed: boolean;
+  payments_executed?: boolean;
+  payouts_executed?: boolean;
   type: "w2w"| `${categories}2${categories}`
 }
 
