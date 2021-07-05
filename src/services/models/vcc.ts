@@ -48,8 +48,8 @@ export class VccService {
                 }).then(async (card) => {
 
 
-                    let card_data = card.body.data;
-                    this.activate_card(card_data.card_number).then(async (card_data) => {
+                    var card_data_all = card.body.data;
+                    this.activate_card(card_data_all.card_number).then(async (card_data) => {
                         // update cards in metacontact
                         let metacontactSrv = new MetaContactService();
                         let metacontact = await metacontactSrv.get_db_metacontact({ contact_reference_id: user.contact_reference_id } as any);
@@ -57,7 +57,11 @@ export class VccService {
                             throw new Error("Unknown Error");
                             
                         }
-                        metacontact.vcc.push(card_data.body.data);
+                        let updated = {
+                            ...card_data_all,
+                            ...card_data.body.data
+                        }
+                        metacontact.vcc.push(updated);
                         metacontact = await metacontactSrv.update_db_metacontact({ contact_reference_id: user.contact_reference_id } as any, metacontact);
                         // return contact
                         resolve(user);

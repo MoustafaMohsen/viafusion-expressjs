@@ -1,5 +1,5 @@
 
-export interface IUtitliesResponse<T=any>{
+export interface IUtilitiesResponse<T=any>{
     statusCode: number;
     headers: IncomingHttpHeaders;
     body?: IRapydResponse<T>;

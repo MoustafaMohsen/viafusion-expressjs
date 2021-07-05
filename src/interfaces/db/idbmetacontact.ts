@@ -4,6 +4,8 @@ import { categories, contact_id, customer_id } from '../rapyd/types';
 import { ewallet_id } from "../rapyd/types";
 import { IPayment } from '../rapyd/ipayment';
 import { TransferToWallet } from '../rapyd/iwallet';
+import { ICreatePayout } from '../rapyd/ipayout';
+import { IssueVccResponse } from '../rapyd/ivcc';
 /**
  *
             meta_id SERIAL PRIMARY KEY,
@@ -23,10 +25,11 @@ export interface IDBMetaContact {
   id?: string;
   contact_reference_id: number;
   transactions: ITransaction[];
-  senders: ISender[];
-  benes: any[];
+  senders: ICreatePayout.Sender[];
+  benes: ICreatePayout.Beneficiary[];
+  vcc: IssueVccResponse[];
+  
   actions: any[];
-  vcc: any[];
   pcc: any[];
   meta: object;
 }
@@ -36,10 +39,10 @@ export interface ITransaction {
   source_amount?: string;
   destination_amount?: string;
   payments: PostCreatePayment.Request[];
-  payouts: any[];
+  payouts: ICreatePayout.Request[];
 
   payments_response: PostCreatePayment.Response[];
-  payouts_response: any[];
+  payouts_response: ICreatePayout.Response[];
 
   transfer_resoponse:TransferToWallet.Response;
   

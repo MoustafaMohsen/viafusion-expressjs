@@ -1,6 +1,6 @@
 const crypto = require('crypto');
 import CryptoJS from "crypto-js";
-import { IRapydResponse, IUtitliesResponse } from "../../interfaces/rapyd/rest-response";
+import { IRapydResponse, IUtilitiesResponse } from "../../interfaces/rapyd/rest-response";
 
 
 // const https = require('https');
@@ -81,7 +81,7 @@ export class RapydUtilties {
     
     async httpRequest(options, body) {
     
-        return new Promise<IUtitliesResponse>((resolve, reject) => {
+        return new Promise<IUtilitiesResponse>((resolve, reject) => {
     
             try {
     
@@ -93,7 +93,7 @@ export class RapydUtilties {
     
                 log && console.log(`httpRequest options: ${JSON.stringify(options)}`);
                 const req = https.request(options, (res) => {
-                    let response:IUtitliesResponse= {
+                    let response:IUtilitiesResponse= {
                         statusCode: res.statusCode,
                         headers: res.headers,
                         body: '' as any
