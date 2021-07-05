@@ -1,7 +1,7 @@
 import { PayoutService } from './payout';
 import { PaymentService } from './payment';
 import { UserService } from './user';
-import { IExcuteTransaction, ITransaction } from './../../interfaces/db/idbmetacontact';
+import { ITransaction, ITransactionFull_payment, ITransactionFull_payout } from './../../interfaces/db/idbmetacontact';
 import { ApiService } from '../api/api';
 import { ListPayments, RequiredFields, PostCreatePayment, IPayment } from '../../interfaces/rapyd/ipayment';
 import { ViafusionDB } from '../db/viafusiondb';
@@ -110,51 +110,64 @@ export class TransactionService {
         const payments = transaction.payments;
         return new Promise((resolve, reject) => {
             for (let i = 0; i < payments.length; i++) {
-                const payment = payments[i];
+                const payment = payments[i].request;
                 this.create_payment(payment).then(
                     res => {
-                        transaction.payments_response.push(res)
-                        if (transaction.payments_response.length == payments.length) {
+                        payments[i].response = res
+                        if (this.are_payments_done(transaction.payments)) {
+                            transaction.payments_executed = true
                             resolve(transaction)
                         }
                     }
                 ).catch((error) => {
                     console.error(error);
-                    transaction.payments_response.push(error)
-                    if (transaction.payments_response.length == payments.length) {
-                        resolve(transaction)
+                    payments[i].response = error
+                    if (this.are_payments_done(transaction.payments)) {
+                            transaction.payouts_executed = true
+                            resolve(transaction)
                     }
                 })
             }
         })
-
     }
 
     execute_create_payout(_transaction: ITransaction): Promise<ITransaction> {
         var transaction = { ..._transaction };
-        transaction.payouts_response = transaction.payouts_response || [];
         const payouts = transaction.payouts;
-
         return new Promise((resolve, reject) => {
             for (let i = 0; i < payouts.length; i++) {
-                const payout = payouts[i];
+                const payout = payouts[i].request;
                 this.create_payout(payout).then(
                     res => {
-                        transaction.payouts_response.push(res)
-                        if (transaction.payouts_response.length == payouts.length) {
+                        payouts[i].response = res
+                        if (this.are_payouts_done(transaction.payouts)) {
+                            transaction.payouts_executed = true
                             resolve(transaction)
                         }
                     }
                 ).catch((error) => {
                     console.error(error);
-                    transaction.payouts_response.push(error)
-                    if (transaction.payouts_response.length == payouts.length) {
-                        resolve(transaction)
+                    payouts[i].response = error
+                    if (this.are_payouts_done(transaction.payouts)) {
+                            transaction.payouts_executed = true
+                            resolve(transaction)
                     }
                 })
             }
         })
     }
+
+    are_payments_done(payments:ITransactionFull_payment[]){
+        let requests = payments.filter(p=>(p.request && p.request != {} as any))
+        let responses = payments.filter(p=>(p.response && p.response != {} as any))
+        return responses.length == requests.length
+    }
+    are_payouts_done(payoutss:ITransactionFull_payout[]){
+        let requests = payoutss.filter(p=>(p.request && p.request != {} as any))
+        let responses = payoutss.filter(p=>(p.response && p.response != {} as any))
+        return responses.length == requests.length
+    }
+
 
     create_payment(payment: PostCreatePayment.Request): Promise<IUtilitiesResponse<PostCreatePayment.Response>> {
         let paymentSrv = new PaymentService();

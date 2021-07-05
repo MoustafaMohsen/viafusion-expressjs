@@ -5,7 +5,6 @@ import { ICreateWallet, IDBWallet, IResponseCreateWallet } from '../../interface
 import { ApiService } from '../api/api';
 import { IContact } from '../../interfaces/rapyd/icontact';
 import { TransferToWallet, WalletBalanceResponse } from '../../interfaces/rapyd/iwallet';
-import { ITransaction } from '../../interfaces/db/idbmetacontact';
 import { IUtilitiesResponse } from '../../interfaces/rapyd/rest-response';
 
 export class WalletService {

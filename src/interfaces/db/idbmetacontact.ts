@@ -38,11 +38,11 @@ export interface ITransaction {
   id: string;
   source_amount?: string;
   destination_amount?: string;
-  payments: PostCreatePayment.Request[];
-  payouts: ICreatePayout.Request[];
+  payments: ITransactionFull_payment[];
+  payouts: ITransactionFull_payout[];
 
-  payments_response: IUtilitiesResponse<PostCreatePayment.Response>[];
-  payouts_response: IUtilitiesResponse<ICreatePayout.Response>[];
+  // payments_response: IUtilitiesResponse<PostCreatePayment.Response>[];
+  // payouts_response: IUtilitiesResponse<ICreatePayout.Response>[];
 
   transfer_resoponse:TransferToWallet.Response;
   
@@ -57,3 +57,16 @@ export interface IExcuteTransaction{
   contact_reference_id:number,
   tran_id:string
 }
+
+export interface ITransactionFull_payment {
+  request:PostCreatePayment.Request;
+  response:IUtilitiesResponse<PostCreatePayment.Response>;
+  status:"CLO" | "ACT"
+}
+
+export interface ITransactionFull_payout {
+  request:ICreatePayout.Request
+  response:IUtilitiesResponse<ICreatePayout.Response>
+  status:"CLO" | "ACT"
+}
+
