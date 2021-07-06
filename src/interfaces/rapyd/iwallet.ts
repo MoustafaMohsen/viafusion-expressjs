@@ -66,7 +66,7 @@ export namespace TransferToWallet {
         * CANCELED
         * CLOSED
          */
-        status: "PEN" | "CLO" | "DEC"|  "CAN"
+        status: "PEN" | "CLO" | "DEC" | "CAN"
         amount: number
         currency_code: string
         destination_phone_number: string
@@ -84,11 +84,30 @@ export namespace TransferToWallet {
 
     }
 
-    export interface Set_Response{
+    export interface Set_Response {
         /** The transfer id */
-        id:string;
+        id: string;
         /** The desired status */
-        status:"accept" | "cancel" | "decline";
-        metadata?:any
+        status: "accept" | "cancel" | "decline";
+        metadata?: any
     }
+}
+
+export namespace ICurrency {
+    export interface QueryRequest {
+        sell_currency: string
+        buy_currency: string
+        action_type: "payment"|"payout"
+    }
+    export interface Response {
+        sell_currency: string
+        buy_currency: string
+        action_type: "payment"|"payout"
+        fixed_side: any
+        rate: number
+        date: string
+        sell_amount: any
+        buy_amount: any
+    }
+
 }

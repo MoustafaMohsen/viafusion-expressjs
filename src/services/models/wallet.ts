@@ -4,7 +4,7 @@ import { UserService } from './user';
 import { ICreateWallet, IDBWallet, IResponseCreateWallet } from '../../interfaces/db/idbwallet';
 import { ApiService } from '../api/api';
 import { IContact } from '../../interfaces/rapyd/icontact';
-import { TransferToWallet, WalletBalanceResponse } from '../../interfaces/rapyd/iwallet';
+import { ICurrency, TransferToWallet, WalletBalanceResponse } from '../../interfaces/rapyd/iwallet';
 import { IUtilitiesResponse } from '../../interfaces/rapyd/rest-response';
 
 export class WalletService {
@@ -92,6 +92,11 @@ export class WalletService {
         return apiSrv.post<IContact>("ewallets/" + ewallet + "/contacts/" + contact, body)
     }
 
+    get_rates(query:ICurrency.QueryRequest){
+        var apiSrv = new ApiService();
+        let url = `rates/daily?action_type=${query.action_type}&buy_currency=${query.buy_currency}&sell_currency=${query.sell_currency}`
+        return apiSrv.get<ICurrency.Response>(url) 
+    }
     async transfer_money_to_phone_number(contact_reference_id: number, amount: number, phone_number: string, currency = "USD") {
         // check wallet has this balance
         let userSrv = new UserService();

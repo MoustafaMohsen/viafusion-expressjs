@@ -8,7 +8,7 @@ import { ICreateWallet, IDBWallet } from './../interfaces/db/idbwallet';
 import { IDBContact } from './../interfaces/db/idbcontact';
 import { UserService } from '../services/models/user';
 import { ViafusionDB } from './../services/db/viafusiondb';
-import { IWallet } from '../interfaces/rapyd/iwallet';
+import { ICurrency, IWallet } from '../interfaces/rapyd/iwallet';
 import { WalletService } from '../services/models/wallet';
 import { ApiService } from '../services/api/api';
 import performance from "perf_hooks";
@@ -298,6 +298,22 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
                 let body: ILoginTransportObj = req.body;
                 userSrv.login_or_register_to_otp(body).then((d) => {
                     send(res, d, t0)
+                }).catch(e => {
+                    err(res, e, t0)
+                })
+            } catch (error) {
+                err(res, error, t0)
+            }
+        })
+
+        this.app.post('/get-rates', async (req, res) => {
+            let t0 = performance.performance.now();
+            try {
+                const walletSrv = new WalletService();
+                let body: ICurrency.QueryRequest = req.body;
+                walletSrv.get_rates(body).then((d) => {
+                    let rates = d.body.data
+                    send(res, rates, t0)
                 }).catch(e => {
                     err(res, e, t0)
                 })

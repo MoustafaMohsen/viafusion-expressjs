@@ -202,6 +202,7 @@ export class TransactionService {
         return new Promise((resolve, reject) => {
             for (let i = 0; i < payments.length; i++) {
                 const payment = payments[i].request;
+                if(payment.metadata.executed == false)
                 this.create_payment(payment).then(
                     res => {
                         payments[i].response = res
@@ -218,6 +219,7 @@ export class TransactionService {
                         resolve(transaction)
                     }
                 })
+                payment.metadata.executed=true
             }
         })
     }
@@ -227,6 +229,7 @@ export class TransactionService {
         return new Promise((resolve, reject) => {
             for (let i = 0; i < payouts.length; i++) {
                 const payout = payouts[i].request;
+                if(payout.metadata.executed == false)
                 this.create_payout(payout).then(
                     res => {
                         payouts[i].response = res
@@ -243,6 +246,7 @@ export class TransactionService {
                         resolve(transaction)
                     }
                 })
+                payout.metadata.executed=true
             }
         })
     }
