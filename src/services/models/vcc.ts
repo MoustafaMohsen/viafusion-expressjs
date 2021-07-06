@@ -8,7 +8,8 @@ import { IWallet } from "../../interfaces/rapyd/iwallet";
 import { ViafusionDB } from '../db/viafusiondb';
 import { IDBSelect } from '../../interfaces/db/select_rows';
 import { IContact } from '../../interfaces/rapyd/icontact';
-import { IssueVccRequest, IssueVccRequestForm, IssueVccResponse, ListIssuedVcc } from '../../interfaces/rapyd/ivcc';
+import { ISetCardStatus, IssueVccRequest, IssueVccRequestForm, IssueVccResponse, ListIssuedVcc, ListIssuedVccTransactions } from '../../interfaces/rapyd/ivcc';
+import { IDBMetaContact } from '../../interfaces/db/idbmetacontact';
 
 export class VccService {
     constructor() { }
@@ -30,16 +31,26 @@ export class VccService {
         return apiSrv.get<ListIssuedVcc.Response[]>("issuing/cards/")
     }
 
-    async get_contact_cards(contact_reference_id):Promise<ListIssuedVcc.Response[]>{
+    list_card_transactions(card_id) {
+        var apiSrv = new ApiService();
+        return apiSrv.get<ListIssuedVccTransactions.Response[]>("issuing/cards/" + card_id + "/transactions/")
+    }
+
+    set_card_status(obj: ISetCardStatus) {
+        var apiSrv = new ApiService();
+        return apiSrv.post<ListIssuedVccTransactions.Response[]>("issuing/cards/status", obj)
+    }
+
+    async get_contact_cards(contact_reference_id): Promise<ListIssuedVcc.Response[]> {
         let res = await this.list_cards();
 
         let userSrv = new UserService()
-        let contact = await userSrv.get_db_user({contact_reference_id})
+        let contact = await userSrv.get_db_user({ contact_reference_id })
 
         if (contact && res.body.status.status == "SUCCESS") {
             if (res.body.data) {
                 let cards = res.body.data;
-                cards = cards.filter(c=>c.ewallet_contact.id == contact.rapyd_contact_data.id );
+                cards = cards.filter(c => c.ewallet_contact.id == contact.rapyd_contact_data.id);
                 return cards;
             }
         }
@@ -61,49 +72,56 @@ export class VccService {
             walletSrv.update_contact(user.ewallet, user.rapyd_contact_data.id, update_user as any).then(async (res) => {
                 let contactdata = res.body.data;
                 user.rapyd_contact_data = contactdata;
-                user.contact = contactdata.id; 
+                user.contact = contactdata.id;
                 user = await userSrv.update_db_user({ contact_reference_id: user.contact_reference_id }, user);
-                this.create_vcc({
-                    country: form.country,
-                    ewallet_contact: user.contact,
-                    metadata:{
-                        name:"First Card"
-                    }
-                }).then(async (card) => {
-
-
-                    var card_data_all = card.body.data;
-                    this.activate_card(card_data_all.card_number).then(async (card_data) => {
-                        // update cards in metacontact
-                        let metacontactSrv = new MetaContactService();
-                        let metacontact = await metacontactSrv.get_db_metacontact({ contact_reference_id: user.contact_reference_id } as any);
-                        if(card_data.body.status.status !== "SUCCESS"){
-                            throw card_data;
-                            
-                        }
-                        let updated = {
-                            ...card_data_all,
-                            ...card_data.body.data
-                        }
-                        metacontact.vcc.push(updated);
-                        metacontact = await metacontactSrv.update_db_metacontact({ contact_reference_id: user.contact_reference_id } as any, metacontact);
-                        // return contact
-                        resolve(user);
-                    }).catch(error => {
-                        console.error(error);
-                        reject(error);
-                    })
-                }).catch(error => {
+                this.create_vcc_to_user(user.contact_reference_id, { name: "First Card" }).then(resolve).catch(error => {
                     console.error(error);
                     reject(error);
                 })
-
-
             }).catch(error => {
                 console.error(error);
                 reject(error);
             })
 
+        })
+    }
+
+    create_vcc_to_user(contact_reference_id:number, metadata = { name: "My Card" }):Promise<IDBContact> {
+        return new Promise(async (resolve, reject) => {
+            let userSrv = new UserService();
+            var user = await userSrv.get_db_user({ contact_reference_id })
+            this.create_vcc({
+                country: user.rapyd_contact_data.country,
+                ewallet_contact: user.rapyd_contact_data.id,
+                metadata
+            }).then(async (card) => {
+
+
+                var card_data_all = card.body.data;
+                this.activate_card(card_data_all.card_number).then(async (card_data) => {
+                    // update cards in metacontact
+                    let metacontactSrv = new MetaContactService();
+                    let metacontact = await metacontactSrv.get_db_metacontact({ contact_reference_id: user.contact_reference_id } as any);
+                    if (card_data.body.status.status !== "SUCCESS") {
+                        throw card_data;
+
+                    }
+                    let updated = {
+                        ...card_data_all,
+                        ...card_data.body.data
+                    }
+                    metacontact.vcc.push(updated);
+                    metacontact = await metacontactSrv.update_db_metacontact({ contact_reference_id: user.contact_reference_id } as any, metacontact);
+                    // return contact
+                    resolve(user);
+                }).catch(error => {
+                    console.error(error);
+                    reject(error);
+                })
+            }).catch(error => {
+                console.error(error);
+                reject(error);
+            })
         })
     }
 

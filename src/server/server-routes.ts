@@ -20,7 +20,7 @@ import { IDBSelect } from '../interfaces/db/select_rows';
 import { PostCreatePayment } from '../interfaces/rapyd/ipayment';
 import { IContactAndSender } from '../interfaces/rapyd/isender';
 import { ILoginTransportObj } from '../interfaces/db/ilogin';
-import { IssueVccRequestForm } from '../interfaces/rapyd/ivcc';
+import { ICreateVccToUser, ISetCardStatus, IssueVccRequestForm } from '../interfaces/rapyd/ivcc';
 import { MetaContactService } from '../services/models/metacontact';
 import { IDBMetaContact, IExcuteTransaction } from '../interfaces/db/idbmetacontact';
 import { ICreatePayout, IGetPayoutRequiredFields } from '../interfaces/rapyd/ipayout';
@@ -220,8 +220,52 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
             let t0 = performance.performance.now();
             try {
                 const vccSrv = new VccService();
-                let body: {contact_reference_id: number} = req.body;
+                let body: { contact_reference_id: number } = req.body;
                 vccSrv.get_contact_cards(body.contact_reference_id).then((d) => {
+                    send(res, d, t0)
+                }).catch(e => {
+                    err(res, e, t0)
+                })
+            } catch (message) {
+                err(res, message, t0)
+            }
+        })
+        this.app.post('/list-vcc-transactions', async (req, res) => {
+            let t0 = performance.performance.now();
+            try {
+                const vccSrv = new VccService();
+                let body: { card_id: number } = req.body;
+                vccSrv.list_card_transactions(body.card_id).then((d) => {
+                    send(res, d, t0)
+                }).catch(e => {
+                    err(res, e, t0)
+                })
+            } catch (message) {
+                err(res, message, t0)
+            }
+        })
+
+        this.app.post('/set-card-status', async (req, res) => {
+            let t0 = performance.performance.now();
+            try {
+                const vccSrv = new VccService();
+                let body: ISetCardStatus = req.body;
+                vccSrv.set_card_status(body).then((d) => {
+                    send(res, d, t0)
+                }).catch(e => {
+                    err(res, e, t0)
+                })
+            } catch (message) {
+                err(res, message, t0)
+            }
+        })
+
+        this.app.post('/create-vcc-to-user', async (req, res) => {
+            let t0 = performance.performance.now();
+            try {
+                const vccSrv = new VccService();
+                let body: ICreateVccToUser = req.body;
+                vccSrv.create_vcc_to_user(body.contact_reference_id, body.metadata).then((d) => {
                     send(res, d, t0)
                 }).catch(e => {
                     err(res, e, t0)
@@ -273,7 +317,82 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
                 var contact_reference_id = body.contact_reference_id
                 var tran_id = body.tran_id
                 let tranSrv = new TransactionService()
+                if (!tran_id) {
+                    throw "Transaction not found"
+                }
                 tranSrv.do_payments(contact_reference_id, tran_id).then(re => {
+                    send(res, re, t0)
+                }).catch(e => {
+                    err(res, e, t0)
+                })
+
+                return;
+            } catch (message) {
+                err(res, message, t0)
+            }
+        })
+        this.app.post('/update-payments', async (req, res) => {
+            let t0 = performance.performance.now();
+            try {
+
+                const metacontactSrv = new MetaContactService();
+                let body: IExcuteTransaction = req.body;
+                var contact_reference_id = body.contact_reference_id
+                var tran_id = body.tran_id
+                let tranSrv = new TransactionService()
+                if (!tran_id) {
+                    throw "Transaction not found"
+                }
+                tranSrv.update_payments_responses(contact_reference_id, tran_id).then(re => {
+                    send(res, re, t0)
+                }).catch(e => {
+                    err(res, e, t0)
+                })
+
+                return;
+            } catch (message) {
+                err(res, message, t0)
+            }
+        })
+        this.app.post('/update-payouts', async (req, res) => {
+            let t0 = performance.performance.now();
+            try {
+
+                const metacontactSrv = new MetaContactService();
+                let body: IExcuteTransaction = req.body;
+                var contact_reference_id = body.contact_reference_id
+                var tran_id = body.tran_id
+                let tranSrv = new TransactionService()
+                if (!tran_id) {
+                    throw "Transaction not found"
+                }
+                tranSrv.update_payments_responses(contact_reference_id, tran_id).then(re => {
+                    send(res, re, t0)
+                }).catch(e => {
+                    err(res, e, t0)
+                })
+
+                return;
+            } catch (message) {
+                err(res, message, t0)
+            }
+        })
+        this.app.post('/update-payments-payouts', async (req, res) => {
+            let t0 = performance.performance.now();
+            try {
+
+                const metacontactSrv = new MetaContactService();
+                let body: IExcuteTransaction = req.body;
+                var contact_reference_id = body.contact_reference_id
+                var tran_id = body.tran_id
+                let tranSrv = new TransactionService()
+                if (!tran_id) {
+                    throw "Transaction not found"
+                }
+                await tranSrv.update_payments_responses(contact_reference_id, tran_id).catch(e => {
+                    err(res, e, t0)
+                })
+                tranSrv.update_payouts_responses(contact_reference_id, tran_id).then(re => {
                     send(res, re, t0)
                 }).catch(e => {
                     err(res, e, t0)
@@ -301,6 +420,7 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
                 err(res, message, t0)
             }
         })
+
         this.app.post('/get-payment', async (req, res) => {
             let t0 = performance.performance.now();
             try {
