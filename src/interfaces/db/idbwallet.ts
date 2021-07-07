@@ -112,3 +112,11 @@ export namespace IResponseCreateWallet {
     }
 
 }
+
+export interface IWallet2Wallet{
+    contact_reference_id:number,
+    phone_number:string,
+    amount:number,
+    currecny:"USD",
+    message:string,
+  }

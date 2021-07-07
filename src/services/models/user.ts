@@ -43,6 +43,17 @@ export class UserService {
         let result = await this.get_db_user(user);
         return result;
     }
+
+    async list_users_by_phone(phone_number, limit = 10) {
+        const db = new ViafusionDB();
+        const query_str = {
+            text: `SELECT phone_number FROM dbcontact WHERE phone_number LIKE $1 AND ewallet LIKE ewallet LIMIT $2`,
+            values: ["%"+phone_number+"%", limit]
+        };
+        const client = await db.connect('viafusiondb')
+        let result = await client.query(query_str);
+        return result.rows.map(u=>u.phone_number)
+    }
     // TODO: delete user
 
 
@@ -91,7 +102,7 @@ export class UserService {
         return { login: user.security.login, contact_reference_id: user.contact_reference_id };
     }
 
-    async confirm_authenticate(user:IDBContact):Promise<IDBContact>{
+    async confirm_authenticate(user: IDBContact): Promise<IDBContact> {
         user.security.login = this.should_authenticate(user.security.login);
         let newuser = await this.update_db_user({ contact_reference_id: user.contact_reference_id }, user);
         return newuser
@@ -256,7 +267,7 @@ export class UserService {
         return login;
     }
 
-    should_authenticate(login:ILogin){
+    should_authenticate(login: ILogin) {
         if (login.fp_passed && login.device_passed) {
             login.authenticated = true;
         }

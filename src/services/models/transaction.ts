@@ -23,7 +23,7 @@ export class TransactionService {
         return new Promise((resolve, reject) => {
             metacontactSrv.get_db_metacontact({ contact_reference_id } as any).then((d) => {
                 var metacontact = d
-                let transaction = metacontact.transactions.find(t => t.id = tran_id)
+                let transaction = metacontact.transactions.find(t => t.id == tran_id)
                 if (transaction) {
                     let transactionSrv = new TransactionService();
                     // execute the payments request
@@ -38,6 +38,7 @@ export class TransactionService {
                                 const t = metacontact.transactions[i];
                                 if (t.id == tran_id) {
                                     transaction_response.payments_executed = true;
+                                    transaction_response.execution_date = transaction_response.execution_date?transaction_response.execution_date:new Date().getTime()/1000;
                                     metacontact.transactions[i] = transaction_response
                                 }
                             }
@@ -255,13 +256,17 @@ export class TransactionService {
     _execute_update_payments(_transaction: ITransaction): Promise<ITransaction> {
         var transaction = { ..._transaction };
         const payments = transaction.payments;
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             let paymentSrv = new PaymentService();
+            if (transaction.execute == false) {
+                resolve(transaction)
+                return;
+            }
 
             for (let i = 0; i < payments.length; i++) {
                 const payment = payments[i].response;
                 if (payment && payment.body && payment.body.status.status == "SUCCESS") {
-                    paymentSrv.get_payment(payment.body.data.id).then(
+                    await paymentSrv.get_payment(payment.body.data.id).then(
                         res => {
                             payments[i].response = res
                         }
@@ -281,13 +286,13 @@ export class TransactionService {
     _execute_update_payouts(_transaction: ITransaction): Promise<ITransaction> {
         var transaction = { ..._transaction };
         const payouts = transaction.payouts;
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             let payoutSrv = new PayoutService();
 
             for (let i = 0; i < payouts.length; i++) {
                 const payout = payouts[i].response;
                 if (payout && payout.body && payout.body.status.status == "SUCCESS") {
-                    payoutSrv.get_payout(payout.body.data.id).then(
+                    await payoutSrv.get_payout(payout.body.data.id).then(
                         res => {
                             payouts[i].response = res
                         }

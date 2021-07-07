@@ -4,7 +4,7 @@ import { DBMetaContact } from './../services/models/metacontact-class';
 import { VccService } from './../services/models/vcc';
 import { IAPIServerResponse } from './../interfaces/rapyd/types.d';
 import { PaymentService } from './../services/models/payment';
-import { ICreateWallet, IDBWallet } from './../interfaces/db/idbwallet';
+import { ICreateWallet, IDBWallet, IWallet2Wallet } from './../interfaces/db/idbwallet';
 import { IDBContact } from './../interfaces/db/idbcontact';
 import { UserService } from '../services/models/user';
 import { ViafusionDB } from './../services/db/viafusiondb';
@@ -111,6 +111,35 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
                 const userSrv = new UserService();
                 let body: IDBContact = req.body;
                 userSrv.get_db_user(body).then((d) => {
+                    send(res, d, t0)
+                }).catch(e => {
+                    err(res, e, t0)
+                })
+            } catch (error) {
+                err(res, error, t0)
+            }
+        })
+
+        this.app.post('/get-like-db-user', async (req, res) => {
+            let t0 = performance.performance.now();
+            try {
+                const userSrv = new UserService();
+                let body = req.body;
+                userSrv.list_users_by_phone(body.phone_number,body.limit || 10).then((d) => {
+                    send(res, {users:d}, t0)
+                }).catch(e => {
+                    err(res, e, t0)
+                })
+            } catch (error) {
+                err(res, error, t0)
+            }
+        })
+        this.app.post('/w2w', async (req, res) => {
+            let t0 = performance.performance.now();
+            try {
+                const walletSrv = new WalletService();
+                let body:IWallet2Wallet = req.body;
+                walletSrv.transfer_money_to_phone_number(body.contact_reference_id,body.amount,body.phone_number,body.message).then((d) => {
                     send(res, d, t0)
                 }).catch(e => {
                     err(res, e, t0)

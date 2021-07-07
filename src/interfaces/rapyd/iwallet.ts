@@ -43,6 +43,7 @@ export interface WalletBalanceResponse {
 export namespace TransferToWallet {
     export interface Request {
         source_ewallet: string
+        phone_number: string
         amount: number
         currency: string
         destination_ewallet: string
