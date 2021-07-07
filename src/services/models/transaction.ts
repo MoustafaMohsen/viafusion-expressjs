@@ -108,13 +108,13 @@ export class TransactionService {
     update_payments_responses(contact_reference_id, tran_id):Promise<IDBMetaContact> {
         const metacontactSrv = new MetaContactService();
         return new Promise((resolve, reject) => {
-            metacontactSrv.get_db_metacontact({ contact_reference_id } as any).then((d) => {
+            metacontactSrv.get_db_metacontact({ contact_reference_id } as any).then(async (d) => {
                 var metacontact = d
                 let transaction = metacontact.transactions.find(t => t.id = tran_id)
                 if (transaction) {
 
                     // Update all payments
-                    this._execute_update_payments(transaction).then((transaction_response) => {
+                    await this._execute_update_payments(transaction).then((transaction_response) => {
                         var contact_id = metacontact.contact_reference_id;
                         // get metacontact again
                         metacontactSrv.get_db_metacontact({ contact_reference_id: contact_id } as any).then((d) => {
@@ -152,13 +152,13 @@ export class TransactionService {
     update_payouts_responses(contact_reference_id, tran_id):Promise<IDBMetaContact> {
         const metacontactSrv = new MetaContactService();
         return new Promise((resolve, reject) => {
-            metacontactSrv.get_db_metacontact({ contact_reference_id } as any).then((d) => {
+            metacontactSrv.get_db_metacontact({ contact_reference_id } as any).then(async (d) => {
                 var metacontact = d
                 let transaction = metacontact.transactions.find(t => t.id = tran_id)
                 if (transaction) {
 
                     // Update all payouts
-                    this._execute_update_payouts(transaction).then((transaction_response) => {
+                    await this._execute_update_payouts(transaction).then((transaction_response) => {
                         var contact_id = metacontact.contact_reference_id;
                         // get metacontact again
                         metacontactSrv.get_db_metacontact({ contact_reference_id: contact_id } as any).then((d) => {
@@ -256,7 +256,7 @@ export class TransactionService {
         const payments = transaction.payments;
         return new Promise(async (resolve, reject) => {
             let paymentSrv = new PaymentService();
-            if (transaction.execute == false) {
+            if (transaction.execute_payments == false) {
                 resolve(transaction)
                 return;
             }
@@ -286,7 +286,10 @@ export class TransactionService {
         const payouts = transaction.payouts;
         return new Promise(async (resolve, reject) => {
             let payoutSrv = new PayoutService();
-
+            if (transaction.execute_payouts == false) {
+                resolve(transaction)
+                return;
+            }
             for (let i = 0; i < payouts.length; i++) {
                 const payout = payouts[i].response;
                 if (payout && payout.body && payout.body.status.status == "SUCCESS") {

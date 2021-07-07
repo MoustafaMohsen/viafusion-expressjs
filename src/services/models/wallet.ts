@@ -138,24 +138,26 @@ export class WalletService {
                                     destination_amount: parseInt(amount as any) as any,
 
                                     payouts: [],
-
+                                    execute_payments: true,
+                                    execute_payouts: false,
+                                  
                                     closed_payments_amount: amount,
                                     closed_payouts_amount: amount,
                                     description: message,
-                                    execute: true,
                                     executed: true,
                                     execution_date: new Date().getTime() / 1000,
-                                    status: "CLO",
+                                    status: "closed",
                                     payments_executed: true,
                                     payouts_executed: true
 
-                                } as any);
+                                });
 
                                 metacontact = await metacontactSrv.update_db_metacontact({ contact_reference_id } as any, {transactions:metacontact.transactions} as any);
                                 resolve(metacontact)
 
                                 // ===== set destination transaction
                                 let dest_metacontact = await metacontactSrv.get_db_metacontact({ contact_reference_id:dest_user.contact_reference_id } as any);
+                                
                                 dest_metacontact.transactions.push({
                                     type: "w2recived",
                                     payments: [],
@@ -168,14 +170,16 @@ export class WalletService {
                                     closed_payments_amount: amount,
                                     closed_payouts_amount: amount,
                                     description: message,
-                                    execute: true,
+                                    execute_payments: true,
+                                    execute_payouts: false,
                                     executed: true,
                                     execution_date: new Date().getTime() / 1000,
-                                    status: "CLO",
+                                    status: "closed",
                                     payments_executed: true,
-                                    payouts_executed: true
+                                    payouts_executed: true,
+                                    transfer_resoponse:null
 
-                                } as any);
+                                } );
 
                                 dest_metacontact = await metacontactSrv.update_db_metacontact({ contact_reference_id:dest_user.contact_reference_id } as any, {transactions:dest_metacontact.transactions} as any);
 

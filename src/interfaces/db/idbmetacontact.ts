@@ -44,7 +44,8 @@ export interface ITransaction {
   payouts: ITransactionFull_payout[];
   transfer_resoponse:TransferToWallet.Response;
 
-  execute: boolean;
+  execute_payments: boolean;
+  execute_payouts: boolean;
   executed: boolean;
 
   payments_executed?: boolean;
