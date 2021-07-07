@@ -21,6 +21,24 @@ export class ActionService {
         return parser
 
     }
+    async get_db_actions(minimum_action_object: IAction): Promise<IAction[]> {
+        const db = new ViafusionDB();
+        let _action: IDBSelect<IAction> = {
+            "*": minimum_action_object
+        }
+        let results = await db.get_object<IAction>(_action, "AND", 'dbaction');
+        let metas = results.rows
+        let parser = []
+        metas.forEach(a => metas.push(this.parse_action(a)))
+        return parser
+
+    }
+
+    async delete_db_action(action: IAction) {
+        const db = new ViafusionDB();
+        let results = await db.delete_object<IAction>(action, "AND", 'dbaction');
+        return results;
+    }
 
     async update_db_action(action: IAction, newaction: IAction) {
         const db = new ViafusionDB();
@@ -70,6 +88,9 @@ export class ActionService {
                     // get the new transaction
                     var transaction = metacontact.transactions[metacontact.transactions.length - 1];
                     transaction.id = "tranid_schedualed_" + this.makeid(5);
+                    transaction.execute_payments = true;
+                    transaction.execute_payouts = true;
+                    transaction.description ="SCHADUALED:" +a.meta
                     let tranSrv = new TransactionService();
 
                     // execute

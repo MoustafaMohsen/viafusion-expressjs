@@ -1,3 +1,4 @@
+import { ActionService } from './../services/models/action';
 import { TransactionService } from './../services/models/transaction';
 import { PayoutService } from './../services/models/payout';
 import { DBMetaContact } from './../services/models/metacontact-class';
@@ -868,6 +869,61 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
                 var rapydUti = new RapydUtilties();
                 const data = await rapydUti.makeRequest('GET', '/v1/data/countries');
                 send(res, data.body.data, t0)
+            } catch (error) {
+                err(res, error, t0)
+            }
+        })
+
+
+        // === Actions
+        this.app.post('/get-actions', async (req, res) => {
+            let t0 = performance.performance.now();
+            let data = {} as any;
+            let act = new ActionService();
+            try {
+                let body = req.body;
+                act.get_db_actions(body).then(r=>{
+                    send(res, r, t0)
+                })
+            } catch (error) {
+                err(res, error, t0)
+            }
+        })
+        this.app.post('/update-action', async (req, res) => {
+            let t0 = performance.performance.now();
+            let data = {} as any;
+            let act = new ActionService();
+            try {
+                let body = req.body;
+                act.update_db_action(body.action,body.newaction).then(r=>{
+                    send(res, r, t0)
+                })
+            } catch (error) {
+                err(res, error, t0)
+            }
+        })
+        this.app.post('/delete-actions', async (req, res) => {
+            let t0 = performance.performance.now();
+            let data = {} as any;
+            let act = new ActionService();
+            try {
+                let body = req.body;
+                act.delete_db_action(body).then(r=>{
+                    send(res, r, t0)
+                })
+            } catch (error) {
+                err(res, error, t0)
+            }
+        })
+        this.app.post('/create-actions', async (req, res) => {
+            let t0 = performance.performance.now();
+            let data = {} as any;
+            let act = new ActionService();
+            try {
+                let body = req.body;
+                act.get_db_actions(body).then(r=>{
+                    send(res, r, t0)
+                })
             } catch (error) {
                 err(res, error, t0)
             }

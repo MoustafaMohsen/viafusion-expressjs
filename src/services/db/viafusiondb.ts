@@ -185,6 +185,22 @@ export class ViafusionDB {
         }
         return query;
     }
+    create_delete_query(tablename, cols: string[] | string, values: {}, relation: "OR" | "AND"): QueryConfig {
+        let equals_keys = Object.keys(values);
+        let equals = Object.values(values);
+        let _tmp_keys = equals_keys ? "WHERE " : "";
+        for (let i = 0; i < equals_keys.length; i++) {
+            const key = equals_keys[i];
+            const value = values[key];
+            _tmp_keys = _tmp_keys + key + `=$${i + 1} ` + (i != equals_keys.length - 1 ? relation : "");
+        }
+        let _tmp_cols = cols ? typeof cols == "string" ? cols : cols.join(", ") : "*";
+        const query = {
+            text: `DELETE  ${_tmp_cols} FROM ${tablename} ${_tmp_keys}`,
+            values: equals
+        }
+        return query;
+    }
 
     create_insert_query(tabelname, cols: string[], values: string[]): QueryConfig {
         let _tmp_cols_arr = [];
@@ -274,6 +290,16 @@ export class ViafusionDB {
         let keys = Object.keys(data)[0];
         let values = Object.values(data)[0];
         const query = this.create_select_query(tabelname, keys, values, relation);
+        const client = await this.connect(dbname);
+        let result = await client.query<T>(query);
+        await client.end();
+        return result;
+    }
+
+    async delete_object<T = any>(data: object, relation: "OR" | "AND", tabelname, dbname = "viafusiondb") {
+        let keys = Object.keys(data)[0];
+        let values = Object.values(data)[0];
+        const query = this.create_delete_query(tabelname, keys, values, relation);
         const client = await this.connect(dbname);
         let result = await client.query<T>(query);
         await client.end();
