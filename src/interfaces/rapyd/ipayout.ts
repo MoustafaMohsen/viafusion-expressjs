@@ -190,3 +190,9 @@ export namespace ICreatePayout {
 
 
 }
+
+export interface ISimulateTransaction{
+    success:boolean;
+    message:string;
+    error_code:string;
+}

@@ -114,9 +114,13 @@ export class ViafusionDB {
             active VARCHAR (6) NOT NULL,
             type VARCHAR (6) NOT NULL,
             contact_reference_id VARCHAR ( 255 ) NOT NULL,
-            transaction TEXT,
-            every  VARCHAR ( 255,
-            date VARCHAR (16),
+            tran_id VARCHAR (16),
+            every  VARCHAR ( 255 ) NOT NULL,
+            date VARCHAR (16) NOT NULL,
+            value VARCHAR (16) NOT NULL,
+            count VARCHAR (16) NOT NULL,
+            done_count VARCHAR (16) NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             meta TEXT
 );`)
         return result;

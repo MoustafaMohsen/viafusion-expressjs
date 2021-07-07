@@ -66,7 +66,7 @@ export class TransactionService {
         return new Promise((resolve, reject) => {
             metacontactSrv.get_db_metacontact({ contact_reference_id } as any).then((d) => {
                 var metacontact = d
-                let transaction = metacontact.transactions.find(t => t.id = tran_id)
+                let transaction = metacontact.transactions.find(t => t.id == tran_id)
                 if (transaction) {
                     let transactionSrv = new TransactionService();
                     // execute the payouts request
@@ -110,7 +110,7 @@ export class TransactionService {
         return new Promise((resolve, reject) => {
             metacontactSrv.get_db_metacontact({ contact_reference_id } as any).then(async (d) => {
                 var metacontact = d
-                let transaction = metacontact.transactions.find(t => t.id = tran_id)
+                let transaction = metacontact.transactions.find(t => t.id == tran_id)
                 if (transaction) {
 
                     // Update all payments
@@ -141,7 +141,7 @@ export class TransactionService {
 
                     
                 } else {
-                    throw Error("Transaction not Found")
+                    resolve(metacontact)
                 }
             }).catch(e => {
                 reject(e)
@@ -154,7 +154,7 @@ export class TransactionService {
         return new Promise((resolve, reject) => {
             metacontactSrv.get_db_metacontact({ contact_reference_id } as any).then(async (d) => {
                 var metacontact = d
-                let transaction = metacontact.transactions.find(t => t.id = tran_id)
+                let transaction = metacontact.transactions.find(t => t.id == tran_id)
                 if (transaction) {
 
                     // Update all payouts

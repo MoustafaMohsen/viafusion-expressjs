@@ -125,10 +125,6 @@ export class VccService {
         })
     }
 
-
-
-    // TODO: get wallet / get wallet balance
-
     create_customer(customer: ICreateCustomer) {
         var apiSrv = new ApiService();
         return apiSrv.post<ICreateCustomerResponse>("customers", customer)

@@ -466,6 +466,23 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
             }
         })
 
+        this.app.post('/simulate-payout', async (req, res) => {
+            let t0 = performance.performance.now();
+            try {
+                var payment = req.body.payment
+                let payoutSrv = new PayoutService()
+                payoutSrv.simulate_payout(req.body).then(re => {
+                    send(res, re, t0)
+                }).catch(e => {
+                    err(res, e, t0)
+                })
+
+                return;
+            } catch (message) {
+                err(res, message, t0)
+            }
+        })
+
         this.app.post('/get-payment', async (req, res) => {
             let t0 = performance.performance.now();
             try {

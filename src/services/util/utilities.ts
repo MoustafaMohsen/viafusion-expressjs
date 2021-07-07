@@ -5,8 +5,8 @@ import { IRapydResponse, IUtilitiesResponse } from "../../interfaces/rapyd/rest-
 
 // const https = require('https');
 import https  from "https";
-const access_key = "2BD4532374A630BAACA9";
-const secretKey = "3b0dafc63e76c830bf37a1d9e2ad87f7812f669f26aa0fb06647235d3905d70ddf4174ebfb141e9d";
+const access_key = process.env.RAPYD_ACCESS_KEY 
+const secretKey = process.env.RAPYD_SECRET_KEY 
 const log = true;
 
 export class RapydUtilties {
