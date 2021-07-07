@@ -124,7 +124,6 @@ export class TransactionService {
                             for (let i = 0; i < metacontact.transactions.length; i++) {
                                 const t = metacontact.transactions[i];
                                 if (t.id == tran_id) {
-                                    transaction_response.payments_executed = true;
                                     metacontact.transactions[i] = transaction_response
                                 }
                             }
@@ -169,7 +168,6 @@ export class TransactionService {
                             for (let i = 0; i < metacontact.transactions.length; i++) {
                                 const t = metacontact.transactions[i];
                                 if (t.id == tran_id) {
-                                    transaction_response.payouts_executed = true;
                                     metacontact.transactions[i] = transaction_response
                                 }
                             }
