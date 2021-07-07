@@ -75,33 +75,6 @@ export class MetaContactService {
         }
         return temp.data;
     }
-
-    // stringfy
-    stringfy_metacontact(metacontact: IDBMetaContact) {
-        try {
-            metacontact.transactions = this.stringfy_if_obj(metacontact.transactions) as any;
-            metacontact.senders = this.stringfy_if_obj(metacontact.senders) as any;
-            metacontact.benes = this.stringfy_if_obj(metacontact.benes) as any;
-            metacontact.actions = this.stringfy_if_obj(metacontact.actions) as any;
-            metacontact.vcc = this.stringfy_if_obj(metacontact.vcc) as any;
-            metacontact.pcc = this.stringfy_if_obj(metacontact.pcc) as any;
-            metacontact.meta = this.stringfy_if_obj(metacontact.meta) as any;
-            return metacontact;
-        } catch (error) {
-            console.error(error);
-            return metacontact
-        }
-    }
-
-    stringfy_if_obj(str: string | object) {
-        let temp = str;
-        if (str && typeof str === "object") {
-            temp = JSON.stringify(str);
-        } else {
-            temp = str;
-        }
-        return temp;
-    }
     //#endregion
 
 }

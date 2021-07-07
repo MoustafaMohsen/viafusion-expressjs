@@ -22,6 +22,7 @@ export class ViafusionDB {
         const client2 = await this.connect();
         result.create_contact_tabel = await this.create_contact_tabel(client2);
         result.create_contactmeta_tabel = await this.create_contactmeta_tabel(client2);
+        result.create_action_tabel = await this.create_action_tabel(client2);
         await client2.end();
         delete this.dbsettings.database;
         console.log("DB is ready");
@@ -102,6 +103,20 @@ export class ViafusionDB {
             actions TEXT,
             vcc TEXT,
             pcc TEXT,
+            meta TEXT
+);`)
+        return result;
+    }
+    async create_action_tabel(client: Client, tablename = "dbaction") {
+        await client.query("DROP TABLE IF EXISTS " + tablename + ";")
+        let result = await client.query(`CREATE TABLE IF NOT EXISTS ${tablename} (
+            id SERIAL PRIMARY KEY,
+            active VARCHAR (6) NOT NULL,
+            type VARCHAR (6) NOT NULL,
+            contact_reference_id VARCHAR ( 255 ) NOT NULL,
+            transaction TEXT,
+            every  VARCHAR ( 255,
+            date VARCHAR (16),
             meta TEXT
 );`)
         return result;
