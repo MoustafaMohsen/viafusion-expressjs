@@ -52,7 +52,7 @@ var pg_1 = require("pg");
 var ViafusionDB = (function () {
     function ViafusionDB(opts) {
         this.dbsettings = {
-            user: process.env.DATABASE_USER || "postgres",
+            user: process.env.DATABASE_USER,
             password: process.env.DATABASE_PASSWORD,
             host: process.env.DATABASE_HOST,
             database: process.env.DATABASE_NAME,
@@ -116,19 +116,7 @@ var ViafusionDB = (function () {
                     case 0:
                         set = database ? __assign(__assign({}, this.dbsettings), { database: database }) : this.dbsettings;
                         client = new pg_1.Client(set);
-                        console.log({
-                            user: 'postgres',
-                            host: 'localhost',
-                            password: '123',
-                            port: 5433,
-                        });
-                        console.log({
-                            user: "postgres" || process.env.DATABASE_USER,
-                            password: process.env.DATABASE_PASSWORD,
-                            host: process.env.DATABASE_HOST,
-                            database: process.env.DATABASE_NAME,
-                            port: 5432
-                        });
+                        console.log(set);
                         return [4, client.connect()];
                     case 1:
                         _a.sent();

@@ -3,7 +3,7 @@ import { Client, ClientConfig, QueryConfig, QueryResult } from "pg";
 export class ViafusionDB {
     dbsettings: ClientConfig = {
         // connectionString: process.env.DATABASE_URL,
-        user: process.env.DATABASE_USER || "postgres",
+        user: process.env.DATABASE_USER,
         password: process.env.DATABASE_PASSWORD,
         host: process.env.DATABASE_HOST,
         database: process.env.DATABASE_NAME,
@@ -43,22 +43,7 @@ export class ViafusionDB {
     async connect(database?) {
         const set = database ? { ...this.dbsettings, database } : this.dbsettings;
         const client = new Client(set);
-        console.log({
-            user: 'postgres',
-            host: 'localhost',
-            password: '123',
-            port: 5433,
-        });
-        console.log({
-            user: "postgres" || process.env.DATABASE_USER,
-            password: process.env.DATABASE_PASSWORD,
-            host: process.env.DATABASE_HOST,
-            database: process.env.DATABASE_NAME,
-            port: 5432
-
-        });
-
-
+        console.log(set);
         await client.connect();
         return client;
     }
