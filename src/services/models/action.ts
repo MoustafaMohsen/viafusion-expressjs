@@ -188,11 +188,13 @@ export class ActionService {
 
     parse_meta(str: any) {
         let temp = str;
-        try {
-            temp = JSON.parse(str);
-        } catch (error) {
-            console.error(error);
-            temp = str;
+        if(typeof str === "string"){
+            try {
+                temp = JSON.parse(str);
+            } catch (error) {
+                console.error(error);
+                temp = str;
+            }
         }
         return temp.data;
     }

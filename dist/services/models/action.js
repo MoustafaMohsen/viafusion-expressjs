@@ -141,7 +141,9 @@ var ActionService = (function () {
         var _this = this;
         if (minutes === void 0) { minutes = 5; }
         setInterval(function () {
-            _this.scan_actions();
+            _this.scan_actions().catch(function (error) {
+                console.error(error);
+            });
         }, minutes * 60 * 1000);
     };
     ActionService.prototype.scan_actions = function () {
@@ -151,7 +153,7 @@ var ActionService = (function () {
                 switch (_a.label) {
                     case 0:
                         db = new viafusiondb_1.ViafusionDB();
-                        return [4, db.connect('dbaction')];
+                        return [4, db.connect('viafusiondb')];
                     case 1:
                         client = _a.sent();
                         query = "SELECT * FROM dbaction";
@@ -288,12 +290,14 @@ var ActionService = (function () {
     };
     ActionService.prototype.parse_meta = function (str) {
         var temp = str;
-        try {
-            temp = JSON.parse(str);
-        }
-        catch (error) {
-            console.error(error);
-            temp = str;
+        if (typeof str === "string") {
+            try {
+                temp = JSON.parse(str);
+            }
+            catch (error) {
+                console.error(error);
+                temp = str;
+            }
         }
         return temp.data;
     };
