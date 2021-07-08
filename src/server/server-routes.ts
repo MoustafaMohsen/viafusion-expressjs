@@ -78,7 +78,7 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
         })
 
 
-        this.app.post('/prepare-db', async (req, res) => {
+        this.app.post('/prepare-db/'+process.env.VIAFUSION_KEY, async (req, res) => {
             let t0 = performance.performance.now();
             let data = {} as any;
             const db = new ViafusionDB();
@@ -112,6 +112,21 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
                 const userSrv = new UserService();
                 let body: IDBContact = req.body;
                 userSrv.get_db_user(body).then((d) => {
+                    send(res, d, t0)
+                }).catch(e => {
+                    err(res, e, t0)
+                })
+            } catch (error) {
+                err(res, error, t0)
+            }
+        })
+
+        this.app.post('/delete-db-user', async (req, res) => {
+            let t0 = performance.performance.now();
+            try {
+                const userSrv = new UserService();
+                let body: IDBContact = req.body;
+                userSrv.delete_db_user(body).then((d) => {
                     send(res, d, t0)
                 }).catch(e => {
                     err(res, e, t0)

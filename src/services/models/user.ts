@@ -44,6 +44,13 @@ export class UserService {
         return result;
     }
 
+    
+    async delete_db_user(user: IDBContact) {
+        const db = new ViafusionDB();
+        let results = await db.delete_object<IDBContact>(user, "AND", 'dbcontact');
+        return results;
+    }
+
     async list_users_by_phone(phone_number, limit = 10) {
         const db = new ViafusionDB();
         const query_str = {
