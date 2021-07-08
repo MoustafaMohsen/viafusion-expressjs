@@ -5,7 +5,7 @@ try {
     const server = new ViafusionServer();
     server.init();
     const actionSrv = new ActionService();
-    actionSrv.listen_to_acitons(parseInt(process.env.EXECUTE_ACTIONS_EVERY || '5'));
+    actionSrv.listen_to_acitons(parseInt(process.env.EXECUTE_ACTIONS_EVERY_MINUTES || '5'));
      
 } catch (error) {
     console.log(error);

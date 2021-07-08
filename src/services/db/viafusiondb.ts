@@ -2,10 +2,7 @@ import { Client, ClientConfig, QueryConfig, QueryResult } from "pg";
 
 export class ViafusionDB {
     dbsettings: ClientConfig = {
-        user: 'postgres',
-        host: 'localhost',
-        password: '123',
-        port: 5433,
+        connectionString: process.env.DATABASE_URL
     }
     amIChecked = false;
     constructor(opts?: { host?: string; user?: string; password?: string; port?: number; database?}) {
