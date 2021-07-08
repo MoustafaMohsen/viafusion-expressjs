@@ -121,6 +121,31 @@ var ViafusionServerRoutes = (function (_super) {
                 return [2];
             });
         }); });
+        this.app.get('/test-db', function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+            var t0, data, db, _a, error_1;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        t0 = perf_hooks_1.default.performance.now();
+                        data = {};
+                        db = new viafusiondb_1.ViafusionDB();
+                        _b.label = 1;
+                    case 1:
+                        _b.trys.push([1, 3, , 4]);
+                        _a = data;
+                        return [4, db.connect('viafusion')];
+                    case 2:
+                        _a.result = (_b.sent());
+                        send(res, data, t0);
+                        return [3, 4];
+                    case 3:
+                        error_1 = _b.sent();
+                        err(res, error_1, t0);
+                        return [3, 4];
+                    case 4: return [2];
+                }
+            });
+        }); });
         this.app.post('/', function (req, res) { return __awaiter(_this, void 0, void 0, function () {
             var t0, data;
             return __generator(this, function (_a) {
@@ -136,7 +161,7 @@ var ViafusionServerRoutes = (function (_super) {
             });
         }); });
         this.app.post('/prepare-db/' + process.env.VIAFUSION_KEY, function (req, res) { return __awaiter(_this, void 0, void 0, function () {
-            var t0, data, db, _a, _b, error_1;
+            var t0, data, db, _a, _b, error_2;
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
@@ -154,8 +179,8 @@ var ViafusionServerRoutes = (function (_super) {
                         send(res, data, t0);
                         return [3, 4];
                     case 3:
-                        error_1 = _c.sent();
-                        err(res, error_1, t0);
+                        error_2 = _c.sent();
+                        err(res, error_2, t0);
                         return [3, 4];
                     case 4: return [2];
                 }
@@ -1053,7 +1078,7 @@ var ViafusionServerRoutes = (function (_super) {
             });
         }); });
         this.app.post('/list-countries', function (req, res) { return __awaiter(_this, void 0, void 0, function () {
-            var t0, data, api, body, rapydUti, data_1, error_2;
+            var t0, data, api, body, rapydUti, data_1, error_3;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -1071,15 +1096,15 @@ var ViafusionServerRoutes = (function (_super) {
                         send(res, data_1.body.data, t0);
                         return [3, 4];
                     case 3:
-                        error_2 = _a.sent();
-                        err(res, error_2, t0);
+                        error_3 = _a.sent();
+                        err(res, error_3, t0);
                         return [3, 4];
                     case 4: return [2];
                 }
             });
         }); });
         this.app.post('/wallet-transactions', function (req, res) { return __awaiter(_this, void 0, void 0, function () {
-            var t0, data, walletSrv, userSrv, body, user, error_3;
+            var t0, data, walletSrv, userSrv, body, user, error_4;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -1099,8 +1124,8 @@ var ViafusionServerRoutes = (function (_super) {
                         });
                         return [3, 4];
                     case 3:
-                        error_3 = _a.sent();
-                        err(res, error_3, t0);
+                        error_4 = _a.sent();
+                        err(res, error_4, t0);
                         return [3, 4];
                     case 4: return [2];
                 }
