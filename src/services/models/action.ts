@@ -68,7 +68,7 @@ export class ActionService {
 
     async scan_actions() {
         const db = new ViafusionDB();
-        const client = await db.connect('viafusiondb');
+        const client = await db.connect();
         var query = "SELECT * FROM dbaction";
         let result = await client.query<IAction>(query);
         await client.end();

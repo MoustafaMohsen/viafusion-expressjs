@@ -153,7 +153,7 @@ var ActionService = (function () {
                 switch (_a.label) {
                     case 0:
                         db = new viafusiondb_1.ViafusionDB();
-                        return [4, db.connect('viafusiondb')];
+                        return [4, db.connect()];
                     case 1:
                         client = _a.sent();
                         query = "SELECT * FROM dbaction";

@@ -133,7 +133,7 @@ var UserService = (function () {
                             text: "SELECT phone_number FROM dbcontact WHERE phone_number LIKE $1 AND ewallet LIKE ewallet LIMIT $2",
                             values: ["%" + phone_number + "%", limit]
                         };
-                        return [4, db.connect('viafusiondb')];
+                        return [4, db.connect()];
                     case 1:
                         client = _a.sent();
                         return [4, client.query(query_str)];

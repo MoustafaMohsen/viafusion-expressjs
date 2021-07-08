@@ -70,7 +70,7 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
             let data = {} as any;
             const db = new ViafusionDB();
             try {
-                data.result = (await db.connect('viafusion'));
+                data.result = (await db.connect());
                 send(res, data, t0)
             } catch (error) {
                 err(res, error, t0)

@@ -133,7 +133,7 @@ var ViafusionServerRoutes = (function (_super) {
                     case 1:
                         _b.trys.push([1, 3, , 4]);
                         _a = data;
-                        return [4, db.connect('viafusion')];
+                        return [4, db.connect()];
                     case 2:
                         _a.result = (_b.sent());
                         send(res, data, t0);

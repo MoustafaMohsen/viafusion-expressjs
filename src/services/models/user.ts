@@ -57,7 +57,7 @@ export class UserService {
             text: `SELECT phone_number FROM dbcontact WHERE phone_number LIKE $1 AND ewallet LIKE ewallet LIMIT $2`,
             values: ["%"+phone_number+"%", limit]
         };
-        const client = await db.connect('viafusiondb')
+        const client = await db.connect()
         let result = await client.query(query_str);
         return result.rows.map(u=>u.phone_number)
     }
