@@ -14,10 +14,11 @@ export class ViafusionDB {
     }
 
     async PrepareDB(dbname = "viafusiondb") {
+        // database will be created manually
         let result: any = {}
-        const client1 = await this.connect();
-        result.createDB = await this.createDB(client1, dbname);
-        await client1.end();
+        // const client1 = await this.connect();
+        // result.createDB = await this.createDB(client1, dbname);
+        // await client1.end();
 
         this.dbsettings.database = dbname;
         const client2 = await this.connect();

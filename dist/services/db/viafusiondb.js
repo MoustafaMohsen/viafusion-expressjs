@@ -63,40 +63,30 @@ var ViafusionDB = (function () {
     ViafusionDB.prototype.PrepareDB = function (dbname) {
         if (dbname === void 0) { dbname = "viafusiondb"; }
         return __awaiter(this, void 0, void 0, function () {
-            var result, client1, _a, client2, _b, _c, _d;
-            return __generator(this, function (_e) {
-                switch (_e.label) {
+            var result, client2, _a, _b, _c;
+            return __generator(this, function (_d) {
+                switch (_d.label) {
                     case 0:
                         result = {};
-                        return [4, this.connect()];
-                    case 1:
-                        client1 = _e.sent();
-                        _a = result;
-                        return [4, this.createDB(client1, dbname)];
-                    case 2:
-                        _a.createDB = _e.sent();
-                        return [4, client1.end()];
-                    case 3:
-                        _e.sent();
                         this.dbsettings.database = dbname;
                         return [4, this.connect()];
-                    case 4:
-                        client2 = _e.sent();
-                        _b = result;
+                    case 1:
+                        client2 = _d.sent();
+                        _a = result;
                         return [4, this.create_contact_tabel(client2)];
-                    case 5:
-                        _b.create_contact_tabel = _e.sent();
-                        _c = result;
+                    case 2:
+                        _a.create_contact_tabel = _d.sent();
+                        _b = result;
                         return [4, this.create_contactmeta_tabel(client2)];
-                    case 6:
-                        _c.create_contactmeta_tabel = _e.sent();
-                        _d = result;
+                    case 3:
+                        _b.create_contactmeta_tabel = _d.sent();
+                        _c = result;
                         return [4, this.create_action_tabel(client2)];
-                    case 7:
-                        _d.create_action_tabel = _e.sent();
+                    case 4:
+                        _c.create_action_tabel = _d.sent();
                         return [4, client2.end()];
-                    case 8:
-                        _e.sent();
+                    case 5:
+                        _d.sent();
                         delete this.dbsettings.database;
                         console.log("DB is ready");
                         return [2, result];

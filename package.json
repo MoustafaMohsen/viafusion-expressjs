@@ -7,6 +7,7 @@
     "watch": "tsc --watch",
     "serve": "nodemon --max-old-space-size=8192 ./dist/index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc -p .",
     "start": "node dist/index.js"
   },
   "author": "Moustafa Mohsen",
