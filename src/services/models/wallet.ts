@@ -4,7 +4,7 @@ import { UserService } from './user';
 import { ICreateWallet, IDBWallet, IResponseCreateWallet } from '../../interfaces/db/idbwallet';
 import { ApiService } from '../api/api';
 import { IContact } from '../../interfaces/rapyd/icontact';
-import { ICurrency, TransferToWallet, WalletBalanceResponse } from '../../interfaces/rapyd/iwallet';
+import { ICurrency, IdentityVerification, IWalletTransaction, TransferToWallet, WalletBalanceResponse } from '../../interfaces/rapyd/iwallet';
 import { IUtilitiesResponse } from '../../interfaces/rapyd/rest-response';
 import { IDBMetaContact } from '../../interfaces/db/idbmetacontact';
 
@@ -14,6 +14,15 @@ export class WalletService {
     create_wallet_and_contact(wallet: ICreateWallet.Root) {
         var apiSrv = new ApiService();
         return apiSrv.post<IResponseCreateWallet.Root>("user", wallet)
+    }
+    get_wallet_transactions(wallet_id) {
+        var apiSrv = new ApiService();
+        return apiSrv.get<IWalletTransaction[]>("user/"+wallet_id+"/transactions")
+    }
+
+    generate_idv_page(request: IdentityVerification.Request) {
+        var apiSrv = new ApiService();
+        return apiSrv.post<IdentityVerification.Response>("hosted/idv", request);
     }
 
     async create_wallet_step(form: ICreateWallet.Form, contact_reference_id: number): Promise<IDBContact> {

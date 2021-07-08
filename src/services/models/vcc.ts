@@ -8,7 +8,7 @@ import { IWallet } from "../../interfaces/rapyd/iwallet";
 import { ViafusionDB } from '../db/viafusiondb';
 import { IDBSelect } from '../../interfaces/db/select_rows';
 import { IContact } from '../../interfaces/rapyd/icontact';
-import { ISetCardStatus, IssueVccRequest, IssueVccRequestForm, IssueVccResponse, ListIssuedVcc, ListIssuedVccTransactions } from '../../interfaces/rapyd/ivcc';
+import { ISetCardStatus, ISimulateCardAuthorization, IssueVccRequest, IssueVccRequestForm, IssueVccResponse, ListIssuedVcc, ListIssuedVccTransactions } from '../../interfaces/rapyd/ivcc';
 import { IDBMetaContact } from '../../interfaces/db/idbmetacontact';
 
 export class VccService {
@@ -39,6 +39,11 @@ export class VccService {
     set_card_status(obj: ISetCardStatus) {
         var apiSrv = new ApiService();
         return apiSrv.post<ListIssuedVccTransactions.Response[]>("issuing/cards/status", obj)
+    }
+
+    simulate_card_authorization(obj: ISimulateCardAuthorization) {
+        var apiSrv = new ApiService();
+        return apiSrv.post<ListIssuedVccTransactions.Response>("issuing/cards/authorization", obj)
     }
 
     async get_contact_cards(contact_reference_id): Promise<ListIssuedVcc.Response[]> {

@@ -2,6 +2,7 @@ import { ApiService } from '../api/api';
 import { ListPayments, RequiredFields, PostCreatePayment, IPayment } from '../../interfaces/rapyd/ipayment';
 import { ViafusionDB } from '../db/viafusiondb';
 import { IDBSelect } from '../../interfaces/db/select_rows';
+import { ICreateChckoutPage } from '../../interfaces/rapyd/iwallet';
 
 export class PaymentService {
     constructor() { }
@@ -24,6 +25,11 @@ export class PaymentService {
     get_payment(payment_id: string) {
         var apiSrv = new ApiService();
         return apiSrv.get<PostCreatePayment.Response>("payments/" + payment_id);
+    }
+
+    generate_chckout_page(request: ICreateChckoutPage.Request) {
+        var apiSrv = new ApiService();
+        return apiSrv.post<ICreateChckoutPage.Response>("checkout/", request);
     }
 
     complete_payment(payment_id: string) {

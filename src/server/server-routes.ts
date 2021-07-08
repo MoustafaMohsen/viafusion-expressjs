@@ -1,3 +1,4 @@
+import { UserService } from './../services/models/user';
 import { ActionService } from './../services/models/action';
 import { TransactionService } from './../services/models/transaction';
 import { PayoutService } from './../services/models/payout';
@@ -7,9 +8,8 @@ import { IAPIServerResponse } from './../interfaces/rapyd/types.d';
 import { PaymentService } from './../services/models/payment';
 import { ICreateWallet, IDBWallet, IWallet2Wallet } from './../interfaces/db/idbwallet';
 import { IDBContact } from './../interfaces/db/idbcontact';
-import { UserService } from '../services/models/user';
 import { ViafusionDB } from './../services/db/viafusiondb';
-import { ICurrency, IWallet } from '../interfaces/rapyd/iwallet';
+import { ICreateChckoutPage, ICurrency, IdentityVerification, IWallet } from '../interfaces/rapyd/iwallet';
 import { WalletService } from '../services/models/wallet';
 import { ApiService } from '../services/api/api';
 import performance from "perf_hooks";
@@ -21,7 +21,7 @@ import { IDBSelect } from '../interfaces/db/select_rows';
 import { PostCreatePayment } from '../interfaces/rapyd/ipayment';
 import { IContactAndSender } from '../interfaces/rapyd/isender';
 import { ILoginTransportObj } from '../interfaces/db/ilogin';
-import { ICreateVccToUser, ISetCardStatus, IssueVccRequestForm } from '../interfaces/rapyd/ivcc';
+import { ICreateVccToUser, ISetCardStatus, ISimulateCardAuthorization, IssueVccRequestForm } from '../interfaces/rapyd/ivcc';
 import { MetaContactService } from '../services/models/metacontact';
 import { IDBMetaContact, IExcuteTransaction } from '../interfaces/db/idbmetacontact';
 import { ICreatePayout, IGetPayoutRequiredFields } from '../interfaces/rapyd/ipayout';
@@ -126,8 +126,8 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
             try {
                 const userSrv = new UserService();
                 let body = req.body;
-                userSrv.list_users_by_phone(body.phone_number,body.limit || 10).then((d) => {
-                    send(res, {users:d}, t0)
+                userSrv.list_users_by_phone(body.phone_number, body.limit || 10).then((d) => {
+                    send(res, { users: d }, t0)
                 }).catch(e => {
                     err(res, e, t0)
                 })
@@ -139,8 +139,8 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
             let t0 = performance.performance.now();
             try {
                 const walletSrv = new WalletService();
-                let body:IWallet2Wallet = req.body;
-                walletSrv.transfer_money_to_phone_number(body.contact_reference_id,body.amount,body.phone_number,body.message).then((d) => {
+                let body: IWallet2Wallet = req.body;
+                walletSrv.transfer_money_to_phone_number(body.contact_reference_id, body.amount, body.phone_number, body.message).then((d) => {
                     send(res, d, t0)
                 }).catch(e => {
                     err(res, e, t0)
@@ -875,14 +875,74 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
         })
 
 
+        this.app.post('/wallet-transactions', async (req, res) => {
+            let t0 = performance.performance.now();
+            let data = {} as any;
+            try {
+                let walletSrv = new WalletService();
+                let userSrv = new UserService();
+                let body = req.body;
+                let user = await userSrv.get_db_user({ contact_reference_id: body.contact_reference_id });
+                walletSrv.get_wallet_transactions(user.ewallet).then(r => {
+                    send(res, { data: Object.values(r.body.data) }, t0)
+                })
+            } catch (error) {
+                err(res, error, t0)
+            }
+        })
         // === Actions
+        this.app.post('/simulate-card-authorization', async (req, res) => {
+            let t0 = performance.performance.now();
+            let data = {} as any;
+            let act = new VccService();
+            try {
+                let body: ISimulateCardAuthorization = req.body;
+                act.simulate_card_authorization(body).then(r => {
+                    send(res, r, t0)
+                }).catch(error => {
+                    err(res, error, t0)
+                })
+            } catch (error) {
+                err(res, error, t0)
+            }
+        })
+        this.app.post('/generate-checkout', async (req, res) => {
+            let t0 = performance.performance.now();
+            let data = {} as any;
+            let paymentSrv = new PaymentService();
+            try {
+                let body: ICreateChckoutPage.Request = req.body;
+                paymentSrv.generate_chckout_page(body).then(r => {
+                    send(res, r.body.data, t0)
+                }).catch(error => {
+                    err(res, error, t0)
+                })
+            } catch (error) {
+                err(res, error, t0)
+            }
+        })
+        this.app.post('/generate-idv', async (req, res) => {
+            let t0 = performance.performance.now();
+            let data = {} as any;
+            let walletSrv = new WalletService();
+            try {
+                let body: IdentityVerification.Request = req.body;
+                walletSrv.generate_idv_page(body).then(r => {
+                    send(res, r.body.data, t0)
+                }).catch(error => {
+                    err(res, error, t0)
+                })
+            } catch (error) {
+                err(res, error, t0)
+            }
+        })
         this.app.post('/get-actions', async (req, res) => {
             let t0 = performance.performance.now();
             let data = {} as any;
             let act = new ActionService();
             try {
                 let body = req.body;
-                act.get_db_actions(body).then(r=>{
+                act.get_db_actions(body).then(r => {
                     send(res, r, t0)
                 })
             } catch (error) {
@@ -895,7 +955,7 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
             let act = new ActionService();
             try {
                 let body = req.body;
-                act.update_db_action(body.action,body.newaction).then(r=>{
+                act.update_db_action(body.action, body.newaction).then(r => {
                     send(res, r, t0)
                 })
             } catch (error) {
@@ -908,7 +968,7 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
             let act = new ActionService();
             try {
                 let body = req.body;
-                act.delete_db_action(body).then(r=>{
+                act.delete_db_action(body).then(r => {
                     send(res, r, t0)
                 })
             } catch (error) {
@@ -921,7 +981,7 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
             let act = new ActionService();
             try {
                 let body = req.body;
-                act.get_db_actions(body).then(r=>{
+                act.get_db_actions(body).then(r => {
                     send(res, r, t0)
                 })
             } catch (error) {

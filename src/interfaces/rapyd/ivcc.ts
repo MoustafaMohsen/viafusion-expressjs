@@ -139,6 +139,12 @@ export interface ISetCardStatus {
     card: string,
     status: "active" | "unblock" | "block"
 }
+export interface ISimulateCardAuthorization {
+    /**Card ID */
+    card_id: string,
+    amount:number,
+    currency: "USD"
+}
 
 
 // Frontend-server interface
