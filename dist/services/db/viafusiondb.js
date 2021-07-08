@@ -116,7 +116,6 @@ var ViafusionDB = (function () {
                     case 0:
                         set = database ? __assign(__assign({}, this.dbsettings), { database: database }) : this.dbsettings;
                         client = new pg_1.Client(set);
-                        console.log(set);
                         return [4, client.connect()];
                     case 1:
                         _a.sent();

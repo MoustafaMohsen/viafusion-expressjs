@@ -43,7 +43,6 @@ export class ViafusionDB {
     async connect(database?) {
         const set = database ? { ...this.dbsettings, database } : this.dbsettings;
         const client = new Client(set);
-        console.log(set);
         await client.connect();
         return client;
     }
