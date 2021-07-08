@@ -65,6 +65,17 @@ export default class ViafusionServerRoutes extends ViafusionServerCore {
                 err(res, error, t0)
             }
         })
+        this.app.get('/test-db', async (req, res) => {
+            let t0 = performance.performance.now();
+            let data = {} as any;
+            const db = new ViafusionDB();
+            try {
+                data.result = (await db.connect('viafusion'));
+                send(res, data, t0)
+            } catch (error) {
+                err(res, error, t0)
+            }
+        })
 
         // ==== Status Test
         this.app.post('/', async (req, res) => {
