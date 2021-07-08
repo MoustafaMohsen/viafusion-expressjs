@@ -57,14 +57,18 @@ export class ActionService {
 
     listen_to_acitons(minutes = 5) {
         setInterval(() => {
-            this.scan_actions()
+            this.scan_actions().catch(
+                error=>{
+                    console.error(error);
+                }
+            )
         },
             minutes * 60 * 1000);
     }
 
     async scan_actions() {
         const db = new ViafusionDB();
-        const client = await db.connect('dbaction');
+        const client = await db.connect('viafusiondb');
         var query = "SELECT * FROM dbaction";
         let result = await client.query<IAction>(query);
         await client.end();
