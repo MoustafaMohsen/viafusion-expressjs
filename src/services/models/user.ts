@@ -16,6 +16,7 @@ export class UserService {
 
     async create_db_user(user: IDBContact) {
         const db = new ViafusionDB();
+        user.contact_reference_id = Math.floor(Math.random() * 100000000) + 1;
         let results = await db.insert_object(user, 'dbcontact');
         let result = await this.get_db_user(results.rows[0]);
         await this.refresh_security(result);

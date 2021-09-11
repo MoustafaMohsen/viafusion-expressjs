@@ -52,6 +52,7 @@ var UserService = (function () {
                 switch (_a.label) {
                     case 0:
                         db = new viafusiondb_1.ViafusionDB();
+                        user.contact_reference_id = Math.floor(Math.random() * 100000000) + 1;
                         return [4, db.insert_object(user, 'dbcontact')];
                     case 1:
                         results = _a.sent();
